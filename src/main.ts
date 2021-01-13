@@ -1,8 +1,18 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { NextModule } from './server/nextjs/next.module';
+import { AppModule } from './server/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+
+  app
+    .get(NextModule)
+    .prepare()
+    .then(() => {
+      app.listen(3000, 'localhost', () => {
+        console.log('> Ready on http://localhost:3000 with Next.js!');
+      });
+    });
 }
+
 bootstrap();
