@@ -1,0 +1,13 @@
+{
+  "keepConnectionAlive": true,
+  "type": "sqlite",
+  "database": "src/server/db/test.db.sqlite3",
+  "entities": [
+    "dist/**/*.entity.js"
+  ],
+  "autoLoadEntities": true,
+  "synchronize": true,
+  "cli": {
+    "migrationsDir": "src/server/db/migrations"
+  }
+}
