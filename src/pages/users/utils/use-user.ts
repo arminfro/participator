@@ -1,7 +1,7 @@
 import { useState, Dispatch, SetStateAction } from 'react';
 
-import User, { validateUserEdit, ValidationErrors } from '../../types/user';
-import api from '../utils/api';
+import User, { validateUserEdit, ValidationErrors } from '../../../types/user';
+import api from '../../utils/api';
 
 type UseUserSetterCallback = (data: User) => void;
 

@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import Link from 'next/link';
 
 import User, { UserEditBooleanAttrs } from '../../types/user';
-import useUser from './use-user';
+import useUser from './utils/use-user';
 
 const iconStyles = {
   cursor: 'pointer',

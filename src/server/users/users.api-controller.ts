@@ -9,6 +9,7 @@ import {
   Delete,
   HttpCode,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 
 import { UsersService } from './users.service';
@@ -24,6 +25,13 @@ export class UsersApiController {
   @UseGuards(JwtAuthGuard)
   public async index(): Promise<User[]> {
     return await this.usersService.findAll();
+  }
+
+  // @todo security, delete route and get user from localstorage instead
+  @UseGuards(JwtAuthGuard)
+  @Get('token-to-user')
+  public async tokenToUser(@Req() req: any): Promise<User | undefined> {
+    return await this.usersService.findOne(req.user.userId);
   }
 
   @Get(':id')

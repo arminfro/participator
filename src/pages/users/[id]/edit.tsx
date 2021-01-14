@@ -4,7 +4,7 @@ import User, {
   userEditBooleanAttrs,
   UserEditBooleanAttrs,
 } from '../../../types/user';
-import useUser from '../use-user';
+import useUser from '../utils/use-user';
 import Link from 'next/link';
 import { NextPageContext } from 'next';
 import getInitialProps from '../../utils/get-initial-props';

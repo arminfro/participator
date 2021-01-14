@@ -1,5 +1,8 @@
+import { useRouter } from 'next/router';
 import React, { ReactElement, useState, SyntheticEvent } from 'react';
+import User from '../types/user';
 import api from './utils/api';
+import { useStore } from './utils/store/context';
 import { setToken } from './utils/token';
 
 interface Props {
@@ -7,23 +10,25 @@ interface Props {
 }
 
 export default function LoginForm({ redirectUrl = '' }: Props): ReactElement {
+  const router = useRouter();
+  const { dispatch } = useStore();
   const [name, setName] = useState('Joet');
   const [pw, setPw] = useState('hi');
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    api<{ access_token: string }>(
+    api<{ access_token: string; user: User }>(
       'POST',
       'login',
-      (token) => {
-        setToken(token.access_token);
-        if (redirectUrl) {
-          // Router.push(redirectUrl)
-        }
+      ({ access_token, user }) => {
+        dispatch({ type: 'LOGIN', user });
+        setToken(access_token);
+        router.push(redirectUrl || '/users');
       },
       { username: name, password: pw },
     );
   };
+
   return (
     <>
       <h4>Login</h4>

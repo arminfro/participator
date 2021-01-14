@@ -54,3 +54,12 @@ export function validateUserEdit(
   }
   return errors;
 }
+
+export function isUser(data: User): data is User {
+  return (
+    data instanceof Object &&
+    (['id', 'name'] as Array<keyof User>).every(
+      (attribute) => (data as User)[attribute],
+    )
+  );
+}
