@@ -6,7 +6,6 @@ import User from '../../types/user';
 import { NextPageContext } from 'next';
 import api from '../utils/api';
 import getInitialProps from '../utils/get-initial-props';
-import { getToken } from '../utils/token';
 
 export type UserFilter = (a: User) => boolean;
 

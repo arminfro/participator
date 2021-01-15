@@ -6,10 +6,11 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { UserSubscriber } from '../users/user.subscriber';
 import { User } from './user.entity';
+import { CaslModule } from '../casl/casl.module';
 
 @Module({
   providers: [UsersService, UserSubscriber],
-  imports: [NextModule, TypeOrmModule.forFeature([User])],
+  imports: [NextModule, CaslModule, TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
   exports: [UsersService],
 })

@@ -21,8 +21,6 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       reqUrl: req.url,
     };
 
-    // debugger;
-
     this.next.render(`/http-exception`, data, req, res);
   }
 }

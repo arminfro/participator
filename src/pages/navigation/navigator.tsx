@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { useStore } from '../utils/store/context';
-import api from '../utils/api';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 import User, { isUser } from '../../types/user';
+import api from '../utils/api';
+import { useStore } from '../utils/store/context';
 
 /*
  * Populates store with fetching user by token,

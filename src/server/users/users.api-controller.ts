@@ -1,41 +1,40 @@
 import {
-  ParseIntPipe,
-  Controller,
-  Get,
-  Param,
-  Post,
   Body,
-  Patch,
+  Controller,
   Delete,
+  Get,
   HttpCode,
-  UseGuards,
-  Req,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
 } from '@nestjs/common';
-
-import { UsersService } from './users.service';
-import { User } from './user.entity';
+import { Action } from '../../casl/action';
 import { UserCreate } from '../../types/user';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AppAbility } from '../casl/casl-ability.factory';
+import { UsePolicy } from '../casl/use-policy.decorator';
+import { User as UserDecorator } from './user.decorator';
+import { User } from './user.entity';
+import { UsersService } from './users.service';
 
 @Controller('api/users')
 export class UsersApiController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UsePolicy((ability: AppAbility) => ability.can(Action.Read, User))
   public async index(): Promise<User[]> {
     return await this.usersService.findAll();
   }
 
-  // @todo security, delete route and get user from localstorage instead
-  @UseGuards(JwtAuthGuard)
   @Get('token-to-user')
-  public async tokenToUser(@Req() req: any): Promise<User | undefined> {
-    return await this.usersService.findOne(req.user.userId);
+  @UsePolicy((ability: AppAbility) => ability.can(Action.Manage, User))
+  public async tokenToUser(@UserDecorator() user: User): Promise<User> {
+    return user;
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UsePolicy((ability: AppAbility) => ability.can(Action.Read, User))
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<User | undefined> {
@@ -44,23 +43,24 @@ export class UsersApiController {
 
   @Patch(':id')
   @HttpCode(204)
-  @UseGuards(JwtAuthGuard)
+  @UsePolicy((ability: AppAbility) => ability.can(Action.Update, User))
   async editOne(
-    @Body() user: User,
-    @Param('id', ParseIntPipe) id: number,
+    @UserDecorator() user: User,
+    @Body() newUser: User,
   ): Promise<void> {
-    await this.usersService.update(id, user);
+    console.log('going to update');
+    await this.usersService.update(user.id, newUser);
   }
 
-  @HttpCode(204)
   @Delete(':id')
-  @UseGuards(JwtAuthGuard) // todo, check if req.user.id is same
+  @HttpCode(204)
+  @UsePolicy((ability: AppAbility) => ability.can(Action.Delete, User))
   async deleteOne(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.usersService.delete(id);
   }
 
-  @HttpCode(201)
   @Post('new')
+  @HttpCode(201)
   public async create(@Body() userCreate: UserCreate): Promise<User> {
     return await this.usersService.create(userCreate);
   }

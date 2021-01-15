@@ -25,7 +25,7 @@ export default function UserItem({ user }: Props): ReactElement {
   return (
     <>
       <h2>{user.name}</h2>
-      <UserCard user={user} isChosenUser={false} />
+      <UserCard user={user} />
       <Link href="/users" as={`/users`}>
         <button className="ui button">Back</button>
       </Link>
