@@ -58,9 +58,7 @@ Users.getInitialProps = async ({ req, query }: NextPageContext) => {
     server: () => query.users,
     client: async () => await api('get', 'api/users'),
   });
-  console.log('users', users);
   return {
     users,
-    // user: req && req.user,
   };
 };

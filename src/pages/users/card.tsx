@@ -1,6 +1,5 @@
-import React, { ReactElement } from 'react';
 import Link from 'next/link';
-
+import React, { ReactElement } from 'react';
 import User, { UserEditBooleanAttrs } from '../../types/user';
 import useUser from './utils/use-user';
 

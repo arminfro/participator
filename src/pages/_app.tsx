@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ReactElement } from 'react';
 
 import Navigator from './navigation/navigator';
-import './styles.css';
+import { AbilityContextProvider } from './utils/casl-context';
 import StoreProvider from './utils/store/provider';
+import './styles.css';
 
 interface Props {
   Component: React.FC;
@@ -13,11 +13,13 @@ interface Props {
 export default function MyApp({ Component, pageProps }: Props): ReactElement {
   return (
     <StoreProvider>
-      <Navigator />
+      <AbilityContextProvider>
+        <Navigator />
 
-      <div className="ui container">
-        <Component {...pageProps} />
-      </div>
+        <div className="ui container">
+          <Component {...pageProps} />
+        </div>
+      </AbilityContextProvider>
     </StoreProvider>
   );
 }

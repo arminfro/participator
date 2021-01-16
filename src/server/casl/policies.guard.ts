@@ -5,7 +5,8 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AppAbility, CaslAbilityFactory } from './casl-ability.factory';
+import { AppAbility } from '../../casl/ability';
+import { CaslAbilityFactory } from './casl-ability.factory';
 
 interface IPolicyHandler {
   handle(ability: AppAbility): boolean;
@@ -37,9 +38,10 @@ export class PoliciesGuard implements CanActivate {
       const allowed = policyHandlers.every((handler) =>
         this.execPolicyHandler(handler, ability),
       );
-      console.log('allowed Operation?', allowed);
+      console.debug('allowed Operation?', allowed);
       return allowed;
     } else {
+      console.error('no user found in casl');
       return false;
     }
   }

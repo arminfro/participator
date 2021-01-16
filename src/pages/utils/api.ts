@@ -39,6 +39,9 @@ export default async function api<T>(
     headers: { Authorization: `bearer ${getToken()}` },
     url: `http://localhost:3000/${path}`,
     data,
+  }).catch((err) => {
+    console.error('error', err);
+    throw err;
   });
   if (callback) {
     callback(response.data);
