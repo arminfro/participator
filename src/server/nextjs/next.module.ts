@@ -4,10 +4,6 @@ import next from 'next';
 import { ServerConstructor } from 'next/dist/next-server/server/next-server';
 import { NextService } from './next.service';
 
-type NextServerConstructor = Omit<ServerConstructor, 'staticMarkup'> & {
-  dev?: boolean;
-};
-
 @Module({
   providers: [NextService],
   exports: [NextService],
@@ -15,7 +11,7 @@ type NextServerConstructor = Omit<ServerConstructor, 'staticMarkup'> & {
 export class NextModule {
   constructor(private readonly next: NextService) {}
 
-  public async prepare(options?: NextServerConstructor) {
+  public async prepare(options?: ServerConstructor) {
     const app = next(
       Object.assign(
         {

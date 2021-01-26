@@ -10,50 +10,48 @@ import {
 } from '@nestjs/common';
 import { NextService } from '../nextjs/next.service';
 
-import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RoomsService } from './rooms.service';
 
-@Controller('users')
-export class UsersController {
+@Controller('rooms')
+@UseGuards(JwtAuthGuard)
+export class RoomsController {
   constructor(
     private readonly next: NextService,
-    private readonly usersService: UsersService,
+    private readonly roomsService: RoomsService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   public async index(
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    const users = await this.usersService.findAll();
-    this.next.render('/users', { users }, req, res);
+    const rooms = await this.roomsService.findAll();
+    this.next.render('/rooms', { rooms }, req, res);
   }
 
   @Get('new')
   createForm(@Req() req: IncomingMessage, @Res() res: ServerResponse): void {
-    this.next.render(`/users/new`, req, res);
+    this.next.render(`/rooms/new`, req, res);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id/edit')
   public async showEdit(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    const user = await this.usersService.findOne(id);
-    await this.next.render(`/users/${id}/edit`, { user }, req, res);
+    const room = await this.roomsService.findOne(id);
+    await this.next.render(`/rooms/${id}/edit`, { room }, req, res);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    const user = await this.usersService.findOne(id);
-    this.next.render(`/users/${id}`, { user }, req, res);
+    const room = await this.roomsService.findOne(id);
+    this.next.render(`/rooms/${id}`, { room }, req, res);
   }
 }

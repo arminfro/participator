@@ -1,3 +1,5 @@
+import Room from './room';
+
 export interface UserCreate {
   name: string;
   pw1: string;
@@ -16,9 +18,15 @@ export default interface User {
   randomGroup: boolean;
   active: boolean;
   readonly groupId?: number;
+  readonly joinedRooms: Room[];
+  readonly ownedRooms: Room[];
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
 }
+
+// export interface UserModel extends User {
+//   password: string;
+// }
 
 export type UserEditBooleanAttrs = 'hasHandUp' | 'randomGroup' | 'active';
 export type UserEditAttrs = (UserEditBooleanAttrs & 'name') | 'groupId';

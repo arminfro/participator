@@ -10,7 +10,7 @@ interface Props {
   userId?: number;
 }
 
-export default function UserNew({
+export default function UserForm({
   userName = 'Joe',
   userId,
   edit = false,

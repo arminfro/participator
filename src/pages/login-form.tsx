@@ -43,7 +43,7 @@ export default function LoginForm({ redirectUrl = '' }: Props): ReactElement {
         />
         <label>Passwort</label>
         <input
-          type="text"
+          type="password"
           value={pw}
           onChange={(e) => {
             setPw(e.target.value);

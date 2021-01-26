@@ -4,11 +4,15 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  ManyToMany,
+  BaseEntity,
 } from 'typeorm';
 import UserModel from '../../types/user';
+import { Room } from '../rooms/room.entity';
 
 @Entity()
-export class User implements UserModel {
+export class User extends BaseEntity implements UserModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -17,6 +21,17 @@ export class User implements UserModel {
 
   @Column()
   password!: string;
+
+  @OneToMany(() => Room, (room) => room.admin, {
+    eager: true,
+  })
+  ownedRooms: Room[];
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  @ManyToMany((type) => Room, (room) => room.members, {
+    eager: true,
+  })
+  joinedRooms: Room[];
 
   @Column({ default: false })
   hasHandUp!: boolean;
@@ -35,4 +50,9 @@ export class User implements UserModel {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  // for casl
+  static get modelName() {
+    return 'User';
+  }
 }

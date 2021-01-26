@@ -44,9 +44,14 @@ export default function Navigator() {
         <a className="item">Home</a>
       </Link>
       {userFetched && (
-        <Link href="/users">
-          <a className="item">Users</a>
-        </Link>
+        <>
+          <Link href="/users">
+            <a className="item">Users</a>
+          </Link>
+          <Link href="/rooms">
+            <a className="item">Rooms</a>
+          </Link>
+        </>
       )}
       <LoginOrLogout isLoading={isLoading} />
     </div>

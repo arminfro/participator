@@ -62,7 +62,7 @@ export default function UserEditForm({ user }: Props): ReactElement {
 
 UserEditForm.getInitialProps = async ({ req, query }: NextPageContext) => {
   const user = await getInitialProps<User>(req, query, {
-    server: () => query.users,
+    server: () => query.user,
     client: async () => await api('get', `api/users/${query.id}`),
   });
   return { user };

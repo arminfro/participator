@@ -11,8 +11,8 @@ export type UserFilter = (a: User) => boolean;
 
 interface Props {
   users: User[];
-  group: boolean;
-  filter: UserFilter;
+  group?: boolean;
+  filter?: UserFilter;
 }
 
 export default function Users({

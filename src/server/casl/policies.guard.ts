@@ -8,7 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { AppAbility } from '../../casl/ability';
 import { CaslAbilityFactory } from './casl-ability.factory';
 
-interface IPolicyHandler {
+export interface IPolicyHandler {
   handle(ability: AppAbility): boolean;
 }
 
@@ -34,7 +34,6 @@ export class PoliciesGuard implements CanActivate {
 
     if (user) {
       const ability = this.caslAbilityFactory.createForUser(user);
-
       const allowed = policyHandlers.every((handler) =>
         this.execPolicyHandler(handler, ability),
       );

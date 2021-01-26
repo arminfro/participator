@@ -1,4 +1,5 @@
 import { useState, Dispatch, SetStateAction } from 'react';
+import Room from '../../../types/room';
 
 import User, { validateUserEdit, ValidationErrors } from '../../../types/user';
 import api from '../../utils/api';
@@ -13,6 +14,8 @@ interface UseUser {
     randomGroup: boolean;
     active: boolean;
     groupId: number | undefined;
+    joinedRooms: Room[];
+    ownedRooms: Room[];
     getUser: () => User;
     validationErrors: ValidationErrors;
   };
@@ -45,11 +48,22 @@ export default function useUser(user: User, withValidation = false): UseUser {
   const [hasHandUp, setHasHandUp] = useState(user.hasHandUp);
   const [randomGroup, setRandomGroup] = useState(user.randomGroup);
   const [active, setActive] = useState(user.active);
-  const groupId = useState(user.groupId)[0];
+  const [joinedRooms] = useState(user.joinedRooms);
+  const [ownedRooms] = useState(user.ownedRooms);
+  const [groupId] = useState(user.groupId);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const getUser = (): User => {
-    return { id: user.id, name, hasHandUp, randomGroup, active, groupId };
+    return {
+      id: user.id,
+      name,
+      hasHandUp,
+      randomGroup,
+      active,
+      groupId,
+      joinedRooms,
+      ownedRooms,
+    };
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,6 +110,8 @@ export default function useUser(user: User, withValidation = false): UseUser {
       randomGroup,
       active,
       groupId,
+      ownedRooms,
+      joinedRooms,
       getUser: getUser,
       validationErrors,
     },
