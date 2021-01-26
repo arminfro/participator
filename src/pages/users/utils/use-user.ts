@@ -13,7 +13,6 @@ interface UseUser {
     hasHandUp: boolean;
     randomGroup: boolean;
     active: boolean;
-    groupId: number | undefined;
     joinedRooms: Room[];
     ownedRooms: Room[];
     getUser: () => User;
@@ -50,7 +49,6 @@ export default function useUser(user: User, withValidation = false): UseUser {
   const [active, setActive] = useState(user.active);
   const [joinedRooms] = useState(user.joinedRooms);
   const [ownedRooms] = useState(user.ownedRooms);
-  const [groupId] = useState(user.groupId);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const getUser = (): User => {
@@ -60,7 +58,6 @@ export default function useUser(user: User, withValidation = false): UseUser {
       hasHandUp,
       randomGroup,
       active,
-      groupId,
       joinedRooms,
       ownedRooms,
     };
@@ -84,7 +81,7 @@ export default function useUser(user: User, withValidation = false): UseUser {
     callback: UseUserSetterCallback,
   ): User => {
     const newUser = buildNewUser(attr, newValue);
-    const errors: ValidationErrors = validateUserEdit(getUser(), newUser);
+    const errors: ValidationErrors = validateUserEdit(getUser());
 
     if (errors.length === 0) {
       setter(newValue);
@@ -109,7 +106,6 @@ export default function useUser(user: User, withValidation = false): UseUser {
       hasHandUp,
       randomGroup,
       active,
-      groupId,
       ownedRooms,
       joinedRooms,
       getUser: getUser,

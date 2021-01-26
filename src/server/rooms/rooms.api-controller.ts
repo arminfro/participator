@@ -63,7 +63,10 @@ export class RoomsApiController {
     @Res() res: Response,
   ): Promise<UpdateResult | void> {
     const room = await this.roomsService.findOne(id);
-    if (ability(user).can(Action.Manage, subject('Room', room))) {
+    if (
+      ability(user).can(Action.Manage, subject('Room', room)) ||
+      (room.openToJoin && roomUpdate.addMember)
+    ) {
       res.send(this.roomsService.update(id, roomUpdate));
     } else {
       console.log('FORBIDDEN');

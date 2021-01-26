@@ -69,14 +69,6 @@ export default function UserCard({ user, updateUser }: Props): ReactElement {
             style={stylesForIcon('randomGroup')}
             onClick={() => onToggle('randomGroup')}
           />
-          {/*
-           * <i
-           *   title={`${user.groupId ? 'Leave Group' : 'No Op'}`}
-           *   className="group icon"
-           *   style={stylesForIcon('groupId')}
-           *   onClick={() => onToggle('groupId')}
-           * />
-           */}
         </div>
         <div className="extra content">
           <small>{user.name}</small>

@@ -28,7 +28,6 @@ interface Options {
   online: Option;
   reg: Option;
   hand: Option;
-  group: Option;
 }
 
 interface Props {
@@ -54,12 +53,6 @@ function UserFilterCtrl({ setFilter }: Props): ReactElement {
       icon: 'hand point up outline',
       filterTrue: (u) => u.hasHandUp,
       filterFalse: (u) => !u.hasHandUp,
-    },
-    group: {
-      value: 'group',
-      icon: 'group',
-      filterTrue: (u) => !!u.groupId,
-      filterFalse: (u) => !u.groupId,
     },
   };
 
@@ -100,7 +93,7 @@ function UserFilterCtrl({ setFilter }: Props): ReactElement {
       <div className="ui form">
         <div className="inline fields">
           <label htmlFor="filter">Select filter:</label>
-          {(['online', 'reg', 'hand', 'group'] as Array<keyof Options>).map(
+          {(['online', 'reg', 'hand'] as Array<keyof Options>).map(
             (filterSetting) => (
               <div key={filterSetting} className="field">
                 <div className="ui radio checkbox">

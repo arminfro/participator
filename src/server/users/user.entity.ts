@@ -42,9 +42,6 @@ export class User extends BaseEntity implements UserModel {
   @Column({ default: true })
   active!: boolean;
 
-  @Column()
-  groupId?: number;
-
   @CreateDateColumn()
   createdAt!: Date;
 

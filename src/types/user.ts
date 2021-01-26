@@ -17,7 +17,6 @@ export default interface User {
   hasHandUp: boolean;
   randomGroup: boolean;
   active: boolean;
-  readonly groupId?: number;
   readonly joinedRooms: Room[];
   readonly ownedRooms: Room[];
   readonly createdAt?: Date;
@@ -29,7 +28,7 @@ export default interface User {
 // }
 
 export type UserEditBooleanAttrs = 'hasHandUp' | 'randomGroup' | 'active';
-export type UserEditAttrs = (UserEditBooleanAttrs & 'name') | 'groupId';
+export type UserEditAttrs = UserEditBooleanAttrs & 'name';
 export const userEditBooleanAttrs: UserEditBooleanAttrs[] = [
   'hasHandUp',
   'randomGroup',
@@ -49,16 +48,10 @@ export function validateUserCreate(user: UserCreate): ValidationErrors {
   return errors;
 }
 
-export function validateUserEdit(
-  oldUser: User,
-  newUser: User,
-): ValidationErrors {
+export function validateUserEdit(newUser: User): ValidationErrors {
   const errors: string[] = [];
   if (newUser.name === '') {
     errors.push('Username empty');
-  }
-  if (oldUser.groupId !== newUser.groupId && newUser.groupId) {
-    errors.push('Pick new Room at Rooms api ressource');
   }
   return errors;
 }

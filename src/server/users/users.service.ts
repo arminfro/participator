@@ -74,7 +74,6 @@ export class UsersService {
     if (user) {
       user.name = userCreate.name;
       user.password = userCreate.pw1;
-      user.groupId = 0;
       return user;
     } else {
       console.error('Error in build', userCreate);
