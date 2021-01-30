@@ -1,4 +1,5 @@
 import axios, { Method as HttpMethod } from 'axios';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { getToken } from './token';
 
 /*
@@ -7,18 +8,18 @@ import { getToken } from './token';
  * @param bodyData [object]
  * @return, Response Data
  */
-// export function useApi<T>(
-//   method: HttpMethod,
-//   path: string,
-// ): T | undefined {
-//   const [data, setData] = useState<undefined | T>();
+export function useApi<T>(
+  method: HttpMethod,
+  path: string,
+): [T | undefined, Dispatch<SetStateAction<T>>] {
+  const [data, setData] = useState<T>();
 
-//   useEffect(() => {
-//     api<T>(method, path, (data: T) => setData(data));
-//   }, [method, path]);
+  useEffect(() => {
+    api<T>(method, path, (data: T) => setData(data));
+  }, [method, path]);
 
-//   return data;
-// }
+  return [data, setData];
+}
 
 /*
  * Useful for calls on events or in condition

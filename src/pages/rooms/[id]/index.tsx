@@ -7,6 +7,7 @@ import Users from '../../users';
 import api from '../../utils/api';
 import { Can } from '../../utils/casl-context';
 import getInitialProps from '../../utils/get-initial-props';
+import Chats from '../chats';
 
 interface Props {
   room: Room;
@@ -17,6 +18,7 @@ export default function RoomItem({ room }: Props): ReactElement {
     <>
       <h2>Room: {room.name}</h2>
       <Users users={[room.admin, ...room.members]} />
+      <Chats roomId={room.id} />
       <Can I="update" this={subject('Room', room)}>
         <Link href="/rooms/[id]/edit" as={`/rooms/${room.id}/edit`}>
           <button className="ui button yellow">Edit</button>

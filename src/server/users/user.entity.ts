@@ -9,6 +9,7 @@ import {
   BaseEntity,
 } from 'typeorm';
 import UserModel from '../../types/user';
+import { Chat } from '../chats/chat.entity';
 import { Room } from '../rooms/room.entity';
 
 @Entity()
@@ -32,6 +33,9 @@ export class User extends BaseEntity implements UserModel {
     eager: true,
   })
   joinedRooms: Room[];
+
+  @OneToMany(() => Chat, (chat) => chat.user)
+  chats: Chat[];
 
   @Column({ default: false })
   hasHandUp!: boolean;

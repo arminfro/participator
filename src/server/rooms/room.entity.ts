@@ -8,9 +8,11 @@ import {
   JoinTable,
   ManyToOne,
   BaseEntity,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import RoomModel from '../../types/room';
+import { Chat } from '../chats/chat.entity';
 
 @Entity()
 export class Room extends BaseEntity implements RoomModel {
@@ -35,6 +37,9 @@ export class Room extends BaseEntity implements RoomModel {
 
   @ManyToOne(() => User, (user) => user.ownedRooms)
   admin: User;
+
+  @OneToMany(() => Chat, (chat) => chat.room)
+  chats: Chat[];
 
   @CreateDateColumn()
   createdAt!: Date;
