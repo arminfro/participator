@@ -9,6 +9,7 @@ import {
   BaseEntity,
 } from 'typeorm';
 import UserModel from '../../types/user';
+import { Answer } from '../answers/answer.entity';
 import { Chat } from '../chats/chat.entity';
 import { Question } from '../questions/question.entity';
 import { Room } from '../rooms/room.entity';
@@ -40,6 +41,9 @@ export class User extends BaseEntity implements UserModel {
 
   @OneToMany(() => Question, (question) => question.user)
   questions: Question[];
+
+  @OneToMany(() => Answer, (answer) => answer.user)
+  answers: Answer[];
 
   @Column({ default: false })
   hasHandUp!: boolean;

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AnswersModule } from '../answers/answers.module';
 import { CaslModule } from '../casl/casl.module';
 import { NextModule } from '../nextjs/next.module';
 import { QuestionsModule } from '../questions/questions.module';
@@ -11,6 +12,7 @@ import { RoomsService } from './rooms.service';
 @Module({
   providers: [RoomsService],
   imports: [
+    AnswersModule,
     QuestionsModule,
     NextModule,
     CaslModule,

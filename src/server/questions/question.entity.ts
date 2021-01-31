@@ -4,9 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Answer } from '../answers/answer.entity';
 import QuestionsModelType from '../../types/question';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
@@ -31,6 +33,9 @@ export class Question extends BaseEntity implements QuestionsModel {
 
   @ManyToOne(() => User, (user) => user.questions)
   user: User;
+
+  @OneToMany(() => Answer, (answer) => answer.question)
+  answers: Answer[];
 
   @CreateDateColumn()
   createdAt!: Date;

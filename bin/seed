@@ -32,18 +32,29 @@ const joinRoom = async (addMember) => {
   })
 }
 
+const addQuestion = async (questionCreate) => {
+  await postReq('api/rooms/1/questions', questionCreate)
+}
+
+const addAnswer = async (answerCreate) => {
+  await postReq('api/rooms/1/questions/1/answers', answerCreate)
+}
+
 (async () => {
   let userWithToken;
 
   // ['Joey', 'Lisa', 'Jens', 'Simon', 'Alfred', 'Anna', 'Judith'].forEach((name) => (await register(name)))
-  await register('Joey')
-  await register('Lisa')
-  await login('Joey')
-  await addRoom('Classroom Joey', 'random description')
+  // await register('Joey')
+  // await register('Lisa')
+  // await login('Joey')
+  // await addRoom('Classroom Joey', 'random description')
 
-  userWithToken = await login('Lisa')
-  await addRoom('Classroom 2', 'random description')
+  // userWithToken = await login('Lisa')
+  // await addRoom('Classroom Lisa', 'random description')
   userWithToken = await login('Joey')
-  await joinRoom(userWithToken.user)
+  // await joinRoom(userWithToken.user)
+
+  // await addQuestion({text: 'Alright?', answersFormat: {fixed: ['yes', 'no']}})
+  await addAnswer({fixedAnswer: 'yes'})
 })()
 
