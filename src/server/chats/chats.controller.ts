@@ -9,7 +9,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Chat } from './chat.entity';
 import { ChatsService } from './chats.service';
 
-@Controller('rooms/:roomId/chat')
+@Controller('api/rooms/:roomId/chat')
 @UseGuards(JwtAuthGuard)
 export class ChatsController {
   constructor(private readonly chatService: ChatsService) {}
@@ -18,6 +18,6 @@ export class ChatsController {
   async findAll(
     @Param('roomId', ParseIntPipe) roomId: number,
   ): Promise<Chat[]> {
-    return await this.chatService.findAll({ byRoomId: roomId });
+    return await this.chatService.findAll(roomId);
   }
 }

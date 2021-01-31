@@ -13,6 +13,7 @@ import {
 import { User } from '../users/user.entity';
 import RoomModel from '../../types/room';
 import { Chat } from '../chats/chat.entity';
+import { Question } from '../questions/question.entity';
 
 @Entity()
 export class Room extends BaseEntity implements RoomModel {
@@ -40,6 +41,9 @@ export class Room extends BaseEntity implements RoomModel {
 
   @OneToMany(() => Chat, (chat) => chat.room)
   chats: Chat[];
+
+  @OneToMany(() => Question, (question) => question.room)
+  questions: Question[];
 
   @CreateDateColumn()
   createdAt!: Date;

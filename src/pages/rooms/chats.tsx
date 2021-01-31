@@ -10,7 +10,10 @@ interface Props {
 }
 
 export default function Chats({ roomId }: Props): ReactElement {
-  const [messages, setMessages] = useApi<Chat[]>('get', `rooms/${roomId}/chat`);
+  const [messages, setMessages] = useApi<Chat[]>(
+    'get',
+    `api/rooms/${roomId}/chat`,
+  );
   const [input, setInput] = useState('');
   const {
     store: { user },

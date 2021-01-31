@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Repository } from 'typeorm';
+import { getManager } from 'typeorm';
 import { ChatCreate } from '../../types/chat';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 import { Chat } from './chat.entity';
-// import { CreateChatDto } from './dto/create-chat.dto';
-// import { UpdateChatDto } from './dto/update-chat.dto';
 
 @Injectable()
 export class ChatsService {
@@ -18,8 +15,8 @@ export class ChatsService {
     return chat;
   }
 
-  async findAll(opts: { byRoomId: number }): Promise<Chat[]> {
-    const room = await this.findRoom(opts.byRoomId);
+  async findAll(roomId: number): Promise<Chat[]> {
+    const room = await this.findRoom(roomId);
     return getManager().find(Chat, { where: { room }, relations: ['user'] });
   }
 
@@ -50,6 +47,7 @@ export class ChatsService {
     return room;
   }
 
+  // todo, un-DRY
   private async findUser(userId: number): Promise<User> {
     return await getManager().findOne(User, userId);
   }
