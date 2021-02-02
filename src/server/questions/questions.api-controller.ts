@@ -15,6 +15,7 @@ import { User } from '../users/user.entity';
 import { User as UserDecorator } from '../users/user.decorator';
 import { QuestionsService } from './questions.service';
 import { Question } from './question.entity';
+import { UpdateResult } from 'typeorm';
 
 @Controller('api/rooms/:roomId/questions')
 @UseGuards(JwtAuthGuard)
@@ -41,8 +42,11 @@ export class QuestionsApiController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() questionUpdate: QuestionUpdate) {
-    return this.questionsService.update(+id, questionUpdate);
+  async update(
+    @Param('id') id: string,
+    @Body() questionUpdate: QuestionUpdate,
+  ): Promise<UpdateResult> {
+    return await this.questionsService.update(+id, questionUpdate);
   }
 
   @Delete(':id')

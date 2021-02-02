@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnswersService } from './answers.service';
-import { AnswersController } from './answers.api-controller';
+import { AnswersApiController } from './answers.api-controller';
+import { AnswersController } from './answers.controller';
 import { Answer } from './answer.entity';
+import { NextModule } from '../nextjs/next.module';
 
 @Module({
-  controllers: [AnswersController],
-  imports: [TypeOrmModule.forFeature([Answer])],
+  controllers: [AnswersController, AnswersApiController],
+  imports: [NextModule, TypeOrmModule.forFeature([Answer])],
   providers: [AnswersService],
 })
 export class AnswersModule {}

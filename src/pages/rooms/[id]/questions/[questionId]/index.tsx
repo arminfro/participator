@@ -13,7 +13,7 @@ export default function Question({ question }: Props): ReactElement {
 }
 
 Question.getInitialProps = async ({ req, query }: NextPageContext) => {
-  const question = await getInitialProps<Question>(req, query, {
+  const question = await getInitialProps<IQuestion>(req, query, {
     server: () => query.question,
     client: async () =>
       await api('get', `api/rooms/${query.id}/questions/${query.questionId}`),

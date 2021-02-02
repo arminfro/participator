@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { getManager } from 'typeorm';
-import { AnswerCreate } from '../../types/answer';
+import { InjectRepository } from '@nestjs/typeorm';
+import { getManager, Repository, UpdateResult } from 'typeorm';
+import { AnswerCreate, AnswerUpdate } from '../../types/answer';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
 import { Answer } from './answer.entity';
 
 @Injectable()
 export class AnswersService {
+  constructor(
+    @InjectRepository(Answer)
+    private answerRepository: Repository<Answer>,
+  ) {}
+
   async create(answerCreate: AnswerCreate, questionId: number, user: User) {
     const answer = await this.build(questionId, answerCreate, user);
     await getManager().save(answer);
@@ -21,17 +27,18 @@ export class AnswersService {
     });
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} answer`;
-  // }
+  async findOne(id: number): Promise<Answer> {
+    const answer = await this.answerRepository.findOne(id);
+    return answer;
+  }
 
-  // update(id: number, answerUpdate: AnswerUpdate) {
-  //   return `This action updates a #${id} answer`;
-  // }
+  async update(id: number, answerUpdate: AnswerUpdate): Promise<UpdateResult> {
+    return await this.answerRepository.update(id, answerUpdate);
+  }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} answer`;
-  // }
+  async remove(id: number): Promise<UpdateResult> {
+    return await this.answerRepository.softDelete(id);
+  }
 
   private async build(
     questionId: number,
