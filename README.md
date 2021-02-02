@@ -10,6 +10,7 @@ Specifically for teaching environments.
 ## Running the app
 
 `yarn start:client` for Next.js client
+
 `yarn start:server` for Nest.js server
 
 or `yarn start:debug` for both at once
@@ -20,5 +21,5 @@ all routes prefixed with `api/` return json. Others call Next.js to render compo
 
 ### Known starting Issue
 
-In `dist/src/server/auth/auth.service.js` is on every `bcrypt` call a property access to .`default`, which results in `undefined`.
+In `dist/src/server/auth/auth.service.js` is on every `bcrypt` call a property access to `.default`, which results in `undefined`.
 Just delete `.default` in this file, then it should work.

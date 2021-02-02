@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { getManager } from 'typeorm';
-import { QuestionCreate } from '../../types/question';
+import { getManager, Repository, UpdateResult } from 'typeorm';
+import { QuestionCreate, QuestionUpdate } from '../../types/question';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 import { Question } from './question.entity';
 import QuestionsModel from '../../types/question';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class QuestionsService {
+  constructor(
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
+  ) {}
+
   async create(
     roomId: number,
     questionCreate: QuestionCreate,
@@ -30,17 +36,21 @@ export class QuestionsService {
     }));
   }
 
-  // findOne(id: number) {
-  // return `This action returns a #${id} question`;
-  // }
+  async findOne(id: number): Promise<Question> {
+    const question = await this.questionRepository.findOne(id);
+    return question;
+  }
 
-  // update(id: number, questionUpdate: QuestionUpdate) {
-  // return `This action updates a #${id} question`;
-  // }
+  update(id: number, questionUpdate: QuestionUpdate) {
+    return this.questionRepository.update(id, {
+      ...questionUpdate,
+      answersFormat: JSON.stringify(questionUpdate.answersFormat),
+    });
+  }
 
-  // remove(id: number) {
-  // return `This action removes a #${id} question`;
-  // }
+  async remove(id: number): Promise<UpdateResult> {
+    return await this.questionRepository.softDelete(id);
+  }
 
   private async build(
     roomId: number,

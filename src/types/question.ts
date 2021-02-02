@@ -20,7 +20,6 @@ export interface QuestionCreate {
 }
 
 export interface QuestionUpdate {
-  id: number;
   text: string;
   answersFormat: AnswersFormat;
 }

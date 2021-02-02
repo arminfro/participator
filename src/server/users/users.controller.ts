@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { NextService } from '../nextjs/next.service';
-
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
