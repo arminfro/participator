@@ -1,8 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import Chat from '../../types/chat';
+import io from 'socket.io-client';
+import Chat, { Events } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
-import { useApi } from '../utils/api';
-import { useSocket } from '../utils/socket-context';
 import { useStore } from '../utils/store/context';
 
 interface Props {
@@ -10,51 +9,48 @@ interface Props {
 }
 
 export default function Chats({ roomId }: Props): ReactElement {
-  const [messages, setMessages] = useApi<Chat[]>(
-    'get',
-    `api/rooms/${roomId}/chat`,
-  );
+  const [chats, setChats] = useState<Chat[]>();
   const [input, setInput] = useState('');
   const {
     store: { user },
   } = useStore();
 
-  const socket = useSocket();
-
-  const addChat = (chat: Chat) =>
-    setMessages((messages) => [...messages, chat]);
+  const socket = io.connect(`/rooms/${roomId}/chat`);
 
   useEffect(() => {
-    socket.on('newChat', addChat);
+    socket.emit(Events.findAllChats, (resp: Chat[]) => setChats(resp));
+
+    socket.on(Events.createChat, (chat: Chat) =>
+      setChats((messages) => [...messages, chat]),
+    );
+    socket.on(Events.updateChat, (chat: Chat) => {
+      console.log('updateChat', chat);
+    });
     return () => {
-      socket.off('newChat');
+      socket.off(Events.createChat);
+      socket.off(Events.updateChat);
     };
   }, []);
 
-  if (!messages) {
+  if (!chats) {
     return <LoadingSpinner />;
   }
 
   const onSend = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit(
-      'createChat',
-      { roomId: roomId, msg: input, userId: user.id },
-      (resp: Chat) => {
-        addChat(resp);
-        setInput('');
-      },
+    socket.emit(Events.createChat, { msg: input, userId: user.id }, () =>
+      setInput(''),
     );
   };
 
   return (
     <div>
       <div className="ui relaxed divided list">
-        {messages.map((message) => (
-          <div key={message.id} className="item">
+        {chats.map((chat) => (
+          <div key={chat.id} className="item">
             <div className="content">
-              <a className="header">{message.msg}</a>
-              <div className="description">{message.user.name}</div>
+              <a className="header">{chat.msg}</a>
+              <div className="description">{chat.user.name}</div>
             </div>
           </div>
         ))}

@@ -2,8 +2,12 @@ import Room from './room';
 import User from './user';
 
 export interface ChatCreate {
-  roomId: number;
   userId: number;
+  msg: string;
+}
+
+export interface ChatUpdate {
+  id: number;
   msg: string;
 }
 
@@ -14,4 +18,11 @@ export default interface Chat {
   readonly user: User;
   readonly createdAt: Date;
   readonly updatedAt: Date;
+}
+
+export enum Events {
+  createChat = 'createChat',
+  findAllChats = 'findAllChats',
+  updateChat = 'updateChat',
+  removeChat = 'removeChat',
 }
