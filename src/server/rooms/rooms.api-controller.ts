@@ -35,7 +35,7 @@ export class ManageRoomPolicyHandler implements IPolicyHandler {
 export class RoomsApiController {
   constructor(private readonly roomsService: RoomsService) {}
 
-  @Post('new')
+  @Post()
   async create(
     @UserDecorator() user: User,
     @Body() roomCreate: RoomCreate,

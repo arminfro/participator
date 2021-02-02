@@ -27,7 +27,7 @@ export default function UserForm({
   const submit = () => {
     api<User>(
       edit ? 'PATCH' : 'POST',
-      edit ? `api/users/${userId}` : 'api/users/new',
+      edit ? `api/users/${userId}` : 'api/users',
       (newUser) => Router.push(`/users/${newUser.id}`),
       userCreate(),
     );

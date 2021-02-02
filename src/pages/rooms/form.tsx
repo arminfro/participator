@@ -37,7 +37,7 @@ export default function RoomForm(props: Props): ReactElement {
     }
     api(
       props.isEdit ? 'patch' : 'post',
-      props.isEdit ? `api/rooms/${props.roomId}` : 'api/rooms/new',
+      props.isEdit ? `api/rooms/${props.roomId}` : 'api/rooms',
       (room: Room) => {
         router.push(`/rooms/${room ? room.id : props.roomId}`);
       },

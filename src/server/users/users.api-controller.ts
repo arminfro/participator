@@ -59,7 +59,7 @@ export class UsersApiController {
     await this.usersService.delete(id);
   }
 
-  @Post('new')
+  @Post()
   @HttpCode(201)
   public async create(@Body() userCreate: UserCreate): Promise<User> {
     return await this.usersService.create(userCreate);
