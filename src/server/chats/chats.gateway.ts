@@ -13,19 +13,17 @@ import { ChatsService } from './chats.service';
 export class ChatsGateway {
   constructor(private readonly chatsService: ChatsService) {}
 
-  @SubscribeMessage(Events.createChat)
+  @SubscribeMessage(Events.create)
   async create(
     @MessageBody() chatCreate: ChatCreate,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    const chat = await this.chatsService.create(
-      chatCreate,
-      this.roomIdByNsp(client.nsp.name),
-    );
-    client.broadcast.emit(Events.createChat, chat);
+    const roomId = this.roomIdByNsp(client.nsp.name);
+    const chat = await this.chatsService.create(chatCreate, roomId);
+    client.broadcast.emit(Events.create, chat);
   }
 
-  @SubscribeMessage(Events.findAllChats)
+  @SubscribeMessage(Events.findAll)
   async findAll(@ConnectedSocket() client: Socket): Promise<Chat[]> {
     return await this.chatsService.findAll(this.roomIdByNsp(client.nsp.name));
   }
@@ -35,7 +33,7 @@ export class ChatsGateway {
   //   return this.chatsService.findOne(id);
   // }
 
-  @SubscribeMessage(Events.updateChat)
+  @SubscribeMessage(Events.update)
   update(
     @ConnectedSocket() client: Socket,
     @MessageBody() chatUpdate: ChatUpdate,
@@ -43,11 +41,12 @@ export class ChatsGateway {
     return this.chatsService.update(chatUpdate);
   }
 
-  @SubscribeMessage(Events.removeChat)
+  @SubscribeMessage(Events.remove)
   remove(@MessageBody() id: number) {
     return this.chatsService.remove(id);
   }
 
+  // todo, un-DRY
   private roomIdByNsp(nsp: string): number {
     return +nsp.split('/')[2];
   }

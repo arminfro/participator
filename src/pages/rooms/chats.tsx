@@ -18,17 +18,20 @@ export default function Chats({ roomId }: Props): ReactElement {
   const socket = io.connect(`/rooms/${roomId}/chat`);
 
   useEffect(() => {
-    socket.emit(Events.findAllChats, (resp: Chat[]) => setChats(resp));
+    socket.emit(Events.findAll, (chats: Chat[]) => {
+      console.log('chats', chats);
+      return setChats(chats);
+    });
 
-    socket.on(Events.createChat, (chat: Chat) =>
+    socket.on(Events.create, (chat: Chat) =>
       setChats((messages) => [...messages, chat]),
     );
-    socket.on(Events.updateChat, (chat: Chat) => {
+    socket.on(Events.update, (chat: Chat) => {
       console.log('updateChat', chat);
     });
     return () => {
-      socket.off(Events.createChat);
-      socket.off(Events.updateChat);
+      socket.off(Events.create);
+      socket.off(Events.update);
     };
   }, []);
 
@@ -38,7 +41,7 @@ export default function Chats({ roomId }: Props): ReactElement {
 
   const onSend = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit(Events.createChat, { msg: input, userId: user.id }, () =>
+    socket.emit(Events.create, { msg: input, userId: user.id }, () =>
       setInput(''),
     );
   };

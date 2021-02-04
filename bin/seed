@@ -12,7 +12,7 @@ const postReq = async (url, data) => {
 }
 
 const register = async (username, pw = 'hi') => {
-  await postReq('api/users/new', {name: username, pw1: pw, pw2: pw})
+  await postReq('api/users', {name: username, pw1: pw, pw2: pw})
 }
 
 const login = async (username, password = 'hi') => {
@@ -23,7 +23,7 @@ const login = async (username, password = 'hi') => {
 }
 
 const addRoom = async (name, description) => {
-  await postReq('api/rooms/new', {name, description, openToJoin: true})
+  await postReq('api/rooms', {name, description, openToJoin: true})
 }
 
 const joinRoom = async (addMember) => {
@@ -44,17 +44,17 @@ const addAnswer = async (answerCreate) => {
   let userWithToken;
 
   // ['Joey', 'Lisa', 'Jens', 'Simon', 'Alfred', 'Anna', 'Judith'].forEach((name) => (await register(name)))
-  // await register('Joey')
-  // await register('Lisa')
-  // await login('Joey')
-  // await addRoom('Classroom Joey', 'random description')
+  await register('Joey')
+  await register('Lisa')
+  await login('Joey')
+  await addRoom('Classroom Joey', 'random description')
 
-  // userWithToken = await login('Lisa')
-  // await addRoom('Classroom Lisa', 'random description')
+  userWithToken = await login('Lisa')
+  await addRoom('Classroom Lisa', 'random description')
   userWithToken = await login('Joey')
-  // await joinRoom(userWithToken.user)
+  await joinRoom(userWithToken.user)
 
-  // await addQuestion({text: 'Alright?', answersFormat: {fixed: ['yes', 'no']}})
+  await addQuestion({text: 'Alright?', answersFormat: {fixed: ['yes', 'no']}})
   await addAnswer({fixedAnswer: 'yes'})
 })()
 

@@ -14,6 +14,7 @@ import { User } from '../users/user.entity';
 import RoomModel from '../../types/room';
 import { Chat } from '../chats/chat.entity';
 import { Question } from '../questions/question.entity';
+import { Link } from '../links/link.entity';
 
 @Entity()
 export class Room extends BaseEntity implements RoomModel {

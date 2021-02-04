@@ -21,8 +21,8 @@ export default interface Chat {
 }
 
 export enum Events {
-  createChat = 'createChat',
-  findAllChats = 'findAllChats',
-  updateChat = 'updateChat',
-  removeChat = 'removeChat',
+  create = 'createChat',
+  findAll = 'findAllChats',
+  update = 'updateChat',
+  remove = 'removeChat',
 }

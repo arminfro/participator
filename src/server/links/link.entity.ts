@@ -4,31 +4,33 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import ChatModel from '../../types/chat';
-import { Link } from '../links/link.entity';
+import LinkModel from '../../types/link';
+import { Chat } from '../chats/chat.entity';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 
 @Entity()
-export class Chat extends BaseEntity implements ChatModel {
+export class Link extends BaseEntity implements LinkModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Room, (room) => room.chats)
-  room: Room;
+  @Column()
+  title!: string;
 
   @Column()
-  msg!: string;
+  description!: string;
 
-  @ManyToOne(() => User, (user) => user.chats)
-  user: User;
+  @Column()
+  domain!: string;
 
-  @OneToMany(() => Link, (link) => link.chat)
-  links: Link[];
+  @Column()
+  imgUrl!: string;
+
+  @ManyToOne(() => Chat, (chat) => chat.links)
+  chat: Chat;
 
   @CreateDateColumn()
   createdAt!: Date;
