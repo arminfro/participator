@@ -20,15 +20,16 @@ export class ChatsService {
   async create(chatCreate: ChatCreate, roomId: number): Promise<Chat> {
     const chat = await this.build(chatCreate, roomId);
     await getManager().save(chat);
-    const links = await Promise.all(
-      chat.msg
-        .match(urlRegex)
-        .map(
+    const linkStrings = chat.msg.match(urlRegex);
+    if (linkStrings) {
+      const links = await Promise.all(
+        linkStrings.map(
           async (url) =>
             await this.linksService.create({ url, chatId: chat.id }),
         ),
-    );
-    chat.links = links;
+      );
+      chat.links = links;
+    }
     await getManager().save(chat);
     return chat;
   }
