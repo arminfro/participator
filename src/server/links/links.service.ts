@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LinkCreate, LinkUpdate } from '../../types/link';
-import LinkPreviewGenerator from 'link-preview-generator';
+import * as LinkPreviewGenerator from 'link-preview-generator';
 import { Link } from './link.entity';
 import { Room } from '../rooms/room.entity';
 import { getManager, Repository } from 'typeorm';

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import bcrypt from 'bcrypt';
+import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 
 import { User as UserEntity } from './../users/user.entity';
 import User from '../../types/user';
@@ -35,10 +35,10 @@ export class AuthService {
   }
 
   static hashPassword(password: string): string {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+    return hashSync(password, genSaltSync(10));
   }
 
   static comparePassword(password: string, user: UserEntity): boolean {
-    return bcrypt.compareSync(password, user.password);
+    return compareSync(password, user.password);
   }
 }
