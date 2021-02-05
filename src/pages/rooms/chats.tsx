@@ -1,8 +1,9 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { Dispatch, ReactElement, SetStateAction, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import Chat, { Events } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
+import ChatInputForm from './chat-input-form';
 import ChatMessage from './chat-message';
 
 
@@ -43,10 +44,10 @@ export default function Chats({ roomId }: Props): ReactElement {
     return <LoadingSpinner />;
   }
 
-  const onSend = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSend = (input: string, callback: Dispatch<SetStateAction<string>>): void => {
+
     socket.emit(Events.create, { msg: input, userId: user.id }, () =>
-      setInput(''),
+      callback(''),
     );
   };
 
@@ -55,17 +56,7 @@ export default function Chats({ roomId }: Props): ReactElement {
       <div className="ui relaxed divided list">
         {chats.map(chat => <ChatMessage chat={chat} />)}
       </div>
-      <form onSubmit={onSend}>
-        <input type="text" className="ui huge input"
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value)
-          }
-          }
-          placeholder="Your Message"
-        />
-        <button className="ui button blue">send</button>
-      </form>
+      <ChatInputForm onSend={onSend} />
     </div>
   );
 }
