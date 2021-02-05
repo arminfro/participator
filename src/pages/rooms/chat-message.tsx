@@ -11,9 +11,18 @@ interface Props {
 export default function ChatMessage({ chat }: Props) {
 
     return (
-        <div key={chat.id} className="item">
+        <div className="comment">
+            <a className="avatar">
+                <img src="https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png" />
+            </a>
             <div className="content">
-                <div className="description"><b>{chat.user.name} </b> {formatDistance(new Date(chat.updatedAt), new Date(), { includeSeconds: true })}</div>
+                <a className="author">
+                    {chat.user.name}
+                </a>
+                <div className="metadata">
+                    <span className="date">{formatDistance(new Date(chat.updatedAt), new Date(), { includeSeconds: true })}</span>
+                </div>
+
                 <div
                     className="text-with-markdown"
                     dangerouslySetInnerHTML={{
@@ -21,6 +30,6 @@ export default function ChatMessage({ chat }: Props) {
                     }}
                 />
             </div>
-        </div>
+        </div >
     )
 }

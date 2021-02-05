@@ -13,13 +13,20 @@ export default function ChatInputForm({ onSend }: Props) {
     }
 
     return (
-        <form onSubmit={onSubmit}>
-            <input type="text" className="ui huge input"
+        <form className="ui reply form" onSubmit={onSubmit}>
+            <div className="field">
+                <textarea value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Your Message"></textarea>
+            </div>
+            {/* <input type="text" className="ui huge input"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Your Message"
-            />
-            <button className="ui button blue">send</button>
+            /> */}
+            <button className="ui blue labled submit icon button ">
+                <i className="icon edit"></i>send
+            </button>
         </form>
     )
 }

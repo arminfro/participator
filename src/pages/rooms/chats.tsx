@@ -53,8 +53,10 @@ export default function Chats({ roomId }: Props): ReactElement {
 
   return (
     <div>
-      <div className="ui relaxed divided list">
-        {chats.map(chat => <ChatMessage chat={chat} />)}
+      <br></br>
+      <div className="ui comments">
+        <h3 className="ui dividing header">Chat</h3>
+        {chats.map(chat => <ChatMessage key={chat.id} chat={chat} />)}
       </div>
       <ChatInputForm onSend={onSend} />
     </div>
