@@ -9,7 +9,13 @@ interface Props {
 }
 
 export default function QuestionEdit({ question }: Props): ReactElement {
-  return <>{JSON.stringify(question)}</>;
+  return (
+    <>
+      <h2> Einzelne Umfrage (anhand von ID) editieren</h2>
+      <p>Formular wird mit den bereits bestehenden Werten als default-Werten aufgerufen</p>
+      {JSON.stringify(question)}
+    </>
+  )
 }
 
 QuestionEdit.getInitialProps = async ({ req, query }: NextPageContext) => {
