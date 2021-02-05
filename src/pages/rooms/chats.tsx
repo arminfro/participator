@@ -3,6 +3,9 @@ import io from 'socket.io-client';
 import Chat, { Events } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
+import marked from 'marked'
+import sanitizeHtml from 'sanitize-html';
+import formatDistance from 'date-fns/formatDistance'
 
 interface Props {
   roomId: number;
@@ -26,9 +29,11 @@ export default function Chats({ roomId }: Props): ReactElement {
     socket.on(Events.create, (chat: Chat) =>
       setChats((messages) => [...messages, chat]),
     );
+
     socket.on(Events.update, (chat: Chat) => {
       console.log('updateChat', chat);
     });
+
     return () => {
       socket.off(Events.create);
       socket.off(Events.update);
@@ -52,18 +57,27 @@ export default function Chats({ roomId }: Props): ReactElement {
         {chats.map((chat) => (
           <div key={chat.id} className="item">
             <div className="content">
-              <a className="header">{chat.msg}</a>
-              <div className="description">{chat.user.name}</div>
+              <div className="description"><b>{chat.user.name} </b> {formatDistance(new Date(chat.updatedAt), new Date(), { includeSeconds: true })}</div>
+              <div
+                className="text-with-markdown"
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeHtml(marked(chat.msg)),
+                }}
+              />
             </div>
           </div>
         ))}
       </div>
       <form onSubmit={onSend}>
-        <input
+        <input type="text" className="ui huge input"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value)
+          }
+          }
           placeholder="Your Message"
         />
+        <button className="ui button blue">send</button>
       </form>
     </div>
   );
