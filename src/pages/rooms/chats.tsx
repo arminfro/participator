@@ -3,9 +3,8 @@ import io from 'socket.io-client';
 import Chat, { Events } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
-import marked from 'marked'
-import sanitizeHtml from 'sanitize-html';
-import formatDistance from 'date-fns/formatDistance'
+import ChatMessage from './chat-message';
+
 
 interface Props {
   roomId: number;
@@ -54,19 +53,7 @@ export default function Chats({ roomId }: Props): ReactElement {
   return (
     <div>
       <div className="ui relaxed divided list">
-        {chats.map((chat) => (
-          <div key={chat.id} className="item">
-            <div className="content">
-              <div className="description"><b>{chat.user.name} </b> {formatDistance(new Date(chat.updatedAt), new Date(), { includeSeconds: true })}</div>
-              <div
-                className="text-with-markdown"
-                dangerouslySetInnerHTML={{
-                  __html: sanitizeHtml(marked(chat.msg)),
-                }}
-              />
-            </div>
-          </div>
-        ))}
+        {chats.map(chat => <ChatMessage chat={chat} />)}
       </div>
       <form onSubmit={onSend}>
         <input type="text" className="ui huge input"
