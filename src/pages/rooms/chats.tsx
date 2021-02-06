@@ -1,39 +1,27 @@
-import React, { ReactElement, useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import React, { ReactElement, useMemo, useState } from 'react';
 import Chat, { Events } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
+import { useSocket } from '../utils/useSocket';
 
 interface Props {
   roomId: number;
 }
 
 export default function Chats({ roomId }: Props): ReactElement {
-  const [chats, setChats] = useState<Chat[]>();
   const [input, setInput] = useState('');
   const {
     store: { user },
   } = useStore();
 
-  const socket = io.connect(`/rooms/${roomId}/chat`);
-
-  useEffect(() => {
-    socket.emit(Events.findAll, (chats: Chat[]) => {
-      console.log('chats', chats);
-      return setChats(chats);
-    });
-
-    socket.on(Events.create, (chat: Chat) =>
-      setChats((messages) => [...messages, chat]),
-    );
-    socket.on(Events.update, (chat: Chat) => {
-      console.log('updateChat', chat);
-    });
-    return () => {
-      socket.off(Events.create);
-      socket.off(Events.update);
-    };
-  }, []);
+  const [chats, socket] = useSocket<Chat>(
+    `/rooms/${roomId}/chat`,
+    useMemo(() => {
+      return {
+        [Events.create]: () => setInput(''),
+      };
+    }, []),
+  );
 
   if (!chats) {
     return <LoadingSpinner />;
@@ -41,9 +29,7 @@ export default function Chats({ roomId }: Props): ReactElement {
 
   const onSend = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit(Events.create, { msg: input, userId: user.id }, () =>
-      setInput(''),
-    );
+    socket.emit(Events.create, { msg: input, userId: user.id });
   };
 
   return (
