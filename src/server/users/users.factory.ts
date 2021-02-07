@@ -6,6 +6,7 @@ import { User } from './user.entity';
 define(User, (faker: typeof Faker) => {
   const user = new User();
   user.id = faker.random.number();
+  user.name = faker.random.word();
   user.joinedRooms = [];
   user.password = AuthService.hashPassword('pw');
   user.ownedRooms = [];

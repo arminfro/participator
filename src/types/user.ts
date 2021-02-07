@@ -6,6 +6,12 @@ export interface UserCreate {
   pw2: string;
 }
 
+export interface UserUpdate extends Partial<UserCreate> {
+  hasHandUp?: boolean;
+  randomGroup?: boolean;
+  active?: boolean;
+}
+
 export interface UserLogin {
   username: string;
   password: string;
@@ -48,11 +54,12 @@ export function validateUserCreate(user: UserCreate): ValidationErrors {
   return errors;
 }
 
-export function validateUserEdit(newUser: User): ValidationErrors {
-  const errors: string[] = [];
-  if (newUser.name === '') {
-    errors.push('Username empty');
-  }
+export function validateUserUpdate(userUpdate: UserUpdate): ValidationErrors {
+  const errors: string[] = validateUserCreate({
+    name: userUpdate.name,
+    pw1: userUpdate.pw1,
+    pw2: userUpdate.pw2,
+  });
   return errors;
 }
 

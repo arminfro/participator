@@ -25,15 +25,11 @@ export class User extends BaseEntity implements UserModel {
   @Column()
   password!: string;
 
-  @OneToMany(() => Room, (room) => room.admin, {
-    eager: true,
-  })
+  @OneToMany(() => Room, (room) => room.admin)
   ownedRooms: Room[];
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @ManyToMany((type) => Room, (room) => room.members, {
-    eager: true,
-  })
+  @ManyToMany((type) => Room, (room) => room.members)
   joinedRooms: Room[];
 
   @OneToMany(() => Chat, (chat) => chat.user)
