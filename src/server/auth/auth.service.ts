@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 
 import { User as UserEntity } from './../users/user.entity';
+import { UsersService } from '../users/users.service';
 import User from '../../types/user';
 
 export interface AccessToken {

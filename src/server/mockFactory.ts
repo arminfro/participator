@@ -12,8 +12,8 @@ export const repositoryMockFactory: () => MockType<Repository<any>> = jest.fn(
     findOne: jest.fn((entity) => entity),
     findOneOrFail: jest.fn((entity) => entity),
     create: jest.fn((entity) => entity),
-    find: jest.fn((entity, opts = {}) => entity),
+    find: jest.fn((entity) => entity),
     save: jest.fn((entity) => entity),
-    // there u can implement another functions of your repositories
+    update: jest.fn((entity) => entity),
   }),
 );

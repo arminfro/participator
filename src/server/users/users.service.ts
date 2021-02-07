@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getManager, UpdateResult, DeleteResult } from 'typeorm';
+import { Repository, UpdateResult, DeleteResult } from 'typeorm';
 import { validate, ValidationError } from 'class-validator';
 
 import { User } from './user.entity';
@@ -25,21 +25,18 @@ export class UsersService {
     const errs1 = validateUserCreate(userCreate);
     userCreate.pw1 = AuthService.hashPassword(userCreate.pw1);
     const user = await this.build(userCreate);
-
     const validationErrors = user ? await validate(user) : [];
     const errs2 = validationErrors.map((err: ValidationError) =>
       err.toString(),
     );
 
     const errors = [...errs1, ...errs2];
+    console.debug('user create', user, errors.join('. '));
 
-    console.log(user, errors.join('. '));
     if (errors.length > 0 || !user) {
       throw new HttpException(errors.join('. '), HttpStatus.BAD_REQUEST);
     }
-    await getManager().save(user);
-    // return [user, errors]
-    return user;
+    return await this.usersRepository.save(user);
   }
 
   async update(id: number, user: User): Promise<UpdateResult> {
@@ -69,7 +66,7 @@ export class UsersService {
     return users[0];
   }
 
-  async build(userCreate: UserCreate): Promise<User | undefined> {
+  private async build(userCreate: UserCreate): Promise<User | undefined> {
     const user = new User();
     if (user) {
       user.name = userCreate.name;
