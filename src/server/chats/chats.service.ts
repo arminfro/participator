@@ -8,7 +8,7 @@ import { User } from '../users/user.entity';
 import { Chat } from './chat.entity';
 
 // todo, regex matches file path
-const urlRegex = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+const urlRegex = /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/gi;
 
 @Injectable()
 export class ChatsService {
@@ -42,13 +42,13 @@ export class ChatsService {
     });
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} chat`;
-  // }
+  async findOne(id: number): Promise<Chat> {
+    return await this.chatsRepository.findOne(id);
+  }
 
-  update(chatUpdate: ChatUpdate) {
-    this.chatsRepository.update(chatUpdate.id, { msg: chatUpdate.msg });
-    this.chatsRepository.update(chatUpdate.id, { msg: chatUpdate.msg });
+  async update(chatUpdate: ChatUpdate): Promise<Chat> {
+    await this.chatsRepository.update(chatUpdate.id, { msg: chatUpdate.msg });
+    return await this.findOne(chatUpdate.id);
   }
 
   remove(id: number) {

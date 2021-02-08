@@ -1,62 +1,45 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, ReactElement, SetStateAction, useEffect, useState, useMemo } from 'react';
 import io from 'socket.io-client';
 import Chat, { Events } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
 import ChatInputForm from './chat-input-form';
 import ChatMessage from './chat-message';
-
+import { useSocket } from '../utils/useSocket';
 
 interface Props {
   roomId: number;
 }
 
 export default function Chats({ roomId }: Props): ReactElement {
-  const [chats, setChats] = useState<Chat[]>();
   const [input, setInput] = useState('');
   const {
     store: { user },
   } = useStore();
 
-  const socket = io.connect(`/rooms/${roomId}/chat`);
-
-  useEffect(() => {
-    socket.emit(Events.findAll, (chats: Chat[]) => {
-      console.log('chats', chats);
-      return setChats(chats);
-    });
-
-    socket.on(Events.create, (chat: Chat) =>
-      setChats((messages) => [...messages, chat]),
-    );
-
-    socket.on(Events.update, (chat: Chat) => {
-      console.log('updateChat', chat);
-    });
-
-    return () => {
-      socket.off(Events.create);
-      socket.off(Events.update);
-    };
-  }, []);
+  const [chats, socket] = useSocket<Chat>(
+    `/rooms/${roomId}/chat`,
+    useMemo(() => {
+      return {
+        [Events.create]: () => setInput(''),
+      };
+    }, []),
+  );
 
   if (!chats) {
     return <LoadingSpinner />;
   }
-
-  const onSend = (input: string, callback: Dispatch<SetStateAction<string>>): void => {
-
-    socket.emit(Events.create, { msg: input, userId: user.id }, () =>
-      callback(''),
-    );
-  };
-
 
   const onEdit = (chat: Chat, callback: Dispatch<SetStateAction<string>>): void => {
 
     socket.emit(Events.update, { id: chat.id, msg: chat.msg }, () =>
       callback(''),
     );
+  };
+
+  const onSend = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    socket.emit(Events.create, { msg: input, userId: user.id });
   };
 
   //   const divStyle: any = {

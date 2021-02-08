@@ -21,9 +21,7 @@ export class LinksService {
   ) {}
 
   async create(linkCreate: LinkCreate): Promise<Link> {
-    const link = await this.build(linkCreate);
-    await getManager().save(link);
-    return link;
+    return await this.linksRepository.save(await this.build(linkCreate));
   }
 
   async findAll(roomId: number): Promise<Link[]> {
@@ -34,9 +32,9 @@ export class LinksService {
     });
   }
 
-  // findOne(id: number) {
-  // return `This action returns a #${id} link`;
-  // }
+  async findOne(id: number): Promise<Link> {
+    return await this.linksRepository.findOne(id);
+  }
 
   // update(id: number, linkUpdate: LinkUpdate) {
   //   return `This action updates a #${id} link`;
@@ -49,6 +47,7 @@ export class LinksService {
   private async build(linkCreate: LinkCreate): Promise<Link> {
     const link = new Link();
     const previewData = await this.getPreview(linkCreate.url);
+    link.url = linkCreate.url;
     link.title = previewData.title;
     link.description = previewData.description;
     link.domain = previewData.domain;
@@ -70,6 +69,7 @@ export class LinksService {
   }
 
   private async getPreview(url: string): Promise<PreviewData> {
+    console.log('LinkPreviewGenerator', LinkPreviewGenerator);
     return await LinkPreviewGenerator(url);
   }
 }

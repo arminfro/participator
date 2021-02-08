@@ -12,7 +12,7 @@ interface Props {
 export default function LoginForm({ redirectUrl = '' }: Props): ReactElement {
   const router = useRouter();
   const { dispatch } = useStore();
-  const [name, setName] = useState('Joet');
+  const [name, setName] = useState('Joey');
   const [pw, setPw] = useState('hi');
 
   const onSubmit = (e: SyntheticEvent) => {

@@ -17,6 +17,7 @@ export default interface Link {
   description: string;
   domain: string;
   imgUrl: string;
+  url: string;
   chat: Chat;
   createdAt: Date;
   updatedAt: Date;

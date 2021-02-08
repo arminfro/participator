@@ -4,12 +4,12 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
-import Chat, { ChatCreate, ChatUpdate, Events } from '../../types/chat';
-import { ChatsService } from './chats.service';
+import {Socket} from 'socket.io';
+import Chat, {ChatCreate, ChatUpdate, Events} from '../../types/chat';
+import {ChatsService} from './chats.service';
 
 // todo, use JwtAuthGuard
-@WebSocketGateway({ namespace: /^\/rooms\/\d\/chat$/ })
+@WebSocketGateway({namespace: /^\/rooms\/\d\/chat$/})
 export class ChatsGateway {
   constructor(private readonly chatsService: ChatsService) {}
 
@@ -21,6 +21,7 @@ export class ChatsGateway {
     const roomId = this.roomIdByNsp(client.nsp.name);
     const chat = await this.chatsService.create(chatCreate, roomId);
     client.broadcast.emit(Events.create, chat);
+    client.emit(Events.create, chat);
   }
 
   @SubscribeMessage(Events.findAll)
@@ -28,17 +29,17 @@ export class ChatsGateway {
     return await this.chatsService.findAll(this.roomIdByNsp(client.nsp.name));
   }
 
-  // @SubscribeMessage('findOneChat')
-  // findOne(@MessageBody() id: number) {
-  //   return this.chatsService.findOne(id);
-  // }
+  @SubscribeMessage('findOneChat')
+  async findOne(@MessageBody() id: number): Promise<Chat> {
+    return await this.chatsService.findOne(id);
+  }
 
   @SubscribeMessage(Events.update)
-  update(
+  async update(
     @ConnectedSocket() client: Socket,
     @MessageBody() chatUpdate: ChatUpdate,
-  ) {
-    return this.chatsService.update(chatUpdate);
+  ): Promise<Chat> {
+    return await this.chatsService.update(chatUpdate);
   }
 
   @SubscribeMessage(Events.remove)
