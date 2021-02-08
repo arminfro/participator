@@ -1,4 +1,3 @@
-import { UseGuards } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -8,18 +7,30 @@ import {
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
 import { Socket } from 'socket.io';
 import Chat, { ChatCreate, ChatUpdate, Events } from '../../types/chat';
-import { WebsocketJwtAuthGuard } from '../auth/websocket-jwt-auth.guard';
+import { AuthService } from '../auth/auth.service';
+import { UsersService } from '../users/users.service';
 import { ChatsService } from './chats.service';
 
 @WebSocketGateway({ namespace: /^\/rooms\/\d\/chat$/ })
-@UseGuards(WebsocketJwtAuthGuard)
 export class ChatsGateway implements NestGateway {
-  constructor(private readonly chatsService: ChatsService) {}
+  constructor(
+    private readonly chatsService: ChatsService,
+    private readonly usersService: UsersService,
+    private authService: AuthService,
+  ) {}
 
-  handleConnection(socket: Socket) {
-    const { user } = socket.client.request;
-    // user is not there. WebsocketJwtAuthGuard#canActivate gets called after handleConnection ??
-    console.log('user in handleConnection', user);
+  async handleConnection(client: Socket) {
+    const payload = this.authService.verify(
+      client.handshake.headers.authorization,
+    );
+    const user = await this.usersService.findOne(payload.userId, {
+      relations: ['joinedRooms', 'ownedRooms'],
+    });
+    const roomId = this.roomIdByNsp(client.nsp.name);
+    if (!user || !user.isPartOfRoom(roomId)) {
+      console.log('ws disconnect');
+      client.disconnect();
+    }
   }
 
   @SubscribeMessage(Events.create)
@@ -35,8 +46,6 @@ export class ChatsGateway implements NestGateway {
 
   @SubscribeMessage(Events.findAll)
   async findAll(@ConnectedSocket() client: Socket): Promise<Chat[]> {
-    // user is there
-    console.log('user in handleConnection', client.client.request.user);
     return await this.chatsService.findAll(this.roomIdByNsp(client.nsp.name));
   }
 
