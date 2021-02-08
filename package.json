@@ -41,6 +41,7 @@
     "link-preview-generator": "^0.0.4",
     "marked": "^1.2.9",
     "next": "^10.0.5",
+    "node-emoji": "^1.10.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

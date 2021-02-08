@@ -1,4 +1,4 @@
-import React, { Dispatch, ReactElement, SetStateAction, useEffect, useState, useMemo } from 'react';
+import React, { Dispatch, ReactElement, SetStateAction, useState, useMemo } from 'react';
 import io from 'socket.io-client';
 import Chat, { Events } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
@@ -37,9 +37,10 @@ export default function Chats({ roomId }: Props): ReactElement {
     );
   };
 
-  const onSend = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    socket.emit(Events.create, { msg: input, userId: user.id });
+  const onSend = (msg: string) => {
+    //e.preventDefault();
+    socket.emit(Events.create, { msg, userId: user.id });
+    //callback('');
   };
 
   //   const divStyle: any = {
@@ -52,9 +53,9 @@ export default function Chats({ roomId }: Props): ReactElement {
       <br></br>
       <div className="ui comments">
         <h3 className="ui dividing header">Chat</h3>
-        {chats.map(chat => <ChatMessage key={chat.id} onEdit={onEdit} chat={chat} />)}
+        {chats.map(chat => <ChatMessage key={chat.id} onEdit={onEdit} chat={chat} input={input} setInput={setInput} />)}
       </div>
-      <ChatInputForm onSend={onSend} />
+      <ChatInputForm onSend={onSend} input={input} setInput={setInput} />
     </div>
   );
 }

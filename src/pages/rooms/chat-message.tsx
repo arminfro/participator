@@ -2,15 +2,20 @@ import React, { Dispatch, SetStateAction, useState } from 'react'
 import Chat, { Events } from '../../types/chat';
 import marked from 'marked'
 import sanitizeHtml from 'sanitize-html';
+import emoji from 'node-emoji'
 import formatDistance from 'date-fns/formatDistance'
 import ChatInputForm from './chat-input-form';
+import { Room } from '../../server/rooms/room.entity';
 
 interface Props {
-    chat: Chat;
+    chat: Chat,
+    //room: Room,
+    input: string,
+    setInput: Dispatch<SetStateAction<string>>,
     onEdit: (chat: Chat, callback: Dispatch<SetStateAction<string>>) => void
 }
 
-export default function ChatMessage({ chat, onEdit }: Props) {
+export default function ChatMessage({ chat, onEdit, setInput, input }: Props) {
     const [edit, setEdit] = useState<boolean>(false);
 
     const onClickEdit = (e: React.MouseEvent<HTMLAnchorElement>): void => {
@@ -21,7 +26,7 @@ export default function ChatMessage({ chat, onEdit }: Props) {
         setEdit(false)
     }
 
-    const onSend = (input: string, callback: Dispatch<SetStateAction<string>>): void => {
+    const onSend = (input: string): void => {
         const updated: Chat = { ...chat, msg: input }
         onEdit(updated, onSendCallback)
     }
@@ -40,11 +45,11 @@ export default function ChatMessage({ chat, onEdit }: Props) {
                     <span className="date">{(new Date(chat.updatedAt).getTime() !== new Date(chat.createdAt).getTime()) ? '(edited)' : ''}</span>
                 </div>
 
-                {(edit) ? <ChatInputForm onSend={onSend} chat={chat} /> :
+                {(edit) ? <ChatInputForm onSend={onSend} input={input} setInput={setInput} chat={chat} /> :
                     <div>
                         <div className="text-with-markdown"
                             dangerouslySetInnerHTML={{
-                                __html: sanitizeHtml(marked(chat.msg)),
+                                __html: emoji.emojify(sanitizeHtml(marked(chat.msg))),
                             }}
                         />
                         <div className="actions">
