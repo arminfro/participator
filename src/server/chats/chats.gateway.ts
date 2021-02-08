@@ -1,17 +1,37 @@
 import {
-  WebSocketGateway,
-  SubscribeMessage,
-  MessageBody,
   ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
 } from '@nestjs/websockets';
-import {Socket} from 'socket.io';
-import Chat, {ChatCreate, ChatUpdate, Events} from '../../types/chat';
-import {ChatsService} from './chats.service';
+import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
+import { Socket } from 'socket.io';
+import Chat, { ChatCreate, ChatUpdate, Events } from '../../types/chat';
+import { AuthService } from '../auth/auth.service';
+import { UsersService } from '../users/users.service';
+import { ChatsService } from './chats.service';
 
-// todo, use JwtAuthGuard
-@WebSocketGateway({namespace: /^\/rooms\/\d\/chat$/})
-export class ChatsGateway {
-  constructor(private readonly chatsService: ChatsService) {}
+@WebSocketGateway({ namespace: /^\/rooms\/\d\/chat$/ })
+export class ChatsGateway implements NestGateway {
+  constructor(
+    private readonly chatsService: ChatsService,
+    private readonly usersService: UsersService,
+    private authService: AuthService,
+  ) {}
+
+  async handleConnection(client: Socket) {
+    const payload = this.authService.verify(
+      client.handshake.headers.authorization,
+    );
+    const user = await this.usersService.findOne(payload.userId, {
+      relations: ['joinedRooms', 'ownedRooms'],
+    });
+    const roomId = this.roomIdByNsp(client.nsp.name);
+    if (!user || !user.isPartOfRoom(roomId)) {
+      console.log('ws disconnect');
+      client.disconnect();
+    }
+  }
 
   @SubscribeMessage(Events.create)
   async create(
@@ -39,11 +59,17 @@ export class ChatsGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() chatUpdate: ChatUpdate,
   ): Promise<Chat> {
-    return await this.chatsService.update(chatUpdate);
+    await this.chatsService.update(chatUpdate);
+    const chat = await this.chatsService.findOne(chatUpdate.id);
+    client.broadcast.emit(Events.update, chat);
+    client.emit(Events.update, chat);
+    return chat;
   }
 
   @SubscribeMessage(Events.remove)
-  remove(@MessageBody() id: number) {
+  remove(@MessageBody() id: number, @ConnectedSocket() client: Socket) {
+    client.broadcast.emit(Events.remove, id);
+    client.emit(Events.remove, id);
     return this.chatsService.remove(id);
   }
 
