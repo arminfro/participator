@@ -43,7 +43,9 @@ export class ChatsService {
   }
 
   async findOne(id: number): Promise<Chat> {
-    return await this.chatsRepository.findOne(id);
+    return await this.chatsRepository.findOne(id, {
+      relations: ['user', 'links'],
+    });
   }
 
   async update(chatUpdate: ChatUpdate): Promise<Chat> {
