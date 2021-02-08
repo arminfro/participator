@@ -24,7 +24,9 @@ export class UsersApiController {
   @Get()
   @UsePolicy((ability: AppAbility) => ability.can(Action.Read, 'User'))
   public async index(): Promise<User[]> {
-    return await this.usersService.findAll();
+    return await this.usersService.findAll({
+      relations: ['ownedRooms', 'joinedRooms'],
+    });
   }
 
   @Get('token-to-user')
@@ -38,7 +40,9 @@ export class UsersApiController {
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<User | undefined> {
-    return await this.usersService.findOne(id);
+    return await this.usersService.findOne(id, {
+      relations: ['ownedRooms', 'joinedRooms'],
+    });
   }
 
   @Patch(':id')

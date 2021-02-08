@@ -9,8 +9,6 @@ import {
 } from 'typeorm';
 import LinkModel from '../../types/link';
 import { Chat } from '../chats/chat.entity';
-import { Room } from '../rooms/room.entity';
-import { User } from '../users/user.entity';
 
 @Entity()
 export class Link extends BaseEntity implements LinkModel {
@@ -28,6 +26,9 @@ export class Link extends BaseEntity implements LinkModel {
 
   @Column()
   imgUrl!: string;
+
+  @Column()
+  url!: string;
 
   @ManyToOne(() => Chat, (chat) => chat.links)
   chat: Chat;

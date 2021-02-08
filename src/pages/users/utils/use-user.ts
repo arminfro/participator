@@ -1,7 +1,11 @@
 import { useState, Dispatch, SetStateAction } from 'react';
 import Room from '../../../types/room';
 
-import User, { validateUserEdit, ValidationErrors } from '../../../types/user';
+import User, {
+  UserUpdate,
+  validateUserUpdate,
+  ValidationErrors,
+} from '../../../types/user';
 import api from '../../utils/api';
 
 type UseUserSetterCallback = (data: User) => void;
@@ -68,8 +72,12 @@ export default function useUser(user: User, withValidation = false): UseUser {
     return { ...getUser(), [attr]: value };
   };
 
-  const remoteUpdate = (newUser: User, callback: UseUserSetterCallback) => {
-    api<User>('PATCH', `api/users/${newUser.id}`, callback, newUser);
+  const remoteUpdate = (
+    userId: number,
+    userUpdate: UserUpdate,
+    callback: UseUserSetterCallback,
+  ) => {
+    api<User>('PATCH', `api/users/${userId}`, callback, userUpdate);
   };
 
   const genericSetter = (
@@ -81,11 +89,11 @@ export default function useUser(user: User, withValidation = false): UseUser {
     callback: UseUserSetterCallback,
   ): User => {
     const newUser = buildNewUser(attr, newValue);
-    const errors: ValidationErrors = validateUserEdit(getUser());
+    const errors: ValidationErrors = validateUserUpdate(getUser());
 
     if (errors.length === 0) {
       setter(newValue);
-      sync && remoteUpdate(newUser, callback);
+      sync && remoteUpdate(newUser.id, { [attr]: newValue }, callback);
       return newUser;
     } else {
       console.error(errors);

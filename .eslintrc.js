@@ -1,14 +1,21 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: 'tsconfig.json',
     sourceType: 'module',
+    ecmaFeatures: {
+      "jsx": true
+    }
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: [
+    "react",
+    "@typescript-eslint"
+  ],
   extends: [
-    'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
     'plugin:prettier/recommended',
+    "plugin:@typescript-eslint/recommended",
   ],
   root: true,
   env: {
