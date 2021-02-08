@@ -51,12 +51,25 @@ export default function Chats({ roomId }: Props): ReactElement {
     );
   };
 
+
+  const onEdit = (chat: Chat, callback: Dispatch<SetStateAction<string>>): void => {
+
+    socket.emit(Events.update, { id: chat.id, msg: chat.msg }, () =>
+      callback(''),
+    );
+  };
+
+  //   const divStyle: any = {
+  //     overflow: 'auto',
+  //     max- height: '40%'
+  // }
+
   return (
-    <div>
+    <div >
       <br></br>
       <div className="ui comments">
         <h3 className="ui dividing header">Chat</h3>
-        {chats.map(chat => <ChatMessage key={chat.id} chat={chat} />)}
+        {chats.map(chat => <ChatMessage key={chat.id} onEdit={onEdit} chat={chat} />)}
       </div>
       <ChatInputForm onSend={onSend} />
     </div>
