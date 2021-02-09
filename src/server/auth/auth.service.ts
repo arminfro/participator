@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtVerifyOptions } from '@nestjs/jwt';
 import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 
 import { User as UserEntity } from './../users/user.entity';
 import { UsersService } from '../users/users.service';
 import User from '../../types/user';
+import { JwtPayload } from './jwt.strategy';
 
 export interface AccessToken {
   access_token: string;
@@ -32,6 +33,10 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  verify(token: string, verifyOptions?: JwtVerifyOptions): JwtPayload {
+    return this.jwtService.verify<JwtPayload>(token, verifyOptions);
   }
 
   static hashPassword(password: string): string {

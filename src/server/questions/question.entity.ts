@@ -9,16 +9,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Answer } from '../answers/answer.entity';
-import QuestionsModelType from '../../types/question';
+import { AnswersFormat, QuestionDBModel } from '../../types/question';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 
-interface QuestionsModel extends QuestionsModelType {
-  answersFormat: string; //quick fix, sqlite doesnt support json column
-}
-
 @Entity()
-export class Question extends BaseEntity implements QuestionsModel {
+export class Question extends BaseEntity implements QuestionDBModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -26,7 +22,10 @@ export class Question extends BaseEntity implements QuestionsModel {
   text!: string;
 
   @Column()
-  answersFormat!: string; // AnswersFormat, quick fix, sqlite doesnt support json column
+  answersFormat!: AnswersFormat;
+
+  @Column()
+  fixAnswers!: string; // quick fix, sqlite doesnt support json column
 
   @ManyToOne(() => Room, (room) => room.questions)
   room: Room;

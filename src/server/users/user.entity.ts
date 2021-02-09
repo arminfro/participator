@@ -60,4 +60,10 @@ export class User extends BaseEntity implements UserModel {
   static get modelName() {
     return 'User';
   }
+
+  isPartOfRoom(roomId: number): boolean {
+    return !![...this.joinedRooms, ...this.ownedRooms].find(
+      (room) => room.id === roomId,
+    );
+  }
 }

@@ -15,6 +15,7 @@ import {
   UserUpdate,
   validateUserCreate,
   validateUserUpdate,
+  ValidationErrors,
 } from '../../types/user';
 import { AuthService } from '../auth/auth.service';
 
@@ -70,7 +71,10 @@ export class UsersService {
     return await this.usersRepository.findOne({ name });
   }
 
-  private async validateUser(user: User, errorsFromDto): Promise<void | never> {
+  private async validateUser(
+    user: User,
+    errorsFromDto: ValidationErrors,
+  ): Promise<void | never> {
     const validationErrors = user ? await validate(user) : [];
     const errorsClassValidator = validationErrors.map((err: ValidationError) =>
       err.toString(),
