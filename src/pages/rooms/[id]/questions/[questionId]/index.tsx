@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function Question({ question }: Props): ReactElement {
-  const FORMAT = question.answersFormat;
+  const format = question.answersFormat;
   const router = useRouter();
   const roomId = router.query.id;
   const test = (a): string => {
@@ -28,7 +28,6 @@ export default function Question({ question }: Props): ReactElement {
       'post',
       `api/rooms/${roomId}/questions/api/rooms/{roomId}/questions/{questionId}/answers`,
       (question) => {
-        console.log(question);
         router.push(`/rooms/${roomId}/questions/${question.id}/answers`);
       },
       test(question),
@@ -47,11 +46,9 @@ export default function Question({ question }: Props): ReactElement {
       <p>{question.text}</p>
       <h4>Answer</h4>
       <form className="ui form" onSubmit={onSubmit}>
-        {FORMAT.range === 10 && <RangeAnswer />}
-        {FORMAT.range === false && FORMAT.free === false && (
-          <FixAnswer question={question} />
-        )}
-        {FORMAT.free === '' && <FreeAnswer />}
+        {format === 'range' && <RangeAnswer />}
+        {format === 'fix' && <FixAnswer question={question} />}
+        {format === 'free' && <FreeAnswer />}
         <div>
           <button className="ui button green">Submit</button>
         </div>
