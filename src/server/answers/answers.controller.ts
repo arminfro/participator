@@ -25,10 +25,11 @@ export class AnswersController {
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
     @Param('roomId', ParseIntPipe) roomId: number,
+    @Param('questionId', ParseIntPipe) questionId: number,
   ): Promise<void> {
-    const answers = await this.answersService.findAll(roomId);
+    const answers = await this.answersService.findAll(questionId);
     this.next.render(
-      `/rooms/${roomId}/questions/:questionId/answers`,
+      `/rooms/${roomId}/questions/${questionId}/answers`,
       { answers },
       req,
       res,
@@ -40,9 +41,10 @@ export class AnswersController {
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
     @Param('roomId', ParseIntPipe) roomId: number,
+    @Param('questionId', ParseIntPipe) questionId: number,
   ): Promise<void> {
     this.next.render(
-      `/rooms/${roomId}/questions/:questionId/answers/new`,
+      `/rooms/${roomId}/questions/${questionId}/answers/new`,
       req,
       res,
     );
@@ -53,11 +55,12 @@ export class AnswersController {
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
     @Param('roomId', ParseIntPipe) roomId: number,
+    @Param('questionId', ParseIntPipe) questionId: number,
     @Param('id', ParseIntPipe) answerId: number,
   ): Promise<void> {
     const answer = await this.answersService.findOne(answerId);
     this.next.render(
-      `/rooms/${roomId}/questions/:questionId/answers/${answerId}/edit`,
+      `/rooms/${roomId}/questions/${questionId}/answers/${answerId}/edit`,
       { answer },
       req,
       res,
@@ -69,11 +72,12 @@ export class AnswersController {
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
     @Param('roomId', ParseIntPipe) roomId: number,
+    @Param('questionId', ParseIntPipe) questionId: number,
     @Param('id', ParseIntPipe) answerId: number,
   ): Promise<void> {
     const answer = await this.answersService.findOne(answerId);
     this.next.render(
-      `/rooms/${roomId}/questions/:questionId/answers/${answerId}`,
+      `/rooms/${roomId}/questions/${questionId}/answers/${answerId}`,
       { answer },
       req,
       res,
