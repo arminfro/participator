@@ -59,6 +59,7 @@ export class QuestionsService {
   ): Promise<Question> {
     const question = new Question();
     question.text = questionCreate.text;
+    question.answersFormat = questionCreate.answersFormat;
     question.fixAnswers = JSON.stringify(questionCreate.fixAnswers);
     question.room = await this.findRoom(roomId);
     question.user = user;

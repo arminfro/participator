@@ -47,7 +47,7 @@ export class AnswersService {
   ): Promise<Answer> {
     const answer = new Answer();
     answer.textAnswer = answerCreate.textAnswer;
-    answer.fixedAnswer = answerCreate.fixedAnswer;
+    answer.fixAnswer = answerCreate.fixAnswer;
     answer.question = await this.findQuestion(questionId);
     answer.user = user;
     return answer;
