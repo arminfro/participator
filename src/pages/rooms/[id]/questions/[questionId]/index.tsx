@@ -1,35 +1,61 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, SyntheticEvent } from 'react';
 import { NextPageContext } from 'next';
 import api from '../../../../utils/api';
 import getInitialProps from '../../../../utils/get-initial-props';
 import IQuestion from '../../../../../types/question';
+import FreeAnswer from './FreeAnswer';
+import RangeAnswer from './RangeAnswer';
+import FixAnswer from './FixAnswer';
+import { useRouter } from 'next/router';
+import Answer from '../../../../../types/answer';
 
 interface Props {
   question: IQuestion;
 }
 
 export default function Question({ question }: Props): ReactElement {
+  const FORMAT = question.answersFormat;
+  const router = useRouter();
+  const roomId = router.query.id;
+  const test = (a): string => {
+    console.log(a)
+  };
+
+  const onSubmit = (e: SyntheticEvent) => {
+    e.preventDefault();
+    console.log('Test');
+    api<Answer>(
+      'post',
+      `api/rooms/${roomId}/questions/api/rooms/{roomId}/questions/{questionId}/answers`,
+      (question) => {
+        console.log(question);
+        router.push(`/rooms/${roomId}/questions/${question.id}/answers`);
+      },
+      test(question),
+    );
+  };
+
   return (
     <>
-      <h2>Das ist die Komponente für eine einzelne Umfrage</h2>
-      <p>Hier sind folgende Dinge zu erleben:
-        <ul>
-          <li>Eine Umfrage wird angezeigt</li>
-          <li>Alle Antwortmöglichkeiten sind sichtbar</li>
-          <li>Antwortmöglichkeit(en) können ausgewählt werden</li>
-          <li>Ergebnisse werden dargestellt -> Möglicherweise Auslagerung in eigene Komponente</li>
-          <ul>
-            <li>'free': Textblöcke</li>
-            <li>'fixed'</li>
-            <ul>
-              <li>Antworten in der Reihenfolge wie sie eingepflegt wurden und unter jeder Antwort ein beschrifteter Prozentzahlbalken</li>
-              <li>Antwort mit den meisten Antworten wird <em>dezent</em> hervorgehoben</li>
-            </ul>
-            <li>'range'</li>
-          </ul>
-        </ul>
-      </p>
       {JSON.stringify(question)}
+      {console.log(question)}
+      <h4>Poll No.{question.id}</h4>
+      <p>
+        Created at: <b>{question.createdAt.toLocaleDateString()}</b>
+      </p>
+      <h4>Poll question</h4>
+      <p>{question.text}</p>
+      <h4>Answer</h4>
+      <form className="ui form" onSubmit={onSubmit}>
+        {FORMAT.range === 10 && <RangeAnswer />}
+        {FORMAT.range === false && FORMAT.free === false && (
+          <FixAnswer question={question} />
+        )}
+        {FORMAT.free === '' && <FreeAnswer />}
+        <div>
+          <button className="ui button green">Submit</button>
+        </div>
+      </form>
     </>
   );
 }

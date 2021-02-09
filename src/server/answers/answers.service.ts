@@ -11,7 +11,7 @@ export class AnswersService {
   constructor(
     @InjectRepository(Answer)
     private answerRepository: Repository<Answer>,
-  ) {}
+  ) { }
 
   async create(answerCreate: AnswerCreate, questionId: number, user: User) {
     const answer = await this.build(questionId, answerCreate, user);
@@ -47,7 +47,7 @@ export class AnswersService {
   ): Promise<Answer> {
     const answer = new Answer();
     answer.textAnswer = answerCreate.textAnswer;
-    answer.fixedAnswer = answerCreate.fixedAnswer;
+    answer.fixAnswer = answerCreate.fixAnswer;
     answer.question = await this.findQuestion(questionId);
     answer.user = user;
     return answer;

@@ -2,7 +2,7 @@ import Room from './room';
 
 export interface AnswersFormat {
   free?: '';
-  fixed?: string[];
+  fix?: string[];
   range?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | false;
 }
 

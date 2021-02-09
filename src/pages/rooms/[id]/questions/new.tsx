@@ -1,5 +1,5 @@
-// Antwortfelder -> Anzahl: wie wird sie immer wieder auf 0 gesetzt?
-// Antwortfelder -> Anzahl: wie vermeiden wir Dopplung?
+// Bei enter wird Abfrage direkt abgeschickt --> soll aber neue Antwortmöglichkeit generieren
+
 
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import { AnswersFormat, QuestionCreate } from '../../../../types/question';
@@ -9,35 +9,37 @@ import { Question } from '../../../../server/questions/question.entity';
 
 export default function QuestionNew(): ReactElement {
   const [poll, setPoll] = useState('');
-  const [fixedAnswers, setFixedAnswers] = useState(['']);
+  const [fixAnswers, setFixAnswers] = useState(['']);
   // eslint-disable-next-line prettier/prettier
-  const [answersFormat, setAnswersFormat] = useState<'free' | 'fixed' | 'range'>();
+  const [answersFormat, setAnswersFormat] = useState<'free' | 'fix' | 'range'>();
   const router = useRouter();
 
   const roomId = router.query.id;
-  const answersFormatSelect = (e) => {
+  const answersFormatSelect = (e: SyntheticEvent) => {
     setAnswersFormat(e.target.value);
   };
 
-  const onChangeFixedAnswer = (newValue: string, index: number) => {
-    setFixedAnswers((currentFixedAnswers) => {
-      const copyFixedAnswers = [...currentFixedAnswers];
-      copyFixedAnswers[index] = newValue;
-      return copyFixedAnswers;
+  const onChangeFixAnswer = (newValue: string, index: number) => {
+    setFixAnswers((currentFixAnswers) => {
+      const copyFixAnswers = [...currentFixAnswers];
+      copyFixAnswers[index] = newValue;
+      return copyFixAnswers;
     });
   };
 
-  const onAddFixedAnswer = () => {
-    setFixedAnswers((currentFixedAnswers) => [...currentFixedAnswers, '']);
+  const onAddFixAnswer = (e: SyntheticEvent) => {
+    e.preventDefault();
+    setFixAnswers((currentFixAnswers) => [...currentFixAnswers, '']);
   };
 
-  const onRemoveFixedAnswer = () => {
-    setFixedAnswers((currentFixedAnswers) => {
-      const copyFixedAnswers = [...currentFixedAnswers];
-      if (copyFixedAnswers.length > 1) {
-        currentFixedAnswers.pop();
+  const onRemoveFixAnswer = (e: SyntheticEvent) => {
+    e.preventDefault();
+    setFixAnswers((currentFixAnswers) => {
+      const copyFixAnswers = [...currentFixAnswers];
+      if (copyFixAnswers.length > 1) {
+        currentFixAnswers.pop();
       }
-      return copyFixedAnswers;
+      return copyFixAnswers;
     });
   };
 
@@ -45,7 +47,7 @@ export default function QuestionNew(): ReactElement {
     return {
       text: poll,
       answersFormat: {
-        fixed: answersFormat === 'fixed' && fixedAnswers,
+        fix: answersFormat === 'fix' && fixAnswers,
         free: answersFormat === 'free' && '',
         range: answersFormat === 'range' ? 10 : false,
       },
@@ -59,7 +61,7 @@ export default function QuestionNew(): ReactElement {
       `api/rooms/${roomId}/questions`,
       (question) => {
         console.log(question);
-        Router.push(`/rooms/${roomId}/questions/${question.id}`);
+        router.push(`/rooms/${roomId}/questions/${question.id}`);
       },
       question(),
     );
@@ -69,12 +71,12 @@ export default function QuestionNew(): ReactElement {
     <>
       <h2>Create poll</h2>
       <p>
-        Please select a response type for your poll: <b>fixed answers</b>,{' '}
+        Please select a response type for your poll: <b>fix answers</b>,{' '}
         <b>free answers</b> or <b>temperature check</b>.
       </p>
       <ul>
         <li>
-          <b>Fixed answers:</b> You create a set of answers and users select one
+          <b>Fix answers:</b> You create a set of answers and users select one
           of them. After choosing an answer users see the relative amount of
           choices for each answer. Maximun number of answers: 50.
         </li>
@@ -109,7 +111,7 @@ export default function QuestionNew(): ReactElement {
           </label>
           <input
             type="radio"
-            value="fixed"
+            value="fix"
             onChange={answersFormatSelect}
             name="typeOfAnswer"
           />{' '}
@@ -130,19 +132,19 @@ export default function QuestionNew(): ReactElement {
           temperature check
         </div>
         <div className="field">
-          {answersFormat === 'fixed' && (
+          {answersFormat === 'fix' && (
             <>
               <label>
                 <h3>Answers</h3>
               </label>
-              {fixedAnswers.map((answer, index) => {
+              {fixAnswers.map((answer, index) => {
                 return (
                   <div key={index}>
                     <input
                       placeholder={`Type answer No.${index + 1}`}
                       value={answer}
                       onChange={(e) => {
-                        onChangeFixedAnswer(e.target.value, index);
+                        onChangeFixAnswer(e.target.value, index);
                       }}
                     />
                   </div>
@@ -150,13 +152,13 @@ export default function QuestionNew(): ReactElement {
               })}
 
               <button
-                onClick={onAddFixedAnswer}
+                onClick={onAddFixAnswer}
                 className="ui mini button blue"
               >
                 +
               </button>
-              <button
-                onClick={onRemoveFixedAnswer}
+              {console.log(FORMAT)}<button
+                onClick={onRemoveFixAnswer}
                 className="ui mini button red"
               >
                 -
