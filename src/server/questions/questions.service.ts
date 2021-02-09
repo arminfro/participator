@@ -28,7 +28,7 @@ export class QuestionsService {
     const room = await this.findRoom(roomId);
     const questions = await getManager().find(Question, {
       where: { room },
-      relations: ['user'],
+      relations: ['user', 'answers'],
     });
     return questions.map((question) => ({
       ...question,
@@ -37,7 +37,9 @@ export class QuestionsService {
   }
 
   async findOne(id: number): Promise<Question> {
-    const question = await this.questionRepository.findOne(id);
+    const question = await this.questionRepository.findOne(id, {
+      relations: ['answers'],
+    });
     return question;
   }
 
