@@ -37,11 +37,12 @@ export class ChatsGateway implements NestGateway {
   async create(
     @MessageBody() chatCreate: ChatCreate,
     @ConnectedSocket() client: Socket,
-  ): Promise<void> {
+  ): Promise<Chat> {
     const roomId = this.roomIdByNsp(client.nsp.name);
     const chat = await this.chatsService.create(chatCreate, roomId);
     client.broadcast.emit(Events.create, chat);
     client.emit(Events.create, chat);
+    return chat;
   }
 
   @SubscribeMessage(Events.findAll)

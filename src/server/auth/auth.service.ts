@@ -5,6 +5,7 @@ import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 import { User as UserEntity } from './../users/user.entity';
 import { UsersService } from '../users/users.service';
 import User from '../../types/user';
+import { JwtPayload } from './jwt.strategy';
 
 export interface AccessToken {
   access_token: string;
@@ -34,8 +35,8 @@ export class AuthService {
     };
   }
 
-  verify(token: string, verifyOptions?: JwtVerifyOptions): any {
-    return this.jwtService.verify(token, verifyOptions);
+  verify(token: string, verifyOptions?: JwtVerifyOptions): JwtPayload {
+    return this.jwtService.verify<JwtPayload>(token, verifyOptions);
   }
 
   static hashPassword(password: string): string {
