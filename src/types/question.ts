@@ -1,25 +1,32 @@
 import Room from './room';
 
-export interface AnswersFormat {
-  any?: '';
-  fixed?: string[];
-}
+export type AnswersFormat = 'free' | 'fix' | 'range';
 
-export default interface Question {
+export interface QuestionBase {
   id: number;
   text: string;
   room: Room;
-  answersFormat: AnswersFormat | string; //quick fix, sqlite doesnt support json column
+  answersFormat: AnswersFormat;
   createdAt: Date;
   updatedAt: Date;
 }
 
+export interface QuestionDBModel extends QuestionBase {
+  fixAnswers: string;
+}
+
+export default interface Question extends QuestionBase {
+  fixAnswers: string[];
+}
+
 export interface QuestionCreate {
   text: string;
-  answersFormat: AnswersFormat;
+  answersFormat: 'free' | 'fix' | 'range';
+  fixAnswers: string[];
 }
 
 export interface QuestionUpdate {
   text: string;
-  answersFormat: AnswersFormat;
+  answersFormat: 'free' | 'fix' | 'range';
+  fixAnswers: string[];
 }

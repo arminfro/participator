@@ -32,7 +32,7 @@ export class QuestionsService {
     });
     return questions.map((question) => ({
       ...question,
-      answersFormat: JSON.parse(question.answersFormat),
+      fixAnswers: JSON.parse(question.fixAnswers),
     }));
   }
 
@@ -44,7 +44,7 @@ export class QuestionsService {
   update(id: number, questionUpdate: QuestionUpdate) {
     return this.questionRepository.update(id, {
       ...questionUpdate,
-      answersFormat: JSON.stringify(questionUpdate.answersFormat),
+      fixAnswers: JSON.stringify(questionUpdate.fixAnswers),
     });
   }
 
@@ -59,7 +59,7 @@ export class QuestionsService {
   ): Promise<Question> {
     const question = new Question();
     question.text = questionCreate.text;
-    question.answersFormat = JSON.stringify(questionCreate.answersFormat);
+    question.fixAnswers = JSON.stringify(questionCreate.fixAnswers);
     question.room = await this.findRoom(roomId);
     question.user = user;
     return question;
