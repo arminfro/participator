@@ -12,21 +12,21 @@ export interface QuestionBase {
 }
 
 export interface QuestionDBModel extends QuestionBase {
-  fixAnswers: string;
+  fixAnswers?: string;
 }
 
 export default interface Question extends QuestionBase {
-  fixAnswers: string[];
+  fixAnswers?: string[];
 }
 
 export interface QuestionCreate {
-  text: string;
-  answersFormat: 'free' | 'fix' | 'range';
-  fixAnswers: string[];
+  text?: string;
+  answersFormat?: AnswersFormat;
+  fixAnswers?: string[];
 }
 
 export interface QuestionUpdate {
-  text: string;
-  answersFormat: 'free' | 'fix' | 'range';
-  fixAnswers: string[];
+  text?: string;
+  answersFormat?: AnswersFormat;
+  fixAnswers?: string[];
 }

@@ -12,7 +12,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { NextService } from '../nextjs/next.service';
 import { AnswersService } from './answers.service';
 
-@Controller('rooms/:roomId/answers')
+@Controller('rooms/:roomId/questions/:questionId/answers')
 @UseGuards(JwtAuthGuard)
 export class AnswersController {
   constructor(
@@ -27,7 +27,12 @@ export class AnswersController {
     @Param('roomId', ParseIntPipe) roomId: number,
   ): Promise<void> {
     const answers = await this.answersService.findAll(roomId);
-    this.next.render(`/rooms/${roomId}/answers`, { answers }, req, res);
+    this.next.render(
+      `/rooms/${roomId}/questions/:questionId/answers`,
+      { answers },
+      req,
+      res,
+    );
   }
 
   @Get('new')
@@ -36,7 +41,11 @@ export class AnswersController {
     @Res() res: ServerResponse,
     @Param('roomId', ParseIntPipe) roomId: number,
   ): Promise<void> {
-    this.next.render(`/rooms/${roomId}/answers/new`, req, res);
+    this.next.render(
+      `/rooms/${roomId}/questions/:questionId/answers/new`,
+      req,
+      res,
+    );
   }
 
   @Get(':id/edit')
@@ -48,7 +57,7 @@ export class AnswersController {
   ): Promise<void> {
     const answer = await this.answersService.findOne(answerId);
     this.next.render(
-      `/rooms/${roomId}/answers/${answerId}/edit`,
+      `/rooms/${roomId}/questions/:questionId/answers/${answerId}/edit`,
       { answer },
       req,
       res,
@@ -64,7 +73,7 @@ export class AnswersController {
   ): Promise<void> {
     const answer = await this.answersService.findOne(answerId);
     this.next.render(
-      `/rooms/${roomId}/answers/${answerId}`,
+      `/rooms/${roomId}/questions/:questionId/answers/${answerId}`,
       { answer },
       req,
       res,
