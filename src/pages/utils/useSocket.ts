@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { Events } from '../../types/chat';
-import { transformDateString } from './get-initial-props';
 import { getToken } from './token';
+import { transformDateString } from './transform-tree';
 
 type EffectFuncs = {
   [P in Events]?: (...args: any) => void;
@@ -32,19 +32,20 @@ export function useSocket<T extends WithId>(
   useEffect(() => {
     socket.on('connect', () => {
       socket.emit(Events.findAll, (data: T[]) => {
-        console.debug('socket data find all', data, namespace);
-        return setData(transformDateString(data));
+        const newData = transformDateString<T[]>(data);
+        console.debug('socket data find all', namespace, newData);
+        return setData(newData);
       });
 
       socket.on(Events.create, (data: T) => {
-        const newData = transformDateString(data);
+        const newData = transformDateString<T>(data);
         setData((currData) => [...currData, newData]);
         console.debug('socket data create', newData);
         effectFuncs[Events.create] && effectFuncs[Events.create](newData);
       });
 
       socket.on(Events.update, (updatedData: T) => {
-        const newData = transformDateString(updatedData);
+        const newData = transformDateString<T>(updatedData);
         console.debug('socket data update', newData);
         setData((datas) => {
           return datas.map((data) => {
