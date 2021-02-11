@@ -5,7 +5,6 @@ interface Props {
 }
 
 export default function RangeAnswer({ setRangeAnswer }: Props) {
-
   const rangeValue = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setRangeAnswer(parseInt(e.target.value));
   };

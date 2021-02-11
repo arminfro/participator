@@ -1,4 +1,3 @@
-// Was kommt in den Callback der Submitfunktion?
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import { NextPageContext } from 'next';
 import api from '../../../../utils/api';

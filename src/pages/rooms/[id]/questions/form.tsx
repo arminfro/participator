@@ -1,6 +1,8 @@
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
-// eslint-disable-next-line prettier/prettier
-import Question, { AnswersFormat, QuestionCreate } from '../../../../types/question';
+import Question, {
+  AnswersFormat,
+  QuestionCreate,
+} from '../../../../types/question';
 import api from '../../../utils/api';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
