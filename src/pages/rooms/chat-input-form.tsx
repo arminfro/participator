@@ -27,7 +27,7 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
   const [reducedUserList, setReducedUserList] = useState(users)
 
   // const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onClickSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     if (preSetInput !== '') {
       userInput.replace("\n", " \n");
@@ -114,7 +114,7 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
         ></textarea>
         {doAtMention ? <Dropdown entries={reducedUserList.map((u) => u.name)} callback={selectAtMention} action={action} /> : ''}
       </div>
-      <button onClick={onSubmit} className="ui blue labled submit icon button ">
+      <button onClick={onClickSubmit} className="ui blue labled submit icon button ">
         <i className="icon edit"></i>send
       </button>
       <span className="actions">
