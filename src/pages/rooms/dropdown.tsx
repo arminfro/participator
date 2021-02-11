@@ -17,10 +17,8 @@ export default function Dropdown({ entries, callback, action }: Props) {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-
     onAction(action)
     return
-
   }, [action])
 
   const select = (

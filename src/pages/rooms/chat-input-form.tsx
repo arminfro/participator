@@ -32,7 +32,6 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
     if (preSetInput !== '') {
       userInput.replace("\n", " \n");
     }
-    console.log("cip: onsubmit");
     onCreate(userInput, setInput);
     setInput('');
     setUserInput('')
@@ -43,7 +42,6 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
   };
 
   const onClickCancel = () => {
-    console.log("cip: onclickCancel");
     setUserInput(oldMsg);
   };
 
@@ -66,7 +64,6 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
             const tempTypeAhead = typeAhead.substr(0, typeAhead.length - 1)
             setTypeAhead(currentTypeAhead => currentTypeAhead.substr(0, currentTypeAhead.length - 1))
             setReducedUserList(users.filter(e => e.name.toLowerCase().startsWith(tempTypeAhead)));
-            console.log("key TA", tempTypeAhead)
           }
         }
       } else if (e.key == 'Escape') {
@@ -75,10 +72,8 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
       } else if (isLetter(e.key)) {
         const tempTypeAhead = typeAhead + e.key
         setTypeAhead(currentTypeAhead => currentTypeAhead + e.key)
-        console.log("key TA", tempTypeAhead)
         setReducedUserList(users.filter(e => e.name.toLowerCase().startsWith(tempTypeAhead)));
         setUserInput(currentInput => currentInput + e.key)
-        console.log("RUL: ", reducedUserList)
       }
       setAction(e.key);
     }
@@ -86,9 +81,6 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
     if (e.key == 'Enter' && e.ctrlKey) {
       userInput.replace("\n", " \n");
       onCreate(userInput, () => setUserInput(''));
-
-    } else if (e.key == 'AltGraph') {
-      console.log('alt graph');
     } else if (allowEscape && e.key == 'Escape') {
       onCancel(oldMsg);
     } else if (e.key == '@') {
@@ -108,8 +100,6 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
     setDoAtmention(false);
     setReducedUserList(users);
     setTypeAhead('');
-    console.log(users)
-
   }
 
   return (

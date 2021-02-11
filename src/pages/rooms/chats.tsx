@@ -5,7 +5,6 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import io from 'socket.io-client';
 import Chat, { Events } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
@@ -21,16 +20,13 @@ interface Props {
 
 export default function Chats({ roomId, users }: Props): ReactElement {
   const [input, setInput] = useState('');
-  const {
-    store: { user },
-  } = useStore();
+  const { store: { user }, } = useStore();
 
   const [chats, socket] = useSocket<Chat>(
     `/rooms/${roomId}/chat`,
     useMemo(() => {
       return {
         [Events.create]: () => {
-          console.log('in callback: event create');
           setInput('');
         },
       };
@@ -52,7 +48,6 @@ export default function Chats({ roomId, users }: Props): ReactElement {
     //e.preventDefault();
     socket.emit(Events.create, { msg, userId: user.id }, () =>
       callback(''));
-    console.log('event: on Send');
   };
 
   const onCancel = () => {
@@ -60,15 +55,8 @@ export default function Chats({ roomId, users }: Props): ReactElement {
   }
 
   const onReply = (chat: Chat) => {
-    console.log("chats:", chat);
-
     setInput(chat.msg)
   }
-
-  //   const divStyle: any = {
-  //     overflow: 'auto',
-  //     max- height: '40%'
-  // }
 
   return (
     <div className="ui container" style={{ maxHeight: '900px' }}>
@@ -81,7 +69,6 @@ export default function Chats({ roomId, users }: Props): ReactElement {
             onCreate={onCreate}
             onEdit={onEdit}
             chat={chat}
-            input={input}
             setInput={setInput}
           />
         ))}
