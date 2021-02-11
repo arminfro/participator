@@ -24,8 +24,8 @@ export default function RoomItem({ room }: Props): ReactElement {
           <button className="ui button yellow">Edit</button>
         </Link>
       </Can>
-      <Link href="/rooms/[id]/questions/new" as={`/rooms/${room.id}/questions/new`}>
-        <button className="ui button blue">Umfrage erstellen</button>
+      <Link href="/rooms/[id]/questions/" as={`/rooms/${room.id}/questions/`}>
+        <button className="ui button blue">List of all polls</button>
       </Link>
     </>
   );

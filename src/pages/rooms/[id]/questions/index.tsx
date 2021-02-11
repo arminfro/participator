@@ -3,32 +3,43 @@ import { NextPageContext } from 'next';
 import api from '../../../utils/api';
 import getInitialProps from '../../../utils/get-initial-props';
 import Question from '../../../../types/question';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 interface Props {
   questions: Question[];
 }
 
 export default function Questions({ questions }: Props): ReactElement {
+  const router = useRouter();
+  const roomId = router.query.id;
+
   return (
     <>
-      <h2>Hier werden alle Umfragen gelistet</h2>
-      <p>Diese Seite hat folgenden Leistungsumfang
-        <ul>
-          <li>Auflistung aller Umfragen</li>
-          <li>Öffnen jeder einzelnen Umfrage via Accordeon</li>
-          <li>Im Accordeon Darstellung von</li>
-          <ul>
-            <li>Urheber*in der Frage</li>
-            <li>Umfrage</li>
-            <li>Antwortmöglichkeiten</li>
-            <li>Ergebnissen</li>
-            <li>die gesamte questions/[id]/index-Komponente</li>
-          </ul>
-          <li>Im Accordeon kann die Umfrage beantwortet werden</li>
-          <li>Benötigen wir eine einzelne Seite für die questions/[id]/index-Komponente? Vermutlich nicht</li>
-        </ul>
-      </p>
-      {JSON.stringify(questions)}
+      <h2>All polls of this room</h2>
+      <ol>
+        {questions.map((oneQuestion) => {
+          return (
+            <li key={oneQuestion.id}>
+              <Link
+                href="/rooms/[id]/questions/[id]"
+                as={`/rooms/${roomId}/questions/${oneQuestion.id}`}
+              >
+                {oneQuestion.text}
+              </Link>
+            </li>
+          );
+        })}
+      </ol>
+      <Link
+        href="/rooms/[id]/questions/new"
+        as={`/rooms/${roomId}/questions/new`}
+      >
+        <button className="ui button blue">Create poll</button>
+      </Link>
+      <Link href="/rooms/[id]" as={`/rooms/${roomId}`}>
+        <button className="ui button yellow">Classroom</button>
+      </Link>
     </>
   );
 }

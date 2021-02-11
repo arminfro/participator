@@ -1,7 +1,14 @@
-import React from 'react'
+import React from 'react';
 
-export default function FreeAnswer() {
-    return (
-        <textarea />
-    )
+interface Props {
+  setFreeAnswer: any;
+}
+export default function FreeAnswer({ setFreeAnswer }: Props) {
+  return (
+    <textarea
+      onChange={(e) => {
+        setFreeAnswer(e.target.value);
+      }}
+    />
+  );
 }

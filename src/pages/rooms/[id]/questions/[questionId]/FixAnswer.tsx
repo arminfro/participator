@@ -1,32 +1,29 @@
-import React, { ReactElement, SyntheticEvent } from 'react';
-import { Answer } from '../../../../../../dist/src/server/answers/answer.entity';
-import IQuestion from '../../../../../types/question';
+import React, { ReactElement } from 'react';
+
 
 interface Props {
-  question: IQuestion;
+  fixAnswers: string[];
+  setFixAnswer: any;
 }
 
-export default function FixAnswer({ question }: Props): ReactElement {
-  const ANSWERS = question.answersFormat.fixed;
-  //const ANSWER_CHOICE = answer.target.value;
-  console.log(ANSWERS);
-
-  const CHOICE = (answer: any) => {
-    console.log(answer.target.value);
-    return answer.target.value;
+export default function FixAnswer({
+  fixAnswers,
+  setFixAnswer,
+}: Props): ReactElement {
+  const choice = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFixAnswer(e.target.value);
   };
-
 
   return (
     <div>
       <p>Choose one answer</p>
-      {ANSWERS.map((answer: string, index: number) => {
+      {fixAnswers.map((answer: string, index: number) => {
         return (
           <div key={index}>
             <input
               type="radio"
               value={answer}
-              onClick={CHOICE}
+              onChange={choice}
               name="answerSelection"
             />{' '}
             {answer}

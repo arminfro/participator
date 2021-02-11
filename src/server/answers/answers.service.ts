@@ -23,7 +23,7 @@ export class AnswersService {
     const question = await this.findQuestion(questionId);
     return await getManager().find(Answer, {
       where: { question },
-      relations: ['user'],
+      relations: ['user', 'question'],
     });
   }
 
@@ -46,7 +46,8 @@ export class AnswersService {
     user: User,
   ): Promise<Answer> {
     const answer = new Answer();
-    answer.textAnswer = answerCreate.textAnswer;
+    answer.freeAnswer = answerCreate.freeAnswer;
+    answer.rangeAnswer = answerCreate.rangeAnswer;
     answer.fixAnswer = answerCreate.fixAnswer;
     answer.question = await this.findQuestion(questionId);
     answer.user = user;

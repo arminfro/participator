@@ -1,43 +1,55 @@
-import React, { ReactElement, SyntheticEvent } from 'react';
+// Was kommt in den Callback der Submitfunktion?
+import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import { NextPageContext } from 'next';
 import api from '../../../../utils/api';
 import getInitialProps from '../../../../utils/get-initial-props';
-import IQuestion from '../../../../../types/question';
+import IQuestion, { QuestionDBModel } from '../../../../../types/question';
 import FreeAnswer from './FreeAnswer';
 import RangeAnswer from './RangeAnswer';
 import FixAnswer from './FixAnswer';
 import { useRouter } from 'next/router';
-import Answer from '../../../../../types/answer';
+import Answer, { AnswerCreate } from '../../../../../types/answer';
+import Link from 'next/link';
 
 interface Props {
-  question: IQuestion;
+  question: QuestionDBModel;
 }
 
 export default function Question({ question }: Props): ReactElement {
+  const [rangeAnswer, setRangeAnswer] = useState();
+  const [fixAnswer, setFixAnswer] = useState('');
+  const [freeAnswer, setFreeAnswer] = useState('');
   const format = question.answersFormat;
   const router = useRouter();
+  const questionId = question.id;
   const roomId = router.query.id;
-  const test = (a): string => {
-    console.log(a)
+
+  const answerFunc = (): AnswerCreate => {
+    if (question.answersFormat === 'range') {
+      return { rangeAnswer };
+    } else if (question.answersFormat === 'fix') {
+      return { fixAnswer };
+    } else if (question.answersFormat === 'free') {
+      return { freeAnswer };
+    }
   };
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    console.log('Test');
-    api<Answer>(
-      'post',
-      `api/rooms/${roomId}/questions/api/rooms/{roomId}/questions/{questionId}/answers`,
-      (question) => {
-        router.push(`/rooms/${roomId}/questions/${question.id}/answers`);
-      },
-      test(question),
-    );
+    if (rangeAnswer !== undefined || fixAnswer !== '' || freeAnswer !== '') {
+      api<Answer>(
+        'post',
+        `api/rooms/${roomId}/questions/${questionId}/answers`,
+        () => {
+          router.push(`/rooms/${roomId}/questions/${questionId}/answers`);
+        },
+        answerFunc(),
+      );
+    }
   };
 
   return (
     <>
-      {JSON.stringify(question)}
-      {console.log(question)}
       <h4>Poll No.{question.id}</h4>
       <p>
         Created at: <b>{question.createdAt.toLocaleDateString()}</b>
@@ -46,11 +58,24 @@ export default function Question({ question }: Props): ReactElement {
       <p>{question.text}</p>
       <h4>Answer</h4>
       <form className="ui form" onSubmit={onSubmit}>
-        {format === 'range' && <RangeAnswer />}
-        {format === 'fix' && <FixAnswer question={question} />}
-        {format === 'free' && <FreeAnswer />}
+        {format === 'range' && <RangeAnswer setRangeAnswer={setRangeAnswer} />}
+        {format === 'fix' && (
+          <FixAnswer
+            setFixAnswer={setFixAnswer}
+            fixAnswers={JSON.parse(question.fixAnswers)}
+          />
+        )}
+        {format === 'free' && <FreeAnswer setFreeAnswer={setFreeAnswer} />}
         <div>
           <button className="ui button green">Submit</button>
+        </div>
+        <div>
+          <Link
+            href="/rooms/[id]/questions/"
+            as={`/rooms/${roomId}/questions/`}
+          >
+            <button className="ui button blue">List of all polls</button>
+          </Link>
         </div>
       </form>
     </>

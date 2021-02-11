@@ -1,8 +1,9 @@
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
+// eslint-disable-next-line prettier/prettier
 import Question, { AnswersFormat, QuestionCreate } from '../../../../types/question';
 import api from '../../../utils/api';
-import { Router, useRouter } from 'next/router';
-import { format } from 'prettier';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 interface Props extends QuestionCreate {
   isEdit: boolean;
@@ -11,11 +12,12 @@ interface Props extends QuestionCreate {
 export default function QuestionForm(props: Props): ReactElement {
   const [text, setText] = useState(props.text);
   const [fixAnswers, setFixAnswers] = useState(props.fixAnswers);
-  const [answersFormat, setAnswersFormat] = useState<AnswersFormat>(props.answersFormat);
+  const [answersFormat, setAnswersFormat] = useState<AnswersFormat>(
+    props.answersFormat,
+  );
   const router = useRouter();
-
   const roomId = router.query.id;
-  const answersFormatSelect = (e: SyntheticEvent) => {
+  const answersFormatSelect = (e: any) => {
     setAnswersFormat(e.target.value);
   };
 
@@ -57,7 +59,6 @@ export default function QuestionForm(props: Props): ReactElement {
       'post',
       `api/rooms/${roomId}/questions`,
       (question) => {
-        console.log(question);
         router.push(`/rooms/${roomId}/questions/${question.id}`);
       },
       question(),
@@ -165,6 +166,15 @@ export default function QuestionForm(props: Props): ReactElement {
         </div>
         <div>
           <button className="ui button green">Submit</button>
+          <Link
+            href="/rooms/[id]/questions/"
+            as={`/rooms/${roomId}/questions/`}
+          >
+            <button className="ui button blue">List of all polls</button>
+          </Link>
+          <Link href="/rooms/[id]" as={`/rooms/${roomId}`}>
+            <button className="ui button yellow">Classroom</button>
+          </Link>
         </div>
       </form>
     </>
