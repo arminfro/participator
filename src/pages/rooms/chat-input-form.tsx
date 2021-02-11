@@ -3,22 +3,22 @@ import React, {
   Dispatch,
   SetStateAction,
 } from 'react';
-import Chat from '../../types/chat';
 import User from '../../types/user';
 import Dropdown from './dropdown';
 
 interface Props {
-  onSend: (input: string) => void;
-  input: string;
+  onCreate: (input: string, callback: Dispatch<SetStateAction<string>>) => void;
+  //onEdit: (input: string, callback: Dispatch<SetStateAction<string>>) => void;
+  onCancel: (input: string) => void;
+  preSetInput: string;
   setInput: Dispatch<SetStateAction<string>>;
-  users: User[];
-  chat?: Chat;
+  users?: User[];
   allowEscape: boolean
 }
 
-export default function ChatInputForm({ onSend, chat, users, allowEscape }: Props) {
-  const [input, setInput] = useState(chat ? chat.msg : '');
-  const [oldMsg, setOldMsg] = useState(input);
+export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInput, users, allowEscape }: Props) {
+  const [userInput, setUserInput] = useState(preSetInput);
+  const [oldMsg, setOldMsg] = useState(userInput);
 
   /* For @ Mention Dropdown */
   const [doAtMention, setDoAtmention] = useState(false);
@@ -26,18 +26,25 @@ export default function ChatInputForm({ onSend, chat, users, allowEscape }: Prop
   const [typeAhead, setTypeAhead] = useState('');
   const [reducedUserList, setReducedUserList] = useState(users)
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    onSend(input);
+    if (preSetInput !== '') {
+      userInput.replace("\n", " \n");
+    }
+    console.log("cip: onsubmit");
+    onCreate(userInput, setInput);
     setInput('');
+    setUserInput('')
   };
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
+    setUserInput(e.target.value);
   };
 
-  const onCancel = () => {
-    setInput(oldMsg);
+  const onClickCancel = () => {
+    console.log("cip: onclickCancel");
+    setUserInput(oldMsg);
   };
 
 
@@ -49,12 +56,12 @@ export default function ChatInputForm({ onSend, chat, users, allowEscape }: Prop
     if (doAtMention) {
       e.preventDefault();
       if (e.key == 'Backspace') {
-        if (input.length > 0) {
-          if (input[input.length - 1] === '@') {
+        if (userInput.length > 0) {
+          if (userInput[userInput.length - 1] === '@') {
             resetAtMention()
           }
-          const input_ = input.substr(0, input.length - 1)
-          setInput(input_)
+          const input_ = userInput.substr(0, userInput.length - 1)
+          setUserInput(input_)
           if (typeAhead.length > 0) {
             const tempTypeAhead = typeAhead.substr(0, typeAhead.length - 1)
             setTypeAhead(currentTypeAhead => currentTypeAhead.substr(0, currentTypeAhead.length - 1))
@@ -64,35 +71,35 @@ export default function ChatInputForm({ onSend, chat, users, allowEscape }: Prop
         }
       } else if (e.key == 'Escape') {
         resetAtMention()
-        onCancel();
+        onCancel(oldMsg);
       } else if (isLetter(e.key)) {
         const tempTypeAhead = typeAhead + e.key
         setTypeAhead(currentTypeAhead => currentTypeAhead + e.key)
         console.log("key TA", tempTypeAhead)
         setReducedUserList(users.filter(e => e.name.toLowerCase().startsWith(tempTypeAhead)));
-        setInput(currentInput => currentInput + e.key)
+        setUserInput(currentInput => currentInput + e.key)
         console.log("RUL: ", reducedUserList)
       }
       setAction(e.key);
     }
 
     if (e.key == 'Enter' && e.ctrlKey) {
-      onSend(e.target.value as string);
+      userInput.replace("\n", " \n");
+      onCreate(userInput, () => setUserInput(''));
+
     } else if (e.key == 'AltGraph') {
       console.log('alt graph');
     } else if (allowEscape && e.key == 'Escape') {
-      onCancel();
+      onCancel(oldMsg);
     } else if (e.key == '@') {
-      setOldMsg(input)
+      setOldMsg(userInput)
       setDoAtmention(true)
-    } else {
-      console.log(e.key)
     }
   };
 
   const selectAtMention = (index: number, value: string): void => {
 
-    setInput(oldMsg + '**@' + value + '** ');
+    setUserInput(oldMsg + '**@' + value + '** ');
     resetAtMention();
   };
 
@@ -106,10 +113,10 @@ export default function ChatInputForm({ onSend, chat, users, allowEscape }: Prop
   }
 
   return (
-    <form className="ui reply form" onSubmit={onSubmit}>
+    <form className="ui reply form" >
       <div className="dropdown-container">
         <textarea
-          value={input}
+          value={userInput}
           onChange={onChange}
           onKeyDown={onKeyDown}
           placeholder="Your Message"
@@ -117,14 +124,14 @@ export default function ChatInputForm({ onSend, chat, users, allowEscape }: Prop
         ></textarea>
         {doAtMention ? <Dropdown entries={reducedUserList.map((u) => u.name)} callback={selectAtMention} action={action} /> : ''}
       </div>
-      <button className="ui blue labled submit icon button ">
+      <button onClick={onSubmit} className="ui blue labled submit icon button ">
         <i className="icon edit"></i>send
       </button>
       <span className="actions">
         or <b>Ctrl-Return</b>
       </span>
 
-      {allowEscape && <button onClick={onCancel} className="ui red labled submit icon button ">
+      {allowEscape && <button onClick={onClickCancel} className="ui red labled submit icon button ">
         <i className="icon cancel"></i>cancel
         </button>
       }

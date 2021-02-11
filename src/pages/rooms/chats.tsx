@@ -41,20 +41,29 @@ export default function Chats({ roomId, users }: Props): ReactElement {
     return <LoadingSpinner />;
   }
 
-  const onEdit = (
-    chat: Chat,
-    callback: Dispatch<SetStateAction<string>>,
+  const onEdit = (chat: Chat, callback: Dispatch<SetStateAction<string>>,
   ): void => {
     socket.emit(Events.update, { id: chat.id, msg: chat.msg }, () =>
       callback(''),
     );
   };
 
-  const onSend = (msg: string) => {
+  const onCreate = (msg: string, callback: Dispatch<SetStateAction<string>>) => {
     //e.preventDefault();
-    socket.emit(Events.create, { msg, userId: user.id });
+    socket.emit(Events.create, { msg, userId: user.id }, () =>
+      callback(''));
     console.log('event: on Send');
   };
+
+  const onCancel = () => {
+    return
+  }
+
+  const onReply = (chat: Chat) => {
+    console.log("chats:", chat);
+
+    setInput(chat.msg)
+  }
 
   //   const divStyle: any = {
   //     overflow: 'auto',
@@ -69,6 +78,7 @@ export default function Chats({ roomId, users }: Props): ReactElement {
         {chats.map((chat) => (
           <ChatMessage
             key={chat.id}
+            onCreate={onCreate}
             onEdit={onEdit}
             chat={chat}
             input={input}
@@ -77,8 +87,9 @@ export default function Chats({ roomId, users }: Props): ReactElement {
         ))}
       </div>
       <ChatInputForm
-        onSend={onSend}
-        input={input}
+        onCreate={onCreate}
+        onCancel={onCancel}
+        preSetInput={input}
         setInput={setInput}
         allowEscape={false}
         users={users}

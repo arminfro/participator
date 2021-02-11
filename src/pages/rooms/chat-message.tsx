@@ -12,23 +12,49 @@ interface Props {
   input: string;
   setInput: Dispatch<SetStateAction<string>>;
   onEdit: (chat: Chat, callback: Dispatch<SetStateAction<string>>) => void;
+  onCreate: (input: string, callback: Dispatch<SetStateAction<string>>) => void;
 }
 
-export default function ChatMessage({ chat, onEdit, setInput, input }: Props) {
+export default function ChatMessage({ chat, onCreate, onEdit, setInput, input }: Props) {
   const [edit, setEdit] = useState<boolean>(false);
+  const [reply, setReply] = useState<boolean>(false);
 
   const onClickEdit = (e: React.MouseEvent<HTMLAnchorElement>): void => {
     setEdit(true);
   };
 
+  const onClickReply = (e: React.MouseEvent<HTMLAnchorElement>): void => {
+    setEdit(true)
+    setReply(true)
+  };
+
   const onSendCallback = () => {
+    setReply(false);
     setEdit(false);
   };
 
+  const onCancel = (msg: string) => {
+    onSendCallback();
+  }
+
+  const createReply = (chat: Chat, newInput: string): string => {
+    const msg = chat.msg.replace(/^/gm, "> ");
+    console.log(`Reply to ${chat.user.name}'s Message on ${new Date(chat.updatedAt).toLocaleDateString()}: \n ${msg} \n\n   ${newInput}`);
+    return `Reply to ${chat.user.name}'s Message on ${new Date(chat.updatedAt).toLocaleDateString()}: \n ${msg} \n\n  ${newInput}`
+
+  }
   const onSend = (input: string): void => {
-    const updated: Chat = { ...chat, msg: input };
-    onEdit(updated, onSendCallback);
+    if (edit && !reply) {
+      const updated: Chat = { ...chat, msg: input };
+      onEdit(updated, onSendCallback);
+      onSendCallback();
+    } else if (reply) {
+      onCreate(createReply(chat, input), onSendCallback);
+      onSendCallback();
+    }
+
   };
+
 
   return (
     <div className="comment">
@@ -50,15 +76,29 @@ export default function ChatMessage({ chat, onEdit, setInput, input }: Props) {
               : ''}
           </span>
         </div>
-
+        {(chat.links) ? (
+          chat.links.map((l, i) =>
+            <div key={i} className="metadata">
+              <a className="avatar" href={l.url}>
+                <img src={l.imgUrl} width="100" height="100" />
+              </a>
+              <a className="metadata" href={l.url}>
+                <p><b>{l.title}</b></p> <br />
+                {l.description}
+              </a>
+            </div>
+          )
+        ) : ('')
+        }
         {edit ? (
           <ChatInputForm
-            onSend={onSend}
-            input={input}
+            onCreate={onSend}
+            onCancel={onCancel}
+            preSetInput={(reply) ? '' : chat.msg}
             setInput={setInput}
-            chat={chat}
             allowEscape={true}
-            users={[chat.room.admin, ...chat.room.members]}
+          // users={[]}
+          // users={[chat.room.admin, ...chat.room.members]}
           />
         ) : (
             <div>
@@ -72,7 +112,7 @@ export default function ChatMessage({ chat, onEdit, setInput, input }: Props) {
                 <a className="edit" onClick={onClickEdit}>
                   Edit
               </a>
-                <a className="reply">Reply</a>
+                <a className="reply" onClick={onClickReply}>Reply</a>
               </div>
             </div>
           )}
