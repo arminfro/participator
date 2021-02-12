@@ -45,7 +45,6 @@ export default function Chats({ roomId, users }: Props): ReactElement {
   };
 
   const onCreate = (msg: string, callback: Dispatch<SetStateAction<string>>) => {
-    //e.preventDefault();
     socket.emit(Events.create, { msg, userId: user.id }, () =>
       callback(''));
   };
