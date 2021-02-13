@@ -5,7 +5,11 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
+  Tree,
+  TreeChildren,
+  TreeParent,
   UpdateDateColumn,
 } from 'typeorm';
 import ChatModel from '../../types/chat';
@@ -14,11 +18,12 @@ import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 
 @Entity()
+@Tree('materialized-path')
 export class Chat extends BaseEntity implements ChatModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Room, (room) => room.chats)
+  @OneToOne(() => Room, (room) => room.chat)
   room: Room;
 
   @Column()
@@ -29,6 +34,12 @@ export class Chat extends BaseEntity implements ChatModel {
 
   @OneToMany(() => Link, (link) => link.chat)
   links: Link[];
+
+  @TreeChildren()
+  children: Chat[];
+
+  @TreeParent()
+  parent: Chat;
 
   @CreateDateColumn()
   createdAt!: Date;

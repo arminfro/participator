@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Repository, UpdateResult } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { RoomCreate, RoomUpdate } from '../../types/room';
+import { ChatsService } from '../chats/chats.service';
 import { User } from '../users/user.entity';
 import { Room } from './room.entity';
 
@@ -9,12 +10,17 @@ import { Room } from './room.entity';
 export class RoomsService {
   constructor(
     @InjectRepository(Room) private roomsRepository: Repository<Room>,
+    private chatsService: ChatsService,
   ) {}
 
   async create(roomCreate: RoomCreate): Promise<Room> {
     const room = await this.build(roomCreate);
-    console.log('room to save', room);
-    await getManager().save(room);
+    await this.roomsRepository.save(room);
+    room.chat = await this.chatsService.create(
+      { userId: room.admin.id, msg: `Room chat for ${room.name}` },
+      room.id,
+    );
+    await this.roomsRepository.save(room);
     return room;
   }
 
@@ -26,7 +32,7 @@ export class RoomsService {
 
   async findOne(id: number): Promise<Room | undefined> {
     const room = await this.roomsRepository.findOne(id, {
-      relations: ['admin', 'members'],
+      relations: ['admin', 'members', 'chat'],
     });
     return room;
   }

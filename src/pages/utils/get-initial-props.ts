@@ -1,6 +1,6 @@
 import { IncomingMessage } from 'http';
 import { ParsedUrlQuery } from 'querystring';
-import transformTree, { transformDateString } from './transform-tree';
+import { transformDateString } from '../../utils/transform-tree';
 
 export default async function getInitialProps<T>(
   req: IncomingMessage,
