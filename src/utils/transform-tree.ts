@@ -66,9 +66,7 @@ function isObjectAndNothingElse<T>(val: AnyObjectWithId<T>): boolean {
   return isObject(val) && !isDate(val) && !isFunction(val) && !isArguments(val);
 }
 
-export function transformDateString<T extends { id: number }>(
-  props: T | T[],
-): T[] {
+export function transformDateString<T extends { id: number }>(props: T | T[]) {
   return transformTree<T, Date>(
     props,
     (key: Keys<T>) => key === 'createdAt' || key === 'updatedAt',

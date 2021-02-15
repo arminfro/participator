@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LinkCreate, LinkUpdate } from '../../types/link';
+import { LinkCreate } from '../../types/link';
 import * as LinkPreviewGenerator from 'link-preview-generator';
 import { Link } from './link.entity';
 import { Room } from '../rooms/room.entity';
@@ -21,7 +21,9 @@ export class LinksService {
   ) {}
 
   async create(linkCreate: LinkCreate): Promise<Link> {
-    return await this.linksRepository.save(await this.build(linkCreate));
+    const link = await this.build(linkCreate);
+    console.log('link', link);
+    return await this.linksRepository.save(link);
   }
 
   async findAll(roomId: number): Promise<Link[]> {
@@ -69,7 +71,6 @@ export class LinksService {
   }
 
   private async getPreview(url: string): Promise<PreviewData> {
-    console.log('LinkPreviewGenerator', LinkPreviewGenerator);
     return await LinkPreviewGenerator(url);
   }
 }
