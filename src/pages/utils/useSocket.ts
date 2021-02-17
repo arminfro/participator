@@ -10,8 +10,8 @@ interface WithId {
 
 type EffectFuncs<T extends WithId> = {
   [P in Events]?: (
-    payload: T | T[] | { id: number },
-    setData: Dispatch<SetStateAction<T[]>>,
+    payload: T | { id: number },
+    setData: Dispatch<SetStateAction<T>>,
     socket: SocketIOClient.Socket,
   ) => void;
 };
@@ -19,7 +19,7 @@ type EffectFuncs<T extends WithId> = {
 export function useSocket<T extends WithId>(
   namespace: string,
   effectFuncs: EffectFuncs<T> = {},
-): [T[], SocketIOClient.Socket] {
+): [T, SocketIOClient.Socket] {
   const [socket] = useState(
     io.connect(namespace, {
       transportOptions: {
@@ -31,11 +31,11 @@ export function useSocket<T extends WithId>(
       },
     }),
   );
-  const [data, setData] = useState<T[]>([]);
+  const [data, setData] = useState<T>();
 
   useEffect(() => {
     socket.on('connect', () => {
-      socket.emit(Events.findAll, (data: T[]) => {
+      socket.emit(Events.findAll, (data: T) => {
         effectFuncs[Events.findAll] &&
           effectFuncs[Events.findAll](
             transformDateString<T>(data),

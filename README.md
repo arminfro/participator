@@ -8,6 +8,7 @@ Specifically for teaching environments.
 You'll need sqlite (for dev db), python and gcc (for [`node-gyp`](https://github.com/nodejs/node-gyp)).
 
 Example [Choco](https://chocolatey.org/) Windows: `choco install sqlite python mingw`
+
 Example Ubuntu: `sudo apt-get install sqlite python build-essential`
 
 Then simply do `yarn install`

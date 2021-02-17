@@ -6,6 +6,7 @@ import { Room } from '../rooms/room.entity';
 import { getManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from '../chats/chat.entity';
+import { User } from '../users/user.entity';
 
 interface PreviewData {
   title: string;
@@ -22,15 +23,12 @@ export class LinksService {
 
   async create(linkCreate: LinkCreate): Promise<Link> {
     const link = await this.build(linkCreate);
-    console.log('link', link);
     return await this.linksRepository.save(link);
   }
 
-  async findAll(roomId: number): Promise<Link[]> {
-    const room = await this.findRoom(roomId);
-    return getManager().find(Link, {
-      where: { chat: { room } },
-      relations: ['chat', 'room'],
+  async findAll(): Promise<Link[]> {
+    return await this.linksRepository.find({
+      relations: ['chat'],
     });
   }
 
@@ -61,9 +59,13 @@ export class LinksService {
   // todo, un-DRY
   private async findRoom(roomId: number): Promise<Room> {
     const room = await getManager().findOne(Room, roomId, {
-      relations: ['chats'],
+      relations: ['chat'],
     });
     return room;
+  }
+
+  private async findUser(userId: number): Promise<User> {
+    return await getManager().findOne(User, userId);
   }
 
   private async findChat(chatId: number): Promise<Chat> {

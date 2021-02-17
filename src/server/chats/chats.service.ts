@@ -2,17 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, getManager, TreeRepository } from 'typeorm';
 import { IncomingMessage } from 'http';
-import * as request from 'request';
+import TreeModel = require('tree-model');
+import request = require('request');
 
 import { ChatCreate, ChatUpdate } from '../../types/chat';
-import { mergeObjsById } from '../../utils/transform-tree';
 import { LinksService } from '../links/links.service';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { Chat } from './chat.entity';
 
-// todo, regex matches file path
 const urlRegex = /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/gi;
 
 @Injectable()
@@ -50,28 +49,35 @@ export class ChatsService {
   async findAll(roomId: number): Promise<Chat[]> {
     const room = await this.findRoom(roomId);
 
-    // findDescendantsTree takes no options
-    let chats = await this.chatsRepository.findDescendantsTree(
+    // findDescendantsTree takes no relations options
+    const chats = await this.chatsRepository.findDescendantsTree(
       await this.chatsRepository.findOne({
         where: { id: room.chat.id },
       }),
     );
 
-    const users = await this.usersService.findAll({
-      relations: ['chats', 'joinedRooms', 'ownedRooms'],
+    const users = (
+      await this.usersService.findAll({
+        relations: ['chats', 'chats.links', 'joinedRooms', 'ownedRooms'],
+      })
+    ).filter((user) => user.isPartOfRoom(roomId));
+
+    const tree = new TreeModel().parse<Chat>(chats);
+    // kinda hacking user and links relation into chats,
+    // cause of missing relations options for findDescendantsTree
+    tree.walk(null, (chatNode) => {
+      const chatId = chatNode.model.id;
+      const user = users.find((user) =>
+        user.chats.map((chat) => chat.id).includes(chatId),
+      );
+
+      chatNode.model.user = user;
+      chatNode.model.links = user.chats.find(
+        (chat) => chat.id === chatId,
+      ).links;
     });
 
-    users
-      // kinda hacking user relation into chats, cause of missing relations options
-      .filter((user) => user.isPartOfRoom(roomId))
-      .map((user) => ({ user, chats: user.chats.map((chat) => chat.id) }))
-      .forEach((userMap: { user: User; chats: number[] }) => {
-        userMap.chats.forEach((chatId) => {
-          chats = mergeObjsById<Chat>(chats, chatId, 'user', userMap.user);
-        });
-      });
-
-    return chats.children;
+    return tree.model;
   }
 
   async findOne(id: number): Promise<Chat> {

@@ -7,9 +7,9 @@ import React, {
 } from 'react';
 import Chat, { Events } from '../../types/chat';
 import {
-  addToPropArrayById,
-  removeObjFromArrayById,
-  replaceInObjById,
+  addChild,
+  removeChild,
+  replaceChild,
 } from '../../utils/transform-tree';
 import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
@@ -30,30 +30,28 @@ export default function Chats({ roomId }: Props): ReactElement {
     useMemo(() => {
       return {
         [Events.findAll]: (
-          payload: Chat[],
-          setData: Dispatch<SetStateAction<Chat[]>>,
+          payload: Chat,
+          setData: Dispatch<SetStateAction<Chat>>,
         ) => {
           setData(payload);
         },
         [Events.create]: (
           payload: Chat,
-          setData: Dispatch<SetStateAction<Chat[]>>,
+          setData: Dispatch<SetStateAction<Chat>>,
         ) => {
-          setData((currData) =>
-            addToPropArrayById(currData, 'parent', 'children', payload),
-          );
+          setData((chat) => addChild<Chat>(chat, payload));
         },
         [Events.update]: (
           payload: Chat,
-          setData: Dispatch<SetStateAction<Chat[]>>,
+          setData: Dispatch<SetStateAction<Chat>>,
         ) => {
-          setData((chat) => replaceInObjById<Chat>(chat, payload));
+          setData((chat) => replaceChild<Chat>(chat, payload));
         },
         [Events.remove]: (
           payload: { id: number },
-          setData: Dispatch<SetStateAction<Chat[]>>,
+          setData: Dispatch<SetStateAction<Chat>>,
         ) => {
-          setData((data) => removeObjFromArrayById(payload.id, data));
+          setData((chat) => removeChild<Chat>(chat, payload.id));
         },
       };
     }, []),
@@ -70,7 +68,7 @@ export default function Chats({ roomId }: Props): ReactElement {
       {
         msg: input,
         userId: user.id,
-        parentId: 63, // test, wait for `chat` branch
+        parentId: 23, // test, wait for `chat` branch
       },
       () => setInput(''),
     );
@@ -89,14 +87,15 @@ export default function Chats({ roomId }: Props): ReactElement {
   return (
     <div>
       <div className="ui relaxed divided list">
-        {chats.map((chat) => (
-          <ChatItem
-            key={chat.id}
-            chat={chat}
-            editChat={editChat}
-            onDelete={onDelete}
-          />
-        ))}
+        {chats &&
+          chats.children.map((chat) => (
+            <ChatItem
+              key={chat.id}
+              chat={chat}
+              editChat={editChat}
+              onDelete={onDelete}
+            />
+          ))}
       </div>
       <form onSubmit={onSend}>
         <input
