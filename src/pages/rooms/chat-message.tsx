@@ -5,6 +5,7 @@ import sanitizeHtml from 'sanitize-html';
 import emoji from 'node-emoji';
 import formatDistance from 'date-fns/formatDistance';
 import ChatInputForm from './chat-input-form';
+import ChatLink from './chat-link';
 
 interface Props {
   chat: Chat;
@@ -26,7 +27,7 @@ export default function ChatMessage({ chat, onCreate, onEdit, setInput }: Props)
     setReply(true)
   };
 
-  const resetStatus = () => {
+  const resetStatus = (): void => {
     setReply(false);
     setEdit(false);
   };
@@ -38,6 +39,7 @@ export default function ChatMessage({ chat, onCreate, onEdit, setInput }: Props)
   const createReplyString = (chat: Chat, newInput: string): string => {
     return `Reply to ${chat.user.name}'s Message on ${new Date(chat.updatedAt).toLocaleDateString()}: \n ${chat.msg.replace(/^/gm, "> ")} \n\n  ${newInput}`
   }
+
   const onSend = (input: string): void => {
     if (edit) {
       const updated: Chat = { ...chat, msg: input };
@@ -65,23 +67,14 @@ export default function ChatMessage({ chat, onCreate, onEdit, setInput }: Props)
           <span className="date">
             {new Date(chat.updatedAt).getTime() !==
               new Date(chat.createdAt).getTime()
-              ? '(edited)'
-              : ''}
+              && '(edited)'
+            }
           </span>
         </div>
-        {(chat.links) ? (
-          chat.links.map((l, i) =>
-            <div key={i} className="metadata">
-              <a className="avatar" href={l.url}>
-                <img src={l.imgUrl} width="100" height="100" />
-              </a>
-              <a className="metadata" href={l.url}>
-                <p><b>{l.title}</b></p> <br />
-                {l.description}
-              </a>
-            </div>
+        {(chat.links) && (
+          chat.links.map((l, i) => <ChatLink link={l} key={i} />
           )
-        ) : ('')
+        )
         }
         {edit || reply ? (
           <ChatInputForm

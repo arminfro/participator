@@ -2,13 +2,13 @@ import React, {
   useState,
   Dispatch,
   SetStateAction,
+  ReactElement,
 } from 'react';
 import User from '../../types/user';
 import Dropdown from './dropdown';
 
 interface Props {
   onCreate: (input: string, callback: Dispatch<SetStateAction<string>>) => void;
-  //onEdit: (input: string, callback: Dispatch<SetStateAction<string>>) => void;
   onCancel: (input: string) => void;
   preSetInput: string;
   setInput: Dispatch<SetStateAction<string>>;
@@ -16,7 +16,7 @@ interface Props {
   allowEscape: boolean
 }
 
-export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInput, users, allowEscape }: Props) {
+export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInput, users, allowEscape }: Props): ReactElement {
   const [userInput, setUserInput] = useState(preSetInput);
   const [oldMsg, setOldMsg] = useState(userInput);
 
@@ -27,7 +27,7 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
   const [reducedUserList, setReducedUserList] = useState(users)
 
   // const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  const onClickSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onClickSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     e.preventDefault();
     if (preSetInput !== '') {
       userInput.replace("\n", " \n");
@@ -37,20 +37,20 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
     setUserInput('')
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
     setUserInput(e.target.value);
   };
 
-  const onClickCancel = () => {
+  const onClickCancel = (): void => {
     setUserInput(oldMsg);
   };
 
 
-  const isLetter = (char: string) => {
+  const isLetter = (char: string): boolean => {
     return (/[a-zA-Z]/).test(char) && char.length == 1
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (doAtMention) {
       e.preventDefault();
       if (e.key == 'Backspace') {
@@ -90,8 +90,10 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
   };
 
   const selectAtMention = (index: number, value: string): void => {
-
-    setUserInput(oldMsg + '**@' + value + '** ');
+    const addSpace = oldMsg.charAt(oldMsg.length - 1) !== ' ' ? ' ' : '';
+    setUserInput(oldMsg +
+      addSpace +
+      '**@' + value + '** ');
     resetAtMention();
   };
 
@@ -111,8 +113,8 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
           onKeyDown={onKeyDown}
           placeholder="Your Message"
           id="msg"
-        ></textarea>
-        {doAtMention ? <Dropdown entries={reducedUserList.map((u) => u.name)} callback={selectAtMention} action={action} /> : ''}
+        />
+        {doAtMention && <Dropdown entries={reducedUserList.map((u) => u.name)} callback={selectAtMention} action={action} />}
       </div>
       <button onClick={onClickSubmit} className="ui blue labled submit icon button ">
         <i className="icon edit"></i>send
@@ -121,8 +123,9 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
         or <b>Ctrl-Return</b>
       </span>
 
-      {allowEscape && <button onClick={onClickCancel} className="ui red labled submit icon button ">
-        <i className="icon cancel"></i>cancel
+      {allowEscape &&
+        <button onClick={onClickCancel} className="ui red labled submit icon button ">
+          <i className="icon cancel"></i>cancel
         </button>
       }
     </form>

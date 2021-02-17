@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 
 export interface Position {
   x: number,
@@ -12,13 +12,12 @@ interface Props {
 }
 
 
-export default function Dropdown({ entries, callback, action }: Props) {
+export default function Dropdown({ entries, callback, action }: Props): ReactElement {
   const [selected, setSelected] = useState(0);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
     onAction(action)
-    return
   }, [action])
 
   const select = (
@@ -26,7 +25,7 @@ export default function Dropdown({ entries, callback, action }: Props) {
     element: string
   ) => { callback(i, element); };
 
-  const onAction = (action: string) => {
+  const onAction = (action: string): void => {
     if (action == 'Enter') {
       select(selected, entries[selected]);
     } else if (action == 'ArrowDown') {
@@ -38,16 +37,15 @@ export default function Dropdown({ entries, callback, action }: Props) {
 
   return (
     <div className="dropdown" >
-      <input type="hidden" name="input"></input>
       <div className="dropdowntext" ref={dropdownRef}>
         {entries.map((e, i) => {
           return (
-            <div key={i} data-value={i} className={(selected == i) ? "selected" : ""} onClick={(ev) => select(i, e)}>
+            <div key={i} className={(selected == i) && "selected"} onClick={(ev) => select(i, e)}>
               {e}
             </div>
           );
         })}
       </div>
-    </div>
+    </div >
   );
 }

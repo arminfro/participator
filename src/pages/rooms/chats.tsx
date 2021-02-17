@@ -59,7 +59,7 @@ export default function Chats({ roomId, users }: Props): ReactElement {
 
   return (
     <div className="ui container" style={{ maxHeight: '900px' }}>
-      <br></br>
+      <br />
       <h3 className="ui dividing header">Chat</h3>
       <div className="ui comments" style={{ maxHeight: '80%', overflow: 'scroll' }}>
         {chats.map((chat) => (
