@@ -1,20 +1,20 @@
-import Question from './question';
+import { QuestionDBModel } from './question';
 
 export interface AnswerUpdate {
   textAnswer?: string;
-  fixedAnswer?: string;
+  fixAnswer?: string;
 }
 
 export interface AnswerCreate {
   textAnswer?: string;
-  fixedAnswer?: string;
+  fixAnswer?: string;
 }
 
 export default interface Answer {
   id: number;
   textAnswer?: string;
-  fixedAnswer?: string;
-  question: Question;
+  fixAnswer?: string;
+  question: QuestionDBModel;
   createdAt: Date;
   updatedAt: Date;
 }

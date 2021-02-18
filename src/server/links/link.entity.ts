@@ -18,7 +18,7 @@ export class Link extends BaseEntity implements LinkModel {
   @Column()
   title!: string;
 
-  @Column()
+  @Column({ nullable: true })
   description!: string;
 
   @Column()

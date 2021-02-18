@@ -21,7 +21,7 @@ export class Answer extends BaseEntity implements AnswerModel {
   textAnswer?: string;
 
   @Column({ nullable: true })
-  fixedAnswer?: string;
+  fixAnswer?: string;
 
   @ManyToOne(() => Question, (question) => question.answers)
   question: Question;

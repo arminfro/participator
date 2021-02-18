@@ -5,7 +5,12 @@ import { jwtConstants } from './constants';
 import { UsersService } from '../users/users.service';
 import User from '../../types/user';
 
-type Payload = { username: string; userId: number; iat: number; exp: number };
+export type JwtPayload = {
+  username: string;
+  userId: number;
+  iat: number;
+  exp: number;
+};
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -17,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: Payload): Promise<User> {
+  async validate(payload: JwtPayload): Promise<User> {
     // return { userId: payload.userId, username: payload.username };
     return await this.usersService.findOne(payload.userId);
   }

@@ -18,7 +18,11 @@ export default function RoomItem({ room }: Props): ReactElement {
     <>
       <h2>Room: {room.name}</h2>
       <Users users={[room.admin, ...room.members]} />
-      <Chats roomId={room.id} />
+      <Chats
+        users={[room.admin, ...room.members]}
+        roomId={room.id}
+        chatId={room.chat.id}
+      />
       <Can I="update" this={subject('Room', room)}>
         <Link href="/rooms/[id]/edit" as={`/rooms/${room.id}/edit`}>
           <button className="ui button yellow">Edit</button>

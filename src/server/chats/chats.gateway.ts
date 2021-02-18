@@ -37,11 +37,12 @@ export class ChatsGateway implements NestGateway {
   async create(
     @MessageBody() chatCreate: ChatCreate,
     @ConnectedSocket() client: Socket,
-  ): Promise<void> {
+  ): Promise<Chat> {
     const roomId = this.roomIdByNsp(client.nsp.name);
     const chat = await this.chatsService.create(chatCreate, roomId);
     client.broadcast.emit(Events.create, chat);
     client.emit(Events.create, chat);
+    return chat;
   }
 
   @SubscribeMessage(Events.findAll)
@@ -67,10 +68,14 @@ export class ChatsGateway implements NestGateway {
   }
 
   @SubscribeMessage(Events.remove)
-  remove(@MessageBody() id: number, @ConnectedSocket() client: Socket) {
-    client.broadcast.emit(Events.remove, id);
-    client.emit(Events.remove, id);
-    return this.chatsService.remove(id);
+  remove(
+    @MessageBody() idObj: { id: number },
+    @ConnectedSocket() client: Socket,
+  ): { id: number } {
+    this.chatsService.remove(idObj.id);
+    client.broadcast.emit(Events.remove, idObj);
+    client.emit(Events.remove, idObj);
+    return idObj;
   }
 
   // todo, un-DRY

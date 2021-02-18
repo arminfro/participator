@@ -1,20 +1,21 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
-  ManyToOne,
   BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
   OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../users/user.entity';
 import RoomModel from '../../types/room';
 import { Chat } from '../chats/chat.entity';
 import { Question } from '../questions/question.entity';
-import { Link } from '../links/link.entity';
+import { User } from '../users/user.entity';
 
 @Entity()
 export class Room extends BaseEntity implements RoomModel {
@@ -40,8 +41,9 @@ export class Room extends BaseEntity implements RoomModel {
   @ManyToOne(() => User, (user) => user.ownedRooms)
   admin: User;
 
-  @OneToMany(() => Chat, (chat) => chat.room)
-  chats: Chat[];
+  @OneToOne(() => Chat, (chat) => chat.room)
+  @JoinColumn()
+  chat?: Chat;
 
   @OneToMany(() => Question, (question) => question.room)
   questions: Question[];

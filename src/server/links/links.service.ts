@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { LinkCreate, LinkUpdate } from '../../types/link';
+import { LinkCreate } from '../../types/link';
 import * as LinkPreviewGenerator from 'link-preview-generator';
 import { Link } from './link.entity';
 import { Room } from '../rooms/room.entity';
 import { getManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from '../chats/chat.entity';
+import { User } from '../users/user.entity';
 
 interface PreviewData {
   title: string;
@@ -21,14 +22,13 @@ export class LinksService {
   ) {}
 
   async create(linkCreate: LinkCreate): Promise<Link> {
-    return await this.linksRepository.save(await this.build(linkCreate));
+    const link = await this.build(linkCreate);
+    return await this.linksRepository.save(link);
   }
 
-  async findAll(roomId: number): Promise<Link[]> {
-    const room = await this.findRoom(roomId);
-    return getManager().find(Link, {
-      where: { chat: { room } },
-      relations: ['chat', 'room'],
+  async findAll(): Promise<Link[]> {
+    return await this.linksRepository.find({
+      relations: ['chat'],
     });
   }
 
@@ -59,9 +59,13 @@ export class LinksService {
   // todo, un-DRY
   private async findRoom(roomId: number): Promise<Room> {
     const room = await getManager().findOne(Room, roomId, {
-      relations: ['chats'],
+      relations: ['chat'],
     });
     return room;
+  }
+
+  private async findUser(userId: number): Promise<User> {
+    return await getManager().findOne(User, userId);
   }
 
   private async findChat(chatId: number): Promise<Chat> {
@@ -69,7 +73,6 @@ export class LinksService {
   }
 
   private async getPreview(url: string): Promise<PreviewData> {
-    console.log('LinkPreviewGenerator', LinkPreviewGenerator);
     return await LinkPreviewGenerator(url);
   }
 }

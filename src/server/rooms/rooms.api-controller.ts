@@ -20,7 +20,6 @@ import Room, { RoomCreate, RoomUpdate } from '../../types/room';
 import User from '../../types/user';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { IPolicyHandler } from '../casl/policies.guard';
-// import { UsePolicy } from '../casl/use-policy.decorator';
 import { User as UserDecorator } from '../users/user.decorator';
 import { RoomsService } from './rooms.service';
 

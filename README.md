@@ -5,16 +5,20 @@ Specifically for teaching environments.
 
 ## Installation
 
-`yarn install`
+You'll need sqlite (for dev db), python and gcc (for [`node-gyp`](https://github.com/nodejs/node-gyp)).
+
+Example [Choco](https://chocolatey.org/) Windows: `choco install sqlite python mingw`
+
+Example Ubuntu: `sudo apt-get install sqlite python build-essential`
+
+Then simply do `yarn install`
 
 ## Running the app
 
-`yarn start:client` for Next.js client
+Just `yarn start`, or `yarn start:debug` for server debugging and hot reloading.
 
-`yarn start:server` for Nest.js server
+Once started, you can go to `localhost:3000/api` to see a summary of all `http` routes.
 
-or `yarn start:debug` for both at once (works currently only on Unix Systems)
+All routes prefixed with `api/` return json. Others call Next.js to render components.
 
-once started, you can go to `localhost:3000/api` to see a summary of all `http` routes.
-
-all routes prefixed with `api/` return json. Others call Next.js to render components.
+Register account at `localhost:3000/users/new`.

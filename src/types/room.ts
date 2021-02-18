@@ -19,7 +19,7 @@ export default interface Room {
   readonly name: string;
   readonly description?: string;
   readonly openToJoin: boolean;
-  readonly chats: Chat[];
+  readonly chat?: Chat;
   readonly members: User[];
   readonly admin: User;
   readonly createdAt: Date;

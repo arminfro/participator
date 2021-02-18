@@ -28,23 +28,25 @@ export class QuestionsService {
     const room = await this.findRoom(roomId);
     const questions = await getManager().find(Question, {
       where: { room },
-      relations: ['user'],
+      relations: ['user', 'answers'],
     });
     return questions.map((question) => ({
       ...question,
-      answersFormat: JSON.parse(question.answersFormat),
+      fixAnswers: JSON.parse(question.fixAnswers),
     }));
   }
 
   async findOne(id: number): Promise<Question> {
-    const question = await this.questionRepository.findOne(id);
+    const question = await this.questionRepository.findOne(id, {
+      relations: ['answers'],
+    });
     return question;
   }
 
   update(id: number, questionUpdate: QuestionUpdate) {
     return this.questionRepository.update(id, {
       ...questionUpdate,
-      answersFormat: JSON.stringify(questionUpdate.answersFormat),
+      fixAnswers: JSON.stringify(questionUpdate.fixAnswers),
     });
   }
 
@@ -59,7 +61,8 @@ export class QuestionsService {
   ): Promise<Question> {
     const question = new Question();
     question.text = questionCreate.text;
-    question.answersFormat = JSON.stringify(questionCreate.answersFormat);
+    question.answersFormat = questionCreate.answersFormat;
+    question.fixAnswers = JSON.stringify(questionCreate.fixAnswers);
     question.room = await this.findRoom(roomId);
     question.user = user;
     return question;
