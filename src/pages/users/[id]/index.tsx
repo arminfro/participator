@@ -1,13 +1,13 @@
 import React from 'react';
 
 import UserCard from '../card';
-import { User } from '../../../server/users/user.entity';
 import { ReactElement } from 'react';
 import Link from 'next/link';
 import Router from 'next/router';
 import api from '../../utils/api';
 import { NextPageContext } from 'next';
 import getInitialProps from '../../utils/get-initial-props';
+import User from '../../../types/user';
 
 interface Props {
   user: User;
