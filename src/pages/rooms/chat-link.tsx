@@ -1,21 +1,16 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement } from 'react';
 import Link from '../../types/link';
 
 interface Props {
-    link: Link;
-    key: number
-
+  link: Link;
 }
-export default function ChatLink({ link, key }: Props): ReactElement {
-    return (
-        <div key={key} className="metadata">
-            <a className="avatar" href={link.url}>
-                <img src={link.imgUrl} width="100" height="100" />
-            </a>
-            <a className="metadata" href={link.url}>
-                <p><b>{link.title}</b></p> <br />
-                {link.description}
-            </a>
-        </div>
-    )
+export default function ChatLink({ link }: Props): ReactElement {
+  return (
+    <div className="item">
+      <a href={link.url}>
+        {link.imgUrl && <img className="ui avatar image" src={link.imgUrl} />}
+        <b>{link.title}</b>
+      </a>
+    </div>
+  );
 }

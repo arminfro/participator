@@ -76,11 +76,9 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     );
   };
 
-  // const onDelete = (chatId: number) => {
-  //   socket.emit(Events.remove, { id: chatId }, (chat) =>
-  //     console.log('Chat Deleted', chat),
-  //   );
-  // };
+  const onRemove = (chat: Chat): void => {
+    socket.emit(Events.remove, { id: chat.id });
+  };
 
   const onCreate = (
     msg: string,
@@ -102,22 +100,23 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
   };
 
   return (
-    <div>
-      <br />
+    <div className="ui segment">
       <h3 className="ui dividing header">Chat</h3>
-      <div className="ui comments">
-        {chats &&
-          chats.children.map((chat) => (
+      {chats && (
+        <div className="ui relaxed divided list">
+          {chats.children.map((chat) => (
             <ChatMessage
               key={chat.id}
               onCreate={onCreate}
               onEdit={onEdit}
+              onRemove={onRemove}
               chat={chat}
               setInput={setInput}
               depth={0}
             />
           ))}
-      </div>
+        </div>
+      )}
       <ChatInputForm
         onCreate={onCreate}
         onCancel={onCancel}

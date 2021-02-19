@@ -13,6 +13,7 @@ interface Props {
   depth: number;
   setInput: Dispatch<SetStateAction<string>>;
   onEdit: (chat: Chat, callback: Dispatch<SetStateAction<string>>) => void;
+  onRemove: (chat: Chat) => void;
   onCreate: (
     input: string,
     callback: Dispatch<SetStateAction<string>>,
@@ -25,6 +26,7 @@ export default function ChatMessage({
   depth,
   onCreate,
   onEdit,
+  onRemove,
   setInput,
 }: Props) {
   const [edit, setEdit] = useState<boolean>(false);
@@ -58,53 +60,49 @@ export default function ChatMessage({
   };
 
   return (
-    <>
-      <div className="comment" style={{ marginLeft: depth * 50 }}>
-        <a className="avatar">
-          <img src="https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png" />
-        </a>
-        <div className="content">
-          <a className="author">{chat.user.name}</a>
-          <div className="metadata">
-            <span className="date">
-              {formatDistance(chat.updatedAt, new Date(), {
-                includeSeconds: true,
-              })}
-            </span>
-            <span className="date">
-              {chat.updatedAt.getTime() !== chat.createdAt.getTime() &&
-                '(edited)'}
-            </span>
+    <div className="item pa-tb-20" style={{ marginLeft: depth * 30 }}>
+      <div className="header">
+        <img
+          className="ui avatar image"
+          src="https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png"
+        />
+        <a className="">{chat.user.name}</a>
+        <span className="date">
+          {formatDistance(chat.updatedAt, new Date(), {
+            includeSeconds: true,
+          })}{' '}
+          {chat.updatedAt.getTime() !== chat.createdAt.getTime() && '(edited)'}
+        </span>
+        <i className="ui icon reply" onClick={onClickReply} />
+        <i className="ui icon edit" onClick={onClickEdit} />
+        <i className="ui icon remove" onClick={() => onRemove(chat)} />
+      </div>
+      <div className="description">
+        {chat.links && (
+          <div className="ui link list">
+            {chat.links.map((link) => (
+              <ChatLink link={link} key={link.id} />
+            ))}
           </div>
-          {chat.links &&
-            chat.links.map((link) => <ChatLink link={link} key={link.id} />)}
-          {edit || reply ? (
-            <ChatInputForm
-              onCreate={onSend}
-              onCancel={onCancel}
-              preSetInput={reply ? '' : chat.msg}
-              setInput={setInput}
-              allowEscape={true}
+        )}
+        {edit || reply ? (
+          <ChatInputForm
+            onCreate={onSend}
+            onCancel={onCancel}
+            preSetInput={reply ? '' : chat.msg}
+            setInput={setInput}
+            allowEscape={true}
+          />
+        ) : (
+          <div className="content">
+            <div
+              className="text-with-markdown"
+              dangerouslySetInnerHTML={{
+                __html: emoji.emojify(sanitizeHtml(marked(chat.msg))),
+              }}
             />
-          ) : (
-            <div>
-              <div
-                className="text-with-markdown"
-                dangerouslySetInnerHTML={{
-                  __html: emoji.emojify(sanitizeHtml(marked(chat.msg))),
-                }}
-              />
-              <div className="actions">
-                <a className="edit" onClick={onClickEdit}>
-                  Edit
-                </a>
-                <a className="reply" onClick={onClickReply}>
-                  Reply
-                </a>
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       {chat.children &&
         chat.children.map((chat: Chat) => (
@@ -113,10 +111,11 @@ export default function ChatMessage({
             chat={chat}
             onCreate={onCreate}
             onEdit={onEdit}
+            onRemove={onRemove}
             setInput={setInput}
             depth={depth + 1}
           />
         ))}
-    </>
+    </div>
   );
 }

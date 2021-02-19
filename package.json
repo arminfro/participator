@@ -34,7 +34,6 @@
     "@nestjs/websockets": "^7.6.6",
     "bcrypt": "^5.0.0",
     "class-validator": "^0.13.0",
-    "concurrently": "^5.3.0",
     "date-fns": "^2.16.1",
     "faker": "^5.3.1",
     "link-preview-generator": "^0.0.4",
