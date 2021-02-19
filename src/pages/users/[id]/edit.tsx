@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 
 import User, {
   userEditBooleanAttrs,
-  UserEditBooleanAttrs,
+  UserUpdateToggleAttrs,
 } from '../../../types/user';
 import useUser from '../utils/use-user';
 import Link from 'next/link';
@@ -30,7 +30,7 @@ export default function UserEditForm({ user }: Props): ReactElement {
             stateUser.set.name(e.target.value, true);
           }}
         />
-        {userEditBooleanAttrs.map((attr: UserEditBooleanAttrs) => (
+        {userEditBooleanAttrs.map((attr: UserUpdateToggleAttrs) => (
           <div key={attr} className="ui segment">
             <div className="field">
               <div className="ui toggle checkbox">

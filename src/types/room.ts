@@ -1,4 +1,5 @@
 import Chat from './chat';
+import Question from './question';
 import User from './user';
 
 export interface RoomCreate {
@@ -16,12 +17,13 @@ export interface RoomUpdate {
 
 export default interface Room {
   readonly id: number;
-  readonly name: string;
-  readonly description?: string;
-  readonly openToJoin: boolean;
-  readonly chat?: Chat;
+  name: string;
+  description?: string;
+  openToJoin: boolean;
   readonly members: User[];
   readonly admin: User;
+  readonly chat?: Chat;
+  readonly questions?: Question[];
   readonly createdAt: Date;
   readonly updatedAt: Date;
 }

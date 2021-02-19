@@ -1,4 +1,5 @@
 import Question from './question';
+import User from './user';
 
 export interface AnswerUpdate {
   textAnswer?: string;
@@ -15,6 +16,7 @@ export default interface Answer {
   textAnswer?: string;
   fixAnswer?: string;
   question: Question;
+  user?: User;
   createdAt: Date;
   updatedAt: Date;
 }

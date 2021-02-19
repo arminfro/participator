@@ -1,3 +1,4 @@
+import Link from './link';
 import Room from './room';
 import User from './user';
 
@@ -14,11 +15,12 @@ export interface ChatUpdate {
 
 export default interface Chat {
   readonly id: number;
-  readonly msg: string;
+  msg: string;
   readonly room: Room;
   readonly user: User;
-  readonly parent?: Chat;
+  readonly links: Link[];
   readonly children?: Chat[];
+  readonly parent?: Chat;
   readonly createdAt: Date;
   readonly updatedAt: Date;
 }

@@ -31,10 +31,7 @@ export class Room extends BaseEntity implements RoomModel {
   @Column({ default: false })
   openToJoin!: boolean;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @ManyToMany((type) => User, (user) => user.joinedRooms, {
-    cascade: true,
-  })
+  @ManyToMany(() => User, (user) => user.joinedRooms)
   @JoinTable()
   members: User[];
 

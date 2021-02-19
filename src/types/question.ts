@@ -1,15 +1,19 @@
+import Answer from './answer';
 import Room from './room';
+import User from './user';
 
 export type AnswersFormat = 'free' | 'fix' | 'range';
 
 export default interface Question {
-  id: number;
+  readonly id: number;
   text: string;
-  room: Room;
-  fixAnswers?: FixAnswer[];
-  answersFormat: AnswersFormat;
-  createdAt: Date;
-  updatedAt: Date;
+  readonly answersFormat: AnswersFormat;
+  readonly fixAnswers?: FixAnswer[];
+  readonly room?: Room;
+  readonly user?: User;
+  readonly answers?: Answer[];
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 }
 
 export interface FixAnswer {

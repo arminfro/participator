@@ -1,23 +1,21 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { validate, ValidationError } from 'class-validator';
 import {
+  DeleteResult,
+  FindManyOptions,
+  FindOneOptions,
   Repository,
   UpdateResult,
-  DeleteResult,
-  FindOneOptions,
-  FindManyOptions,
 } from 'typeorm';
-import { validate, ValidationError } from 'class-validator';
-
-import { User } from './user.entity';
 import {
   UserCreate,
   UserUpdate,
   validateUserCreate,
-  validateUserUpdate,
   ValidationErrors,
 } from '../../types/user';
 import { AuthService } from '../auth/auth.service';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
@@ -53,9 +51,6 @@ export class UsersService {
     if (userUpdate.hasHandUp) user.hasHandUp = userUpdate.hasHandUp;
     if (userUpdate.randomGroup) user.randomGroup = userUpdate.randomGroup;
     if (userUpdate.active) user.active = userUpdate.active;
-    await this.validateUser(user, validateUserUpdate(userUpdate));
-    if (userUpdate.pw1 && userUpdate.pw2 && userUpdate.pw1 === userUpdate.pw2)
-      user.password = AuthService.hashPassword(userUpdate.pw1);
     return await this.usersRepository.update(id, user);
   }
 

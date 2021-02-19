@@ -28,8 +28,7 @@ export class User extends BaseEntity implements UserModel {
   @OneToMany(() => Room, (room) => room.admin)
   ownedRooms: Room[];
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @ManyToMany((type) => Room, (room) => room.members)
+  @ManyToMany(() => Room, (room) => room.members)
   joinedRooms: Room[];
 
   @OneToMany(() => Chat, (chat) => chat.user)

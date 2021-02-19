@@ -23,11 +23,11 @@ export class Chat extends BaseEntity implements ChatModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @OneToOne(() => Room, (room) => room.chat)
-  room: Room;
-
   @Column()
   msg!: string;
+
+  @OneToOne(() => Room, (room) => room.chat)
+  room: Room;
 
   @ManyToOne(() => User, (user) => user.chats)
   user: User;

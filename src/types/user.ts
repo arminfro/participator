@@ -1,3 +1,6 @@
+import Answer from './answer';
+import Chat from './chat';
+import Question from './question';
 import Room from './room';
 
 export interface UserCreate {
@@ -6,7 +9,11 @@ export interface UserCreate {
   pw2: string;
 }
 
-export interface UserUpdate extends Partial<UserCreate> {
+export interface UserUpdate extends UserUpdateToggle {
+  name?: string;
+}
+
+export interface UserUpdateToggle {
   hasHandUp?: boolean;
   randomGroup?: boolean;
   active?: boolean;
@@ -20,22 +27,21 @@ export interface UserLogin {
 export default interface User {
   readonly id: number;
   name: string;
+  readonly joinedRooms: Room[];
+  readonly ownedRooms: Room[];
+  readonly chats?: Chat[];
+  readonly questions?: Question[];
+  readonly answers?: Answer[];
   hasHandUp: boolean;
   randomGroup: boolean;
   active: boolean;
-  readonly joinedRooms: Room[];
-  readonly ownedRooms: Room[];
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
 }
 
-// export interface UserModel extends User {
-//   password: string;
-// }
-
-export type UserEditBooleanAttrs = 'hasHandUp' | 'randomGroup' | 'active';
-export type UserEditAttrs = UserEditBooleanAttrs & 'name';
-export const userEditBooleanAttrs: UserEditBooleanAttrs[] = [
+export type UserUpdateAttrs = keyof UserUpdate;
+export type UserUpdateToggleAttrs = keyof UserUpdateToggle;
+export const userEditBooleanAttrs: UserUpdateToggleAttrs[] = [
   'hasHandUp',
   'randomGroup',
   'active',
@@ -55,12 +61,8 @@ export function validateUserCreate(user: UserCreate): ValidationErrors {
 }
 
 export function validateUserUpdate(userUpdate: UserUpdate): ValidationErrors {
-  const errors: string[] = validateUserCreate({
-    name: userUpdate.name,
-    pw1: userUpdate.pw1,
-    pw2: userUpdate.pw2,
-  });
-  return errors;
+  // todo
+  return [];
 }
 
 export function isUser(data: User): data is User {
