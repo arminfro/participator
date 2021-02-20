@@ -1,14 +1,13 @@
-import { isNotEmpty, length } from 'class-validator';
+import { length } from 'class-validator';
 import { Failure, refine, string, Struct, validate } from 'superstruct';
 
-export type ValidationResult<T> = [Failure[] | undefined, T | undefined];
+export type ValidationResult<T> = [Failure[], undefined] | [undefined, T];
 
-export const stringLengthGtTwo = (key: string): Struct<string, null> => {
-  return refine(
-    string(),
-    key,
-    (value) => isNotEmpty(value) && length(value, 2),
-  );
+export const stringMinLength = (
+  minLength: number,
+  key: string,
+): Struct<string, null> => {
+  return refine(string(), key, (value) => length(value, minLength));
 };
 
 export function customValidate<T>(

@@ -4,11 +4,11 @@ import Answer from './answer';
 import Chat from './chat';
 import Question from './question';
 import Room from './room';
-import { stringLengthGtTwo } from './utils.validation';
+import { stringMinLength } from './utils.validation';
 
 export type UserCreate = Infer<typeof UserCreate>;
 export const UserCreate = object({
-  name: stringLengthGtTwo('name'),
+  name: stringMinLength(2, 'name'),
   pws: refine(object({ pw1: string(), pw2: string() }), 'pws', (value) =>
     equals(value.pw1, value.pw2),
   ),
@@ -23,12 +23,12 @@ export const UserUpdateToggle = object({
 
 export type UserUpdate = Partial<Infer<typeof UserUpdate> & UserUpdateToggle>;
 export const UserUpdate = object({
-  name: stringLengthGtTwo('name'),
+  name: stringMinLength(2, 'name'),
 });
 
 export type UserLogin = Infer<typeof UserLogin>;
 export const UserLogin = object({
-  name: stringLengthGtTwo('username'),
+  name: stringMinLength(2, 'username'),
   password: string(),
 });
 

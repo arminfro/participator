@@ -3,6 +3,7 @@ import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import User, { UserCreate } from '../../types/user';
 import { validateUserCreate } from '../../types/user.validation';
 import api from '../utils/api';
+import { useFormValidation } from './utils/hooks/use-form-validation';
 
 interface Props {
   userName?: string;
@@ -18,36 +19,35 @@ export default function UserForm({
   const [name, setName] = useState(userName);
   const [pw1, setPw1] = useState('hi');
   const [pw2, setPw2] = useState('hi');
-  const [formError, setFormError] = useState<string[]>([]);
+
+  const submit = (payload: UserCreate) => {
+    api<User>(
+      edit ? 'PATCH' : 'POST',
+      edit ? `api/users/${userId}` : 'api/users',
+      (newUser) => Router.push(`/users/${newUser.id}`),
+      payload,
+    );
+  };
+
+  const [errorList, onValidSubmit] = useFormValidation(
+    validateUserCreate,
+    submit,
+  );
 
   const userCreate = (): UserCreate => {
     return { name, pws: { pw1, pw2 } };
   };
 
-  const submit = () => {
-    api<User>(
-      edit ? 'PATCH' : 'POST',
-      edit ? `api/users/${userId}` : 'api/users',
-      (newUser) => Router.push(`/users/${newUser.id}`),
-      userCreate(),
-    );
-  };
-
   const onSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    const [errs, validUserCreate] = validateUserCreate(userCreate());
-    if (validUserCreate) {
-      submit();
-    } else {
-      setFormError(errs.map((failure) => failure.message));
-    }
+    onValidSubmit(userCreate());
   };
 
   return (
     <>
       <h2>Join Participator</h2>
       <form className="ui form" onSubmit={onSubmit}>
-        <label>Benutzername</label>
+        <label>Username</label>
         <input
           type="text"
           value={name}
@@ -55,7 +55,7 @@ export default function UserForm({
             setName(e.target.value);
           }}
         />
-        <label>Passwort</label>
+        <label>Password</label>
         <input
           type="text"
           value={pw1}
@@ -63,7 +63,7 @@ export default function UserForm({
             setPw1(e.target.value);
           }}
         />
-        <label>Passwort wiederholen</label>
+        <label>Repeat password</label>
         <input
           type="text"
           value={pw2}
@@ -71,13 +71,7 @@ export default function UserForm({
             setPw2(e.target.value);
           }}
         />
-        {formError.length !== 0 && (
-          <ul className="ui negative message">
-            {formError.map((err: string) => (
-              <li key={err}>{err}</li>
-            ))}
-          </ul>
-        )}
+        {errorList}
         <button className="ui button">Submit</button>
       </form>
     </>
