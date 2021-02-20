@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { ReactElement } from 'react';
-import User, { UserUpdateToggleAttrs } from '../../types/user';
+import User, { UserUpdateToggleKeys } from '../../types/user';
 import useUser from './utils/use-user';
 
 const iconStyles = {
@@ -22,12 +22,12 @@ export interface Props {
 
 export default function UserCard({ user, updateUser }: Props): ReactElement {
   const stateUser = useUser(user);
-  const onToggle = (attr: UserUpdateToggleAttrs) => {
+  const onToggle = (attr: UserUpdateToggleKeys) => {
     const newUser = stateUser.set[attr](!stateUser.get[attr], true);
     updateUser && updateUser(newUser);
   };
 
-  const stylesForIcon = (attr: UserUpdateToggleAttrs) => {
+  const stylesForIcon = (attr: UserUpdateToggleKeys) => {
     const stateStyle = stateUser.get[attr]
       ? onlineColorStyle
       : offlineColorStyle;

@@ -1,8 +1,8 @@
-import React, { ReactElement, useState, SyntheticEvent } from 'react';
 import Router from 'next/router';
-
+import React, { ReactElement, SyntheticEvent, useState } from 'react';
+import User, { UserCreate } from '../../types/user';
+import { validateUserCreate } from '../../types/user.validation';
 import api from '../utils/api';
-import User, { validateUserCreate, UserCreate } from '../../types/user';
 
 interface Props {
   userName?: string;
@@ -21,7 +21,7 @@ export default function UserForm({
   const [formError, setFormError] = useState<string[]>([]);
 
   const userCreate = (): UserCreate => {
-    return { name, pw1, pw2 };
+    return { name, pws: { pw1, pw2 } };
   };
 
   const submit = () => {
@@ -35,11 +35,11 @@ export default function UserForm({
 
   const onSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    const errs = validateUserCreate(userCreate());
-    if (errs.length === 0) {
+    const [errs, validUserCreate] = validateUserCreate(userCreate());
+    if (validUserCreate) {
       submit();
     } else {
-      setFormError(errs);
+      setFormError(errs.map((failure) => failure.message));
     }
   };
 

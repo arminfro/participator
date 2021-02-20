@@ -49,6 +49,7 @@
     "semantic-ui-css": "^2.4.1",
     "socket.io-client": "^2.4.0",
     "sqlite3": "^5.0.1",
+    "superstruct": "^0.14.2",
     "swagger-ui-express": "^4.1.6",
     "tree-model": "^1.0.7",
     "typeorm": "^0.2.30",

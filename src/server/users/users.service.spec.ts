@@ -1,4 +1,3 @@
-import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -59,8 +58,10 @@ describe('UsersService', () => {
       spyOnBuild(user);
       const builtUser = await service.create({
         name: user.name,
-        pw1: 'pw',
-        pw2: 'pw',
+        pws: {
+          pw1: 'pw',
+          pw2: 'pw',
+        },
       });
 
       expect(builtUser).toEqual(user);

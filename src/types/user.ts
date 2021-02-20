@@ -1,28 +1,36 @@
+import { equals } from 'class-validator';
+import { boolean, Infer, object, optional, refine, string } from 'superstruct';
 import Answer from './answer';
 import Chat from './chat';
 import Question from './question';
 import Room from './room';
+import { stringLengthGtTwo } from './utils.validation';
 
-export interface UserCreate {
-  name: string;
-  pw1: string;
-  pw2: string;
-}
+export type UserCreate = Infer<typeof UserCreate>;
+export const UserCreate = object({
+  name: stringLengthGtTwo('name'),
+  pws: refine(object({ pw1: string(), pw2: string() }), 'pws', (value) =>
+    equals(value.pw1, value.pw2),
+  ),
+});
 
-export interface UserUpdate extends UserUpdateToggle {
-  name?: string;
-}
+export type UserUpdateToggle = Partial<Infer<typeof UserUpdateToggle>>;
+export const UserUpdateToggle = object({
+  hasHandUp: optional(boolean()),
+  randomGroup: optional(boolean()),
+  active: optional(boolean()),
+});
 
-export interface UserUpdateToggle {
-  hasHandUp?: boolean;
-  randomGroup?: boolean;
-  active?: boolean;
-}
+export type UserUpdate = Partial<Infer<typeof UserUpdate> & UserUpdateToggle>;
+export const UserUpdate = object({
+  name: stringLengthGtTwo('name'),
+});
 
-export interface UserLogin {
-  username: string;
-  password: string;
-}
+export type UserLogin = Infer<typeof UserLogin>;
+export const UserLogin = object({
+  name: stringLengthGtTwo('username'),
+  password: string(),
+});
 
 export default interface User {
   readonly id: number;
@@ -39,32 +47,9 @@ export default interface User {
   readonly updatedAt?: Date;
 }
 
-export type UserUpdateAttrs = keyof UserUpdate;
-export type UserUpdateToggleAttrs = keyof UserUpdateToggle;
-export const userEditBooleanAttrs: UserUpdateToggleAttrs[] = [
-  'hasHandUp',
-  'randomGroup',
-  'active',
-];
+export type UserUpdateToggleKeys = keyof UserUpdateToggle;
 
-export type ValidationErrors = string[];
-
-export function validateUserCreate(user: UserCreate): ValidationErrors {
-  const errors: string[] = [];
-  if (user.pw1 !== user.pw2) {
-    errors.push('Passwords not identical');
-  }
-  if (user.name === '') {
-    errors.push('Username empty');
-  }
-  return errors;
-}
-
-export function validateUserUpdate(userUpdate: UserUpdate): ValidationErrors {
-  // todo
-  return [];
-}
-
+// todo, implement User as Struct and return is()
 export function isUser(data: User): data is User {
   return (
     data instanceof Object &&

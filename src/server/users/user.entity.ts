@@ -1,3 +1,4 @@
+import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -20,6 +21,7 @@ export class User extends BaseEntity implements UserModel {
   id!: number;
 
   @Column({ unique: true })
+  @IsNotEmpty()
   name!: string;
 
   @Column()
@@ -41,12 +43,18 @@ export class User extends BaseEntity implements UserModel {
   answers: Answer[];
 
   @Column({ default: false })
+  @IsBoolean()
+  @IsOptional()
   hasHandUp!: boolean;
 
   @Column({ default: false })
+  @IsBoolean()
+  @IsOptional()
   randomGroup!: boolean;
 
   @Column({ default: true })
+  @IsBoolean()
+  @IsOptional()
   active!: boolean;
 
   @CreateDateColumn()

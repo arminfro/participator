@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { validate, ValidationError } from 'class-validator';
+import { validate } from 'class-validator';
+import { Failure } from 'superstruct';
 import {
   DeleteResult,
   FindManyOptions,
@@ -8,12 +9,9 @@ import {
   Repository,
   UpdateResult,
 } from 'typeorm';
-import {
-  UserCreate,
-  UserUpdate,
-  validateUserCreate,
-  ValidationErrors,
-} from '../../types/user';
+
+import { UserCreate, UserUpdate } from '../../types/user';
+import { validateUserCreate } from '../../types/user.validation';
 import { AuthService } from '../auth/auth.service';
 import { User } from './user.entity';
 
@@ -36,7 +34,7 @@ export class UsersService {
 
   async create(userCreate: UserCreate): Promise<User | never> {
     const user = await this.build(userCreate);
-    this.validateUser(user, validateUserCreate(userCreate));
+    this.validateUser(user, validateUserCreate(userCreate)[0] || []);
     return await this.usersRepository.save(user);
   }
 
@@ -68,14 +66,14 @@ export class UsersService {
 
   private async validateUser(
     user: User,
-    errorsFromDto: ValidationErrors,
+    failures: Failure[],
   ): Promise<void | never> {
     const validationErrors = user ? await validate(user) : [];
-    const errorsClassValidator = validationErrors.map((err: ValidationError) =>
-      err.toString(),
-    );
 
-    const errors = [...errorsFromDto, ...errorsClassValidator];
+    const errors = [
+      ...failures.map((failure) => failure.message),
+      ...validationErrors.map((err) => err.toString(false)),
+    ];
     console.debug('user create', user, errors.join('. '));
 
     if (errors.length > 0 || !user) {
@@ -87,7 +85,7 @@ export class UsersService {
     const user = new User();
     if (user) {
       user.name = userCreate.name;
-      user.password = AuthService.hashPassword(userCreate.pw1);
+      user.password = AuthService.hashPassword(userCreate.pws.pw1);
       return user;
     } else {
       console.error('Error in build', userCreate);

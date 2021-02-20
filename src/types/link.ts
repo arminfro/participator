@@ -14,11 +14,11 @@ export interface LinkUpdate {
 export default interface Link {
   id: number;
   title: string;
-  description: string;
+  description?: string;
   domain: string;
-  imgUrl: string;
+  imgUrl?: string;
   url: string;
-  chat: Chat;
+  readonly chat: Chat;
   createdAt: Date;
   updatedAt: Date;
 }

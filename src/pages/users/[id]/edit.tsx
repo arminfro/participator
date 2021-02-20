@@ -1,14 +1,10 @@
-import React, { ReactElement } from 'react';
-
-import User, {
-  userEditBooleanAttrs,
-  UserUpdateToggleAttrs,
-} from '../../../types/user';
-import useUser from '../utils/use-user';
-import Link from 'next/link';
 import { NextPageContext } from 'next';
-import getInitialProps from '../../utils/get-initial-props';
+import Link from 'next/link';
+import React, { ReactElement } from 'react';
+import User, { UserUpdateToggleKeys } from '../../../types/user';
 import api from '../../utils/api';
+import getInitialProps from '../../utils/get-initial-props';
+import useUser from '../utils/use-user';
 
 interface Props {
   user: User;
@@ -30,24 +26,28 @@ export default function UserEditForm({ user }: Props): ReactElement {
             stateUser.set.name(e.target.value, true);
           }}
         />
-        {userEditBooleanAttrs.map((attr: UserUpdateToggleAttrs) => (
-          <div key={attr} className="ui segment">
-            <div className="field">
-              <div className="ui toggle checkbox">
-                <input
-                  type="checkbox"
-                  onChange={(e) => stateUser.set[attr](e.target.checked, true)}
-                  checked={stateUser.get[attr]}
-                />
-                <label>{attr}</label>
+        {['hasHandUp', 'randomGroup', 'active'].map(
+          (attr: UserUpdateToggleKeys) => (
+            <div key={attr} className="ui segment">
+              <div className="field">
+                <div className="ui toggle checkbox">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      stateUser.set[attr](e.target.checked, true)
+                    }
+                    checked={stateUser.get[attr]}
+                  />
+                  <label>{attr}</label>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ),
+        )}
         {stateUser.get.validationErrors.length !== 0 && (
           <ul className="ui negative message">
-            {stateUser.get.validationErrors.map((err: string) => (
-              <li key={err}>{err}</li>
+            {stateUser.get.validationErrors.map((failure) => (
+              <li key={failure.key}>{failure.message}</li>
             ))}
           </ul>
         )}

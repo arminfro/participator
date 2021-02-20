@@ -1,11 +1,7 @@
-import { useState, Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { Failure } from 'superstruct';
 import Room from '../../../types/room';
-
-import User, {
-  UserUpdate,
-  validateUserUpdate,
-  ValidationErrors,
-} from '../../../types/user';
+import User, { UserUpdate } from '../../../types/user';
 import api from '../../utils/api';
 
 type UseUserSetterCallback = (data: User) => void;
@@ -20,7 +16,7 @@ interface UseUser {
     joinedRooms: Room[];
     ownedRooms: Room[];
     getUser: () => User;
-    validationErrors: ValidationErrors;
+    validationErrors: Failure[];
   };
   set: {
     name: (
@@ -53,7 +49,7 @@ export default function useUser(user: User, withValidation = false): UseUser {
   const [active, setActive] = useState(user.active);
   const [joinedRooms] = useState(user.joinedRooms);
   const [ownedRooms] = useState(user.ownedRooms);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [validationErrors, setValidationErrors] = useState<Failure[]>([]);
 
   const getUser = (): User => {
     return {
@@ -89,11 +85,12 @@ export default function useUser(user: User, withValidation = false): UseUser {
     callback: UseUserSetterCallback,
   ): User => {
     const newUser = buildNewUser(attr, newValue);
-    const errors: ValidationErrors = validateUserUpdate(getUser());
+    const errors: Failure[] = []; //validateUserCreate() || []; // todo validateUserUpdate(getUser());
 
     if (errors.length === 0) {
       setter(newValue);
-      sync && remoteUpdate(newUser.id, { [attr]: newValue }, callback);
+      sync &&
+        remoteUpdate(newUser.id, { [attr]: newValue } as UserUpdate, callback);
       return newUser;
     } else {
       console.error(errors);
