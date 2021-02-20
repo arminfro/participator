@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import User, { isUser } from '../../types/user';
+import { User, isUser } from '../../types/user';
 import api from '../utils/api';
 import { useStore } from '../utils/store/context';
 

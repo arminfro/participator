@@ -1,10 +1,20 @@
 import { equals } from 'class-validator';
-import { boolean, Infer, object, optional, refine, string } from 'superstruct';
-import Answer from './answer';
-import Chat from './chat';
-import Question from './question';
-import Room from './room';
-import { stringMinLength } from './utils.validation';
+import {
+  any,
+  array,
+  boolean,
+  date,
+  define,
+  Infer,
+  is,
+  number,
+  object,
+  optional,
+  refine,
+  string,
+} from 'superstruct';
+import { RoomCreateStruct } from './room';
+import { stringMinLength, structs } from './utils.validation';
 
 export type UserCreate = Infer<typeof UserCreate>;
 export const UserCreate = object({
@@ -15,6 +25,7 @@ export const UserCreate = object({
 });
 
 export type UserUpdateToggle = Partial<Infer<typeof UserUpdateToggle>>;
+export type UserUpdateToggleKeys = keyof UserUpdateToggle;
 export const UserUpdateToggle = object({
   hasHandUp: optional(boolean()),
   randomGroup: optional(boolean()),
@@ -28,33 +39,26 @@ export const UserUpdate = object({
 
 export type UserLogin = Infer<typeof UserLogin>;
 export const UserLogin = object({
-  name: stringMinLength(2, 'username'),
+  username: stringMinLength(2, 'username'),
   password: string(),
 });
 
-export default interface User {
-  readonly id: number;
-  name: string;
-  readonly joinedRooms: Room[];
-  readonly ownedRooms: Room[];
-  readonly chats?: Chat[];
-  readonly questions?: Question[];
-  readonly answers?: Answer[];
-  hasHandUp: boolean;
-  randomGroup: boolean;
-  active: boolean;
-  readonly createdAt?: Date;
-  readonly updatedAt?: Date;
-}
+export type User = Infer<typeof User>;
+export const User = object({
+  id: number(),
+  name: stringMinLength(2, 'name'),
+  joinedRooms: optional(array(RoomCreateStruct)),
+  ownedRooms: optional(array(RoomCreateStruct)),
+  chats: optional(array(any())),
+  questions: optional(array(any())),
+  answers: optional(array(any())),
+  hasHandUp: boolean(),
+  randomGroup: boolean(),
+  active: boolean(),
+  createdAt: optional(date()),
+  updatedAt: optional(date()),
+});
 
-export type UserUpdateToggleKeys = keyof UserUpdateToggle;
-
-// todo, implement User as Struct and return is()
-export function isUser(data: User): data is User {
-  return (
-    data instanceof Object &&
-    (['id', 'name'] as Array<keyof User>).every(
-      (attribute) => (data as User)[attribute],
-    )
-  );
+export function isUser(user: User): user is User {
+  return is(user, User);
 }

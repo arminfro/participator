@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import UserModel from '../../types/user';
+import { User as UserModel } from '../../types/user';
 import { Answer } from '../answers/answer.entity';
 import { Chat } from '../chats/chat.entity';
 import { Question } from '../questions/question.entity';

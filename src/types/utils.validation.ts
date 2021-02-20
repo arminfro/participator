@@ -1,5 +1,14 @@
 import { length } from 'class-validator';
-import { Failure, refine, string, Struct, validate } from 'superstruct';
+import {
+  define,
+  Failure,
+  is,
+  refine,
+  string,
+  Struct,
+  validate,
+} from 'superstruct';
+import { User } from './user';
 
 export type ValidationResult<T> = [Failure[], undefined] | [undefined, T];
 
@@ -23,3 +32,7 @@ export function customValidate<T>(
     return [undefined, validModel];
   }
 }
+
+export const structs = {
+  user: define('User', (value) => is(value, User)),
+};

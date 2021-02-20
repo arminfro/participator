@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { ReactElement } from 'react';
-import User, { UserUpdateToggleKeys } from '../../types/user';
+import { User, UserUpdateToggleKeys } from '../../types/user';
 import useUser from './utils/use-user';
 
 const iconStyles = {

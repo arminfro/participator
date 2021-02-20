@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { ReactElement, useState, SyntheticEvent } from 'react';
-import User from '../types/user';
+import { User } from '../types/user';
 import api from './utils/api';
 import { useStore } from './utils/store/context';
 import { setToken } from './utils/token';

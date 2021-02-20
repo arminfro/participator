@@ -1,6 +1,6 @@
 import Link from './link';
 import Room from './room';
-import User from './user';
+import { User } from './user';
 
 export interface ChatCreate {
   parentId?: number;

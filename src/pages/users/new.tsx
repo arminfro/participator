@@ -1,6 +1,6 @@
 import Router from 'next/router';
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
-import User, { UserCreate } from '../../types/user';
+import { User, UserCreate } from '../../types/user';
 import { validateUserCreate } from '../../types/user.validation';
 import api from '../utils/api';
 import { useFormValidation } from './utils/hooks/use-form-validation';

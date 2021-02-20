@@ -4,7 +4,7 @@ import { NextService } from './nextjs/next.service';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { AccessToken } from './auth/auth.service';
-import User from '../types/user';
+import { User } from '../types/user';
 import { UsersService } from './users/users.service';
 
 @Controller()

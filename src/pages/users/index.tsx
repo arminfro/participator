@@ -2,7 +2,7 @@ import React, { useState, ReactElement } from 'react';
 
 import UserCard from './card';
 import UserFilterCtrl from './filter-ctrl';
-import User from '../../types/user';
+import { User } from '../../types/user';
 import { NextPageContext } from 'next';
 import api from '../utils/api';
 import getInitialProps from '../utils/get-initial-props';

@@ -1,5 +1,5 @@
 import Question from './question';
-import User from './user';
+import { User } from './user';
 
 export interface AnswerUpdate {
   textAnswer?: string;

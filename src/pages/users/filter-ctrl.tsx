@@ -4,7 +4,7 @@ import React, {
   ChangeEvent,
   SyntheticEvent,
 } from 'react';
-import User from '../../types/user';
+import { User } from '../../types/user';
 import { UserFilter } from './index';
 
 function useInput(

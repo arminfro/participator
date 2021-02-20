@@ -1,5 +1,4 @@
 import {
-  any,
   boolean,
   define,
   Infer,
@@ -10,22 +9,23 @@ import {
 } from 'superstruct';
 import Chat from './chat';
 import Question from './question';
-import User from './user';
-import { stringMinLength } from './utils.validation';
+import { User } from './user';
+import { stringMinLength, structs } from './utils.validation';
 
-const RoomCreateStruct = define('RoomCreate', (value) => is(value, RoomCreate));
+export const RoomCreateStruct = define('RoomCreate', (value) =>
+  is(value, RoomCreate));
 export type RoomCreate = Infer<typeof RoomCreate>;
 export const RoomCreate = object({
   name: stringMinLength(3, 'name'),
   description: optional(string()),
   openToJoin: boolean(),
-  admin: any(),
+  admin: structs.user,
 });
 
 export type RoomUpdate = Partial<Infer<typeof RoomUpdate>>;
 export const RoomUpdate = object({
-  addMember: optional(any()),
-  removeMember: optional(any()),
+  addMember: optional(structs.user),
+  removeMember: optional(structs.user),
   updateAttrs: optional(RoomCreateStruct),
 });
 

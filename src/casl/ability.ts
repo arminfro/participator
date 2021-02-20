@@ -1,6 +1,6 @@
 import { Ability, AbilityBuilder, AbilityClass } from '@casl/ability';
 import Room from '../types/room';
-import User, { isUser } from '../types/user';
+import { User, isUser } from '../types/user';
 import { Action } from './action';
 
 type Subjects = User | 'User' | Room | 'Room' | 'all';

@@ -7,7 +7,7 @@ import Router from 'next/router';
 import api from '../../utils/api';
 import { NextPageContext } from 'next';
 import getInitialProps from '../../utils/get-initial-props';
-import User from '../../../types/user';
+import { User } from '../../../types/user';
 
 interface Props {
   user: User;

@@ -1,7 +1,7 @@
 import { NextPageContext } from 'next';
 import Link from 'next/link';
 import React, { ReactElement } from 'react';
-import User, { UserUpdateToggleKeys } from '../../../types/user';
+import { User, UserUpdateToggleKeys } from '../../../types/user';
 import api from '../../utils/api';
 import getInitialProps from '../../utils/get-initial-props';
 import useUser from '../utils/use-user';

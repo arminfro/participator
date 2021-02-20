@@ -1,6 +1,6 @@
 import Answer from './answer';
 import Room from './room';
-import User from './user';
+import { User } from './user';
 
 export type AnswersFormat = 'free' | 'fix' | 'range';
 

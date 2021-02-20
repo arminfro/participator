@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Failure } from 'superstruct';
 import Room from '../../../types/room';
-import User, { UserUpdate } from '../../../types/user';
+import { User, UserUpdate } from '../../../types/user';
 import api from '../../utils/api';
 
 type UseUserSetterCallback = (data: User) => void;
@@ -55,11 +55,16 @@ export default function useUser(user: User, withValidation = false): UseUser {
     return {
       id: user.id,
       name,
+      joinedRooms,
+      ownedRooms,
+      chats: [],
+      questions: [],
+      answers: [],
       hasHandUp,
       randomGroup,
       active,
-      joinedRooms,
-      ownedRooms,
+      createdAt: null,
+      updatedAt: null,
     };
   };
 
