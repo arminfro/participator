@@ -1,6 +1,6 @@
 import { Struct } from 'superstruct';
 import { UserCreate, UserLogin, UserUpdate, UserUpdateToggle } from './user';
-import { customValidate, ValidationResult } from './utils.validation';
+import { customValidate, ValidationResult } from './utils';
 
 export function validateUserCreate(
   userCreate: UserCreate,

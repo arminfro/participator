@@ -12,7 +12,7 @@ import {
   TreeParent,
   UpdateDateColumn,
 } from 'typeorm';
-import ChatModel from '../../types/chat';
+import { Chat as ChatModel } from '../../types/chat';
 import { Link } from '../links/link.entity';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';

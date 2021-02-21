@@ -5,7 +5,7 @@ import React, {
   SyntheticEvent,
   useState,
 } from 'react';
-import Room, { JoinConditions, RoomCreate, RoomUpdate } from '../../types/room';
+import { Room, JoinConditions, RoomCreate, RoomUpdate } from '../../types/room';
 import {
   validateRoomCreate,
   validateRoomUpdate,

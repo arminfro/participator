@@ -12,7 +12,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import RoomModel from '../../types/room';
+import { Room as RoomModel } from '../../types/room';
 import { Chat } from '../chats/chat.entity';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
@@ -26,7 +26,7 @@ export class Room extends BaseEntity implements RoomModel {
   name!: string;
 
   @Column({ default: '' })
-  description?: string;
+  description: string;
 
   @Column({ default: false })
   openToJoin!: boolean;

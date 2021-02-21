@@ -1,16 +1,20 @@
 import {
+  any,
+  array,
   boolean,
+  date,
   define,
   Infer,
   is,
+  lazy,
+  number,
   object,
   optional,
   string,
 } from 'superstruct';
-import Chat from './chat';
-import Question from './question';
-import { User } from './user';
-import { stringMinLength, structs } from './utils.validation';
+import { ChatStruct } from './structs/chat.struct';
+import { UserStruct } from './structs/user.struct';
+import { stringMinLength } from './utils';
 
 export const RoomCreateStruct = define('RoomCreate', (value) =>
   is(value, RoomCreate));
@@ -19,28 +23,30 @@ export const RoomCreate = object({
   name: stringMinLength(3, 'name'),
   description: optional(string()),
   openToJoin: boolean(),
-  admin: structs.user,
+  admin: UserStruct,
 });
 
 export type RoomUpdate = Partial<Infer<typeof RoomUpdate>>;
 export const RoomUpdate = object({
-  addMember: optional(structs.user),
-  removeMember: optional(structs.user),
+  addMember: optional(UserStruct),
+  removeMember: optional(UserStruct),
   updateAttrs: optional(RoomCreateStruct),
 });
 
-export default interface Room {
-  readonly id: number;
-  name: string;
-  description?: string;
-  openToJoin: boolean;
-  readonly members: User[];
-  readonly admin: User;
-  readonly chat?: Chat;
-  readonly questions?: Question[];
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-}
+export type Room = Infer<typeof Room>;
+export const Room = object({
+  id: number(),
+  name: string(),
+  description: optional(string()),
+  openToJoin: boolean(),
+  members: optional(array(UserStruct)),
+  admin: optional(UserStruct),
+  // todo, without lazy -> ReferenceError: Cannot access 'Chat' before initialization
+  chat: lazy(() => optional(ChatStruct)),
+  questions: optional(array(any())),
+  createdAt: optional(date()),
+  updatedAt: optional(date()),
+});
 
 export enum JoinConditions {
   Open = 'open-to-join',

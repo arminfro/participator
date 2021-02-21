@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import Chat, { Events } from '../../types/chat';
+import { Chat, Events } from '../../types/chat';
 import {
   addChild,
   removeChild,

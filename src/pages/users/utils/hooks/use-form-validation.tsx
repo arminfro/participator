@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import { ValidationResult } from '../../../../types/utils.validation';
+import { ValidationResult } from '../../../../types/utils';
 
 export function useFormValidation<T>(
   validatorFunction: (model: T) => ValidationResult<T>,

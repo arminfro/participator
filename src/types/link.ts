@@ -1,4 +1,4 @@
-import Chat from './chat';
+import { Chat } from './chat';
 import { User } from './user';
 
 export interface LinkCreate {

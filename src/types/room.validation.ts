@@ -1,6 +1,6 @@
 import { Struct } from 'superstruct';
 import { RoomCreate, RoomUpdate } from './room';
-import { customValidate, ValidationResult } from './utils.validation';
+import { customValidate, ValidationResult } from './utils';
 
 export function validateRoomCreate(
   room: RoomCreate,

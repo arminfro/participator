@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { SyntheticEvent } from 'react';
-import Room, { RoomUpdate } from '../../types/room';
+import { Room, RoomUpdate } from '../../types/room';
 import api from '../utils/api';
 import { useStore } from '../utils/store/context';
 

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
 import { Socket } from 'socket.io';
-import Chat, { ChatCreate, ChatUpdate, Events } from '../../types/chat';
+import { Chat, ChatCreate, ChatUpdate, Events } from '../../types/chat';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
 import { ChatsService } from './chats.service';

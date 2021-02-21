@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Failure } from 'superstruct';
-import Room from '../../../types/room';
+import { Room } from '../../../types/room';
 import { User, UserUpdate } from '../../../types/user';
 import api from '../../utils/api';
 

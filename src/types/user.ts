@@ -4,7 +4,6 @@ import {
   array,
   boolean,
   date,
-  define,
   Infer,
   is,
   number,
@@ -13,8 +12,9 @@ import {
   refine,
   string,
 } from 'superstruct';
-import { RoomCreateStruct } from './room';
-import { stringMinLength, structs } from './utils.validation';
+import { ChatStruct } from './structs/chat.struct';
+import { RoomStruct } from './structs/room.struct';
+import { stringMinLength } from './utils';
 
 export type UserCreate = Infer<typeof UserCreate>;
 export const UserCreate = object({
@@ -47,9 +47,9 @@ export type User = Infer<typeof User>;
 export const User = object({
   id: number(),
   name: stringMinLength(2, 'name'),
-  joinedRooms: optional(array(RoomCreateStruct)),
-  ownedRooms: optional(array(RoomCreateStruct)),
-  chats: optional(array(any())),
+  joinedRooms: optional(array(RoomStruct)),
+  ownedRooms: optional(array(RoomStruct)),
+  chats: optional(array(ChatStruct)),
   questions: optional(array(any())),
   answers: optional(array(any())),
   hasHandUp: boolean(),

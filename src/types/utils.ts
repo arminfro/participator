@@ -1,14 +1,5 @@
 import { length } from 'class-validator';
-import {
-  define,
-  Failure,
-  is,
-  refine,
-  string,
-  Struct,
-  validate,
-} from 'superstruct';
-import { User } from './user';
+import { Failure, refine, string, Struct, validate } from 'superstruct';
 
 export type ValidationResult<T> = [Failure[], undefined] | [undefined, T];
 
@@ -33,6 +24,5 @@ export function customValidate<T>(
   }
 }
 
-export const structs = {
-  user: define('User', (value) => is(value, User)),
-};
+// could be replaced by https://github.com/piotrwitek/utility-types
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
