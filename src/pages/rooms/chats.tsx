@@ -13,7 +13,7 @@ import {
 } from '../../utils/transform-tree';
 import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
-import { useSocket } from '../utils/useSocket';
+import { useSocket } from '../utils/hooks/use-socket';
 
 interface Props {
   roomId: number;

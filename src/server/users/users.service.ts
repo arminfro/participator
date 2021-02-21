@@ -38,18 +38,16 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
-  async update(
-    id: number,
-    userUpdate: UserUpdate,
-  ): Promise<UpdateResult | never> {
+  async update(id: number, userUpdate: UserUpdate): Promise<User> {
     const user = await this.findOne(id);
-    console.log('before', user);
 
     if (userUpdate.name) user.name = userUpdate.name;
-    if (userUpdate.hasHandUp) user.hasHandUp = userUpdate.hasHandUp;
-    if (userUpdate.randomGroup) user.randomGroup = userUpdate.randomGroup;
-    if (userUpdate.active) user.active = userUpdate.active;
-    return await this.usersRepository.update(id, user);
+    if (userUpdate.hasHandUp !== undefined)
+      user.hasHandUp = userUpdate.hasHandUp;
+    if (userUpdate.randomGroup !== undefined)
+      user.randomGroup = userUpdate.randomGroup;
+    if (userUpdate.active !== undefined) user.active = userUpdate.active;
+    return await user.save();
   }
 
   async delete(id: number): Promise<DeleteResult> {

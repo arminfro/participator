@@ -4,14 +4,14 @@ import React, { ReactElement } from 'react';
 import { User, UserUpdateToggleKeys } from '../../../types/user';
 import api from '../../utils/api';
 import getInitialProps from '../../utils/get-initial-props';
-import useUser from '../utils/use-user';
+import { useUserUpdate } from '../utils/hooks/use-user';
 
 interface Props {
   user: User;
 }
 
 export default function UserEditForm({ user }: Props): ReactElement {
-  const stateUser = useUser(user);
+  const stateUser = useUserUpdate(user.id, user, true, true);
 
   return (
     <div className="ui segment">
@@ -44,9 +44,9 @@ export default function UserEditForm({ user }: Props): ReactElement {
             </div>
           ),
         )}
-        {stateUser.get.validationErrors.length !== 0 && (
+        {stateUser.validationErrors.length !== 0 && (
           <ul className="ui negative message">
-            {stateUser.get.validationErrors.map((failure) => (
+            {stateUser.validationErrors.map((failure) => (
               <li key={failure.key}>{failure.message}</li>
             ))}
           </ul>
