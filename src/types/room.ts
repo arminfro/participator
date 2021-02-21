@@ -3,46 +3,61 @@ import {
   array,
   boolean,
   date,
-  define,
-  Infer,
-  is,
-  lazy,
+  Describe,
   number,
   object,
   optional,
   string,
 } from 'superstruct';
-import { ChatStruct } from './structs/chat.struct';
-import { UserStruct } from './structs/user.struct';
+import { Chat } from './chat';
+import Question from './question';
+import { User } from './user';
 import { stringMinLength } from './utils';
 
-export const RoomCreateStruct = define('RoomCreate', (value) =>
-  is(value, RoomCreate));
-export type RoomCreate = Infer<typeof RoomCreate>;
-export const RoomCreate = object({
+export type RoomCreate = {
+  name: string;
+  description?: string;
+  openToJoin: boolean;
+  admin?: User;
+};
+export const RoomCreate: Describe<RoomCreate> = object({
   name: stringMinLength(3, 'name'),
   description: optional(string()),
   openToJoin: boolean(),
-  admin: UserStruct,
+  admin: optional(User),
 });
 
-export type RoomUpdate = Partial<Infer<typeof RoomUpdate>>;
-export const RoomUpdate = object({
-  addMember: optional(UserStruct),
-  removeMember: optional(UserStruct),
-  updateAttrs: optional(RoomCreateStruct),
+export type RoomUpdate = {
+  addMember?: User;
+  removeMember?: User;
+  updateAttrs?: RoomCreate;
+};
+export const RoomUpdate: Describe<RoomUpdate> = object({
+  addMember: optional(User),
+  removeMember: optional(User),
+  updateAttrs: optional(RoomCreate),
 });
 
-export type Room = Infer<typeof Room>;
-export const Room = object({
+export type Room = {
+  readonly id: number;
+  name: string;
+  description?: string;
+  openToJoin: boolean;
+  readonly members?: User[];
+  readonly admin?: User;
+  readonly chat?: Chat;
+  readonly questions?: Question[];
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
+};
+export const Room: Describe<Room> = object({
   id: number(),
   name: string(),
   description: optional(string()),
   openToJoin: boolean(),
-  members: optional(array(UserStruct)),
-  admin: optional(UserStruct),
-  // todo, without lazy -> ReferenceError: Cannot access 'Chat' before initialization
-  chat: lazy(() => optional(ChatStruct)),
+  members: optional(array(any())),
+  admin: optional(any()),
+  chat: optional(any()),
   questions: optional(array(any())),
   createdAt: optional(date()),
   updatedAt: optional(date()),

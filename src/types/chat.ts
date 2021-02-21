@@ -2,16 +2,16 @@ import {
   any,
   array,
   date,
+  Describe,
   Infer,
-  lazy,
   number,
   object,
   optional,
   string,
 } from 'superstruct';
-import { ChatStruct } from './structs/chat.struct';
-import { RoomStruct } from './structs/room.struct';
-import { UserStruct } from './structs/user.struct';
+import Link from './link';
+import { Room } from './room';
+import { User } from './user';
 import { PartialBy } from './utils';
 
 export type ChatCreate = PartialBy<Infer<typeof ChatCreate>, 'parentId'>;
@@ -27,15 +27,25 @@ export const ChatUpdate = object({
   msg: string(),
 });
 
-export type Chat = Infer<typeof Chat>;
-export const Chat = object({
+export type Chat = {
+  readonly id: number;
+  msg: string;
+  readonly room?: Room;
+  readonly user?: User;
+  readonly links?: Link[];
+  readonly children?: Chat[];
+  readonly parent?: Chat;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
+};
+export const Chat: Describe<Chat> = object({
   id: number(),
   msg: string(),
-  room: RoomStruct,
-  user: UserStruct,
+  room: optional(any()),
+  user: optional(any()),
   links: optional(array(any())),
-  children: lazy(() => optional(array(ChatStruct))),
-  parent: lazy(() => optional(ChatStruct)),
+  children: optional(array(any())),
+  parent: optional(any()),
   createdAt: optional(date()),
   updatedAt: optional(date()),
 });

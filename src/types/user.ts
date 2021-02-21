@@ -4,6 +4,7 @@ import {
   array,
   boolean,
   date,
+  Describe,
   Infer,
   is,
   number,
@@ -12,8 +13,10 @@ import {
   refine,
   string,
 } from 'superstruct';
-import { ChatStruct } from './structs/chat.struct';
-import { RoomStruct } from './structs/room.struct';
+import Answer from './answer';
+import { Chat } from './chat';
+import Question from './question';
+import { Room } from './room';
 import { stringMinLength } from './utils';
 
 export type UserCreate = Infer<typeof UserCreate>;
@@ -43,13 +46,26 @@ export const UserLogin = object({
   password: string(),
 });
 
-export type User = Infer<typeof User>;
-export const User = object({
+export type User = {
+  readonly id: number;
+  name: string;
+  readonly joinedRooms?: Room[];
+  readonly ownedRooms?: Room[];
+  readonly chats?: Chat[];
+  readonly questions?: Question[];
+  readonly answers?: Answer[];
+  hasHandUp: boolean;
+  randomGroup: boolean;
+  active: boolean;
+  readonly createdAt?: Date;
+  readonly updatedAt?: Date;
+};
+export const User: Describe<User> = object({
   id: number(),
   name: stringMinLength(2, 'name'),
-  joinedRooms: optional(array(RoomStruct)),
-  ownedRooms: optional(array(RoomStruct)),
-  chats: optional(array(ChatStruct)),
+  joinedRooms: optional(array(any())),
+  ownedRooms: optional(array(any())),
+  chats: optional(array(any())),
   questions: optional(array(any())),
   answers: optional(array(any())),
   hasHandUp: boolean(),
