@@ -32,6 +32,11 @@ export default function ChatMessage({
   const [edit, setEdit] = useState<boolean>(false);
   const [reply, setReply] = useState<boolean>(false);
 
+  marked.setOptions({
+    breaks: true,
+  gfm: true
+});
+
   const onClickEdit = (e: React.MouseEvent<HTMLAnchorElement>): void => {
     setEdit(true);
   };
@@ -68,10 +73,10 @@ export default function ChatMessage({
         />
         <a className="">{chat.user.name}</a>
         <span className="date">
-          {formatDistance(chat.updatedAt, new Date(), {
+        {' '}{formatDistance(chat.updatedAt, new Date(), {
             includeSeconds: true,
-          })}{' '}
-          {chat.updatedAt.getTime() !== chat.createdAt.getTime() && '(edited)'}
+          })}{' ago '}
+          {chat.updatedAt.getTime() !== chat.createdAt.getTime() && '(edited) '}
         </span>
         <i className="ui icon reply" onClick={onClickReply} />
         <i className="ui icon edit" onClick={onClickEdit} />
