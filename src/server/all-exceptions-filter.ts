@@ -21,8 +21,12 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       reqUrl: req.url,
     };
 
+    const contentType = req.headers['content-type'];
+
     console.error('HTTP Error', data.status, data.message, data.reqUrl);
 
-    this.next.render(`/http-exception`, data, req, res);
+    /\/json/.test(contentType)
+      ? res.send(data)
+      : this.next.render(`/http-exception`, data, req, res);
   }
 }
