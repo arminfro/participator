@@ -12,7 +12,7 @@ type UseStruct<T> = {
   set: {
     [P in keyof T]: (
       newAttr: T[P],
-      sync: boolean,
+      sync?: boolean,
       callback?: SetCallback<T>,
     ) => T;
   };
@@ -45,7 +45,7 @@ export function useStruct<T>(
         acc.get[key] = structArg[key][0];
         acc.set[key] = (
           newValue,
-          sync = false,
+          sync = !!remoteUpdate,
           callback = (): void => {
             /* no-op */
           },
@@ -77,7 +77,7 @@ export function useStruct<T>(
   const genericSetter = (
     key: StringKeys<T>,
     newValue: Values<T>,
-    sync = true,
+    sync,
     setter: Dispatch<SetStateAction<Values<T>>>,
     callback: SetCallback<T>,
   ): T => {

@@ -76,6 +76,25 @@ export class PoliciesGuard implements CanActivate {
     }
   }
 
+  // todo, doesn't work to call with:
+  // const requestedSubjects = {
+  //   user: await this.getRequestedEntity('users', req.url, User),
+  //   room: await this.getRequestedEntity('rooms', req.url, Room),
+  // } as RequestedSubjects;
+  //
+  // private async getRequestedEntity(
+  //   pathName: string,
+  //   name: string,
+  //   entity: any,
+  // ): Promise<User | Room | undefined> {
+  //   const regex = new RegExp('/(?<=' + pathName + '/)d+/');
+  //   const requestedEntityId = pathName.match(regex);
+  //   if (requestedEntityId) {
+  //     console.log('requestedEntityId', requestedEntityId);
+  //     return await getManager().findOne(entity, +requestedEntityId);
+  //   }
+  // }
+
   private execPolicyHandler(
     handler: PolicyHandler,
     ability: AppAbility,
