@@ -3,7 +3,7 @@ import { Room } from '../types/room';
 import { User, isUser } from '../types/user';
 import { Action } from './action';
 
-type Subjects = User | 'User' | Room | 'Room' | 'all';
+export type Subjects = User | 'User' | Room | 'Room' | 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
 

@@ -10,7 +10,6 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { AppAbility } from '../../casl/ability';
 import { Action } from '../../casl/action';
 import { UserCreate } from '../../types/user';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -24,8 +23,7 @@ export class UsersApiController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @UsePolicy((ability: AppAbility) => ability.can(Action.Read, 'User'))
+  @UsePolicy((ability) => ability.can(Action.Read, 'User'))
   public async index(): Promise<User[]> {
     return await this.usersService.findAll({
       relations: ['ownedRooms', 'joinedRooms'],
@@ -39,8 +37,7 @@ export class UsersApiController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @UsePolicy((ability: AppAbility) => ability.can(Action.Read, 'User'))
+  @UsePolicy((ability, subjects) => ability.can(Action.Read, subjects.user))
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<User | undefined> {
@@ -51,20 +48,18 @@ export class UsersApiController {
 
   @Patch(':id')
   @HttpCode(204)
-  @UseGuards(JwtAuthGuard)
-  @UsePolicy((ability: AppAbility) => ability.can(Action.Update, 'User'))
+  @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.user))
   async editOne(
     @UserDecorator() user: User,
     @Body() newUser: User,
   ): Promise<void> {
-    console.log('going to update');
     await this.usersService.update(user.id, newUser);
   }
 
   @Delete(':id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
-  @UsePolicy((ability: AppAbility) => ability.can(Action.Delete, 'User'))
+  @UsePolicy((ability, subjects) => ability.can(Action.Delete, subjects.user))
   async deleteOne(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.usersService.delete(id);
   }
