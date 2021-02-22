@@ -43,6 +43,7 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
 
   const onClickCancel = (): void => {
     setUserInput(oldMsg);
+    onCancel();
   };
 
 
@@ -124,7 +125,7 @@ export default function ChatInputForm({ onCreate, onCancel, setInput, preSetInpu
       </span>
 
       {allowEscape &&
-        <button onClick={onClickCancel} className="ui red labled submit icon button ">
+        <button type="button" onClick={onClickCancel} className="ui red labled submit icon button ">
           <i className="icon cancel"></i>cancel
         </button>
       }
