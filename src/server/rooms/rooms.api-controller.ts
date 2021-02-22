@@ -1,25 +1,22 @@
-import { subject } from '@casl/ability';
 import {
   Body,
   Controller,
   Get,
   HttpCode,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { UpdateResult } from 'typeorm';
-import { Response } from 'express';
-import { ability, AppAbility } from '../../casl/ability';
+import { AppAbility } from '../../casl/ability';
 import { Action } from '../../casl/action';
 import { Room, RoomCreate, RoomUpdate } from '../../types/room';
 import { User } from '../../types/user';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { IPolicyHandler } from '../casl/policies.guard';
+import { UsePolicy } from '../casl/use-policy.decorator';
 import { User as UserDecorator } from '../users/user.decorator';
 import { RoomsService } from './rooms.service';
 
@@ -48,32 +45,24 @@ export class RoomsApiController {
   }
 
   @Get(':id')
+  @UsePolicy((ability, subjects) => ability.can(Action.Read, subjects.room))
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Room> {
     return await this.roomsService.findOne(id);
   }
 
   @Patch(':id')
   @HttpCode(204)
-  // @UsePolicy((ability: AppAbility) => ability.can(Action.Manage, 'Room'))
+  @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.room))
   async update(
     @Param('id', ParseIntPipe) id: number,
     @UserDecorator() user: User,
     @Body() roomUpdate: RoomUpdate,
-    @Res() res: Response,
   ): Promise<UpdateResult | void> {
-    const room = await this.roomsService.findOne(id);
-    if (
-      ability(user).can(Action.Manage, subject('Room', room)) ||
-      (room.openToJoin && roomUpdate.addMember)
-    ) {
-      res.send(this.roomsService.update(id, roomUpdate));
-    } else {
-      console.log('FORBIDDEN');
-      res.status(HttpStatus.FORBIDDEN).send();
-    }
+    return this.roomsService.update(id, roomUpdate);
   }
 
   // @Delete(':id')
+  // @UsePolicy((ability, subjects) => ability.can(Action.Delete, subjects.room))
   // remove(@Param('id', ParseIntPipe) id: number) {
   //   return this.roomsService.remove(id);
   // }

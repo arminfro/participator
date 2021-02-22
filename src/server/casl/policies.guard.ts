@@ -47,13 +47,13 @@ export class PoliciesGuard implements CanActivate {
     if (user) {
       const requestedSubjects = {
         user: await this.getRequestedUser(req.url),
+        room: await this.getRequestedRoom(req.url),
       };
 
       const ability = this.caslAbilityFactory.createForUser(user);
       const allowed = policyHandlers.every((handler) =>
         this.execPolicyHandler(handler, ability, requestedSubjects),
       );
-      console.debug('allowed Operation?', allowed);
       return allowed;
     } else {
       return false;
@@ -64,6 +64,15 @@ export class PoliciesGuard implements CanActivate {
     const requestedUserId = url.match(/(?<=users\/)\d+/);
     if (requestedUserId) {
       return await getManager().findOne(User, +requestedUserId);
+    }
+  }
+
+  private async getRequestedRoom(url: string): Promise<Room | undefined> {
+    const requestedRoomId = url.match(/(?<=rooms\/)\d+/);
+    if (requestedRoomId) {
+      return await getManager().findOne(Room, +requestedRoomId, {
+        relations: ['admin', 'members'],
+      });
     }
   }
 

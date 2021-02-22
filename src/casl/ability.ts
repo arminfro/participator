@@ -20,6 +20,9 @@ export function ability(user: User | undefined) {
     can(Action.Manage, 'Room', {
       'admin.id': user.id,
     });
+    can(Action.Read, 'Room', {
+      'members.id': user.id,
+    });
     can(Action.Manage, 'User', { id: user.id });
   }
 
