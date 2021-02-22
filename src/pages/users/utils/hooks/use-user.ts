@@ -28,3 +28,20 @@ export function useUserUpdate(
         api<UserUpdate>('PATCH', `api/users/${userId}`, callback, newUser)),
   );
 }
+
+// todo, nested objects break the code
+// export function useUserCreate(user: UserCreate, withValidation = false) {
+//   const name = useState(user.name);
+//   const pw1 = useState(user.pws.pw1);
+//   const pw2 = useState(user.pws.pw2);
+//   return useStruct<{ name: string; pw1: string; pw2: string }>(
+//     { name, pw1, pw2 },
+//     withValidation &&
+//       ((user) =>
+//         validateUserCreate({
+//           name: user.name,
+//           pws: { pw1: user.pw1, pw2: user.pw2 },
+//         })),
+//     false,
+//   );
+// }

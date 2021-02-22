@@ -23,8 +23,10 @@ export interface Props {
 export default function UserCard({ user, updateUser }: Props): ReactElement {
   const stateUser = useUserUpdate(user.id, user);
   const onToggle = (attr: UserUpdateToggleKeys) =>
-    stateUser.set[attr](!stateUser.get[attr], true, (updatedUser) =>
-      updateUser(updatedUser),
+    stateUser.set[attr](
+      !stateUser.get[attr],
+      true,
+      (updatedUser) => updateUser && updateUser(updatedUser),
     );
 
   const stylesForIcon = (attr: UserUpdateToggleKeys) => {

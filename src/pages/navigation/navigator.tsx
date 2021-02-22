@@ -35,7 +35,7 @@ export default function Navigator() {
         }
       });
     }
-  }, []);
+  }, [dispatch, userFetched]);
 
   console.debug('render navigator');
   return (

@@ -8,10 +8,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { AppAbility } from '../../casl/ability';
 import { Action } from '../../casl/action';
 import { UserCreate } from '../../types/user';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsePolicy } from '../casl/use-policy.decorator';
 import { User as UserDecorator } from './user.decorator';
 import { User } from './user.entity';
@@ -22,6 +24,7 @@ export class UsersApiController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   @UsePolicy((ability: AppAbility) => ability.can(Action.Read, 'User'))
   public async index(): Promise<User[]> {
     return await this.usersService.findAll({
@@ -30,12 +33,13 @@ export class UsersApiController {
   }
 
   @Get('token-to-user')
-  @UsePolicy((ability: AppAbility) => ability.can(Action.Read, 'User'))
+  @UseGuards(JwtAuthGuard)
   public async tokenToUser(@UserDecorator() user: User): Promise<User> {
     return user;
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   @UsePolicy((ability: AppAbility) => ability.can(Action.Read, 'User'))
   async findOne(
     @Param('id', ParseIntPipe) id: number,
@@ -47,6 +51,7 @@ export class UsersApiController {
 
   @Patch(':id')
   @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
   @UsePolicy((ability: AppAbility) => ability.can(Action.Update, 'User'))
   async editOne(
     @UserDecorator() user: User,
@@ -58,6 +63,7 @@ export class UsersApiController {
 
   @Delete(':id')
   @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
   @UsePolicy((ability: AppAbility) => ability.can(Action.Delete, 'User'))
   async deleteOne(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.usersService.delete(id);

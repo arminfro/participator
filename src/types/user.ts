@@ -6,11 +6,14 @@ import {
   date,
   Describe,
   Infer,
+  is,
+  nullable,
   number,
   object,
   optional,
   refine,
   string,
+  validate,
 } from 'superstruct';
 import Answer from './answer';
 import { Chat } from './chat';
@@ -51,6 +54,7 @@ export const UserLogin = object({
 export type User = {
   readonly id: number;
   name: string;
+  password?: string | null;
   readonly joinedRooms?: Room[];
   readonly ownedRooms?: Room[];
   readonly chats?: Chat[];
@@ -59,12 +63,13 @@ export type User = {
   hasHandUp: boolean;
   randomGroup: boolean;
   active: boolean;
-  readonly createdAt?: Date;
-  readonly updatedAt?: Date;
+  readonly createdAt?: Date | string;
+  readonly updatedAt?: Date | string;
 };
 export const User: Describe<User> = object({
   id: number(),
-  name: stringMinLength(2, 'name'),
+  name: string(),
+  password: optional(string()),
   joinedRooms: optional(array(any())),
   ownedRooms: optional(array(any())),
   chats: optional(array(any())),
@@ -73,11 +78,15 @@ export const User: Describe<User> = object({
   hasHandUp: boolean(),
   randomGroup: boolean(),
   active: boolean(),
-  createdAt: optional(date()),
-  updatedAt: optional(date()),
+  createdAt: optional(any()),
+  updatedAt: optional(any()),
 });
 
 export function isUser(user: User): user is User {
-  // return is(user, User);
-  return true; // todo, quick fix
+  if (is(user, User)) {
+    return true;
+  } else {
+    console.debug('isnt a User:', validate(user, User));
+    return false;
+  }
 }

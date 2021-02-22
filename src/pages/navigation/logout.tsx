@@ -7,9 +7,10 @@ export default function Logout() {
   const { store, dispatch } = useStore();
   const router = useRouter();
   const onLogout = () => {
-    router.push('/');
-    removeToken();
-    dispatch({ type: 'LOGOUT' });
+    router.push('/').then(() => {
+      removeToken();
+      dispatch({ type: 'LOGOUT' });
+    });
   };
 
   return (

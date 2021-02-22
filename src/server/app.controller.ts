@@ -36,7 +36,6 @@ export class AppController {
   async login(
     @Req() req: IncomingMessage & { user: User },
   ): Promise<AccessToken & { user: User }> {
-    console.log('req.user', req.user);
     return {
       access_token: (await this.authService.login(req.user)).access_token,
       user: await this.userService.findOne(req.user.id),

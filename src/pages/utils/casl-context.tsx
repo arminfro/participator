@@ -1,4 +1,4 @@
-import { createContext, ReactElement, useContext } from 'react';
+import React, { createContext, ReactElement, useContext } from 'react';
 import { createContextualCan } from '@casl/react';
 import { Ability } from '@casl/ability';
 import { useStore } from './store/context';
@@ -18,10 +18,8 @@ export function AbilityContextProvider(props: {
     store: { user },
   } = useStore();
 
-  console.debug('render AbilityContextProvider');
-
   return (
-    <AbilityContext.Provider value={ability((user || { id: 0 }) as User)}>
+    <AbilityContext.Provider value={ability(user as User)}>
       {props.children}
     </AbilityContext.Provider>
   );

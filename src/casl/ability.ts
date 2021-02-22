@@ -7,13 +7,14 @@ type Subjects = User | 'User' | Room | 'Room' | 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
 
-export function ability(user: User) {
+export function ability(user: User | undefined) {
   const { can, cannot, build } = new AbilityBuilder<
     Ability<[Action, Subjects]>
   >(Ability as AbilityClass<AppAbility>);
 
   cannot(Action.Manage, 'all');
-  // can(Action.Read, 'all'); // read-only access to everything
+
+  if (!user) return build();
 
   if (isUser(user)) {
     can(Action.Manage, 'Room', {
