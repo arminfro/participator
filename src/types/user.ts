@@ -3,11 +3,9 @@ import {
   any,
   array,
   boolean,
-  date,
   Describe,
   Infer,
   is,
-  nullable,
   number,
   object,
   optional,
@@ -86,7 +84,7 @@ export function isUser(user: User): user is User {
   if (is(user, User)) {
     return true;
   } else {
-    console.debug('isnt a User:', validate(user, User));
+    console.debug("isn't a User:", validate(user, User));
     return false;
   }
 }

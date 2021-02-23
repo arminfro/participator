@@ -53,7 +53,7 @@ export default function RoomTable({ rooms }: Props) {
         {rooms.map((room) => (
           <tr
             key={room.id}
-            className={canReadRoom(room) && 'pointer'}
+            className={(canReadRoom(room) && 'pointer') || ''}
             onClick={() => onGoToRoom(room)}
           >
             <td className="wi-100">{room.name}</td>

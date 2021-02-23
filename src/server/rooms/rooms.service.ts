@@ -89,7 +89,6 @@ export class RoomsService {
       ...failures.map((failure) => failure.message),
       ...validationErrors.map((err) => err.toString(false)),
     ];
-    console.debug('room create', room, errors.join('. '));
 
     if (errors.length > 0 || !room) {
       throw new HttpException(errors.join('. '), HttpStatus.BAD_REQUEST);

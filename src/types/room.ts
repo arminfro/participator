@@ -4,10 +4,12 @@ import {
   boolean,
   date,
   Describe,
+  is,
   number,
   object,
   optional,
   string,
+  validate,
 } from 'superstruct';
 import { Chat } from './chat';
 import Question from './question';
@@ -66,4 +68,13 @@ export const Room: Describe<Room> = object({
 export enum JoinConditions {
   Open = 'open-to-join',
   Closed = 'invite-to-join',
+}
+
+export function isRoom(room: Room) {
+  if (is(room, Room)) {
+    return true;
+  } else {
+    console.debug("isn't a Room:", validate(room, Room));
+    return false;
+  }
 }

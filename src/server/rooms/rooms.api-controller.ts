@@ -12,12 +12,13 @@ import {
 import { UpdateResult } from 'typeorm';
 import { AppAbility } from '../../casl/ability';
 import { Action } from '../../casl/action';
-import { Room, RoomCreate, RoomUpdate } from '../../types/room';
+import { Room } from '../../types/room';
 import { User } from '../../types/user';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { IPolicyHandler } from '../casl/policies.guard';
 import { UsePolicy } from '../casl/use-policy.decorator';
 import { User as UserDecorator } from '../users/user.decorator';
+import { RoomCreatePipe, RoomUpdatePipe } from './room.pipes';
 import { RoomsService } from './rooms.service';
 
 export class ManageRoomPolicyHandler implements IPolicyHandler {
@@ -34,7 +35,7 @@ export class RoomsApiController {
   @Post()
   async create(
     @UserDecorator() user: User,
-    @Body() roomCreate: RoomCreate,
+    @Body(new RoomCreatePipe()) roomCreate: any,
   ): Promise<Room> {
     return await this.roomsService.create({ ...roomCreate, admin: user });
   }
@@ -55,8 +56,7 @@ export class RoomsApiController {
   @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.room))
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @UserDecorator() user: User,
-    @Body() roomUpdate: RoomUpdate,
+    @Body(new RoomUpdatePipe()) roomUpdate: any,
   ): Promise<UpdateResult | void> {
     return this.roomsService.update(id, roomUpdate);
   }
