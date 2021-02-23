@@ -20,8 +20,7 @@ export default function RangeAnswersResults(props: Props) {
       acc[value] = 1;
     }
     return acc;
-  }, []);
-  console.log(reduceAnswers);
+  }, {});
 
   const reducedAnswersEntries = Object.entries(reduceAnswers);
   const arrayOfVotes = () => {

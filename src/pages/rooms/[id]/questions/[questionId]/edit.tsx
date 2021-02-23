@@ -3,19 +3,23 @@ import { NextPageContext } from 'next';
 import api from '../../../../utils/api';
 import getInitialProps from '../../../../utils/get-initial-props';
 import Question from '../../../../../types/question';
+import QuestionForm from '../form';
 
 interface Props {
   question: Question;
 }
 
 export default function QuestionEdit({ question }: Props): ReactElement {
+
+  console.log(question);
   return (
     <>
-      <h2> Einzelne Umfrage (anhand von ID) editieren</h2>
-      <p>Formular wird mit den bereits bestehenden Werten als default-Werten aufgerufen</p>
-      {JSON.stringify(question)}
+      <h2> Edit poll</h2>
+      <QuestionForm
+        text={question.text}
+        isEdit={true} />
     </>
-  )
+  );
 }
 
 QuestionEdit.getInitialProps = async ({ req, query }: NextPageContext) => {

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import FreeAnswersResults from './FreeAnswersResults';
 import FixAnswersResults from './FixAnswersResults';
 import RangeAnswersResults from './RangeAnswersResults';
+import { query } from 'express';
 
 interface Props {
   answers: Answer[];
@@ -15,18 +16,24 @@ interface Props {
 export default function Answers({ answers }: Props) {
   const router = useRouter();
   const roomId = router.query.id;
+
+  if (answers.length === 0) {
+    return (
+      <p>
+        There have no answers been given yet to question No.
+        {router.query.questionId}.
+      </p>
+    );
+  }
+
   const questionId = answers[0].question.id;
 
   return (
     <>
       <h2>{answers[0].question.text}</h2>
       <div className="ui container">
-        {answers[0].freeAnswer !== null && (
-          <FreeAnswersResults answers={answers} />
-        )}
-        {answers[0].fixAnswer !== null && (
-          <FixAnswersResults answers={answers} />
-        )}
+        {answers[0].freeAnswer && <FreeAnswersResults answers={answers} />}
+        {answers[0].fixAnswer && <FixAnswersResults answers={answers} />}
         {/* rangeAnswer not yet defined in interface Answer -> quick fix: exclusion of other answer formats*/}
         {answers[0].freeAnswer === null && answers[0].fixAnswer === null && (
           <RangeAnswersResults answers={answers} />
@@ -54,5 +61,5 @@ Answers.getInitialProps = async ({ req, query }: NextPageContext) => {
         `api/rooms/${query.id}/questions/${query.questionId}/answers/`,
       ),
   });
-  return { answers };
+  return { answers, questionId: query.questionId };
 };

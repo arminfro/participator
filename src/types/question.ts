@@ -23,6 +23,7 @@ export interface QuestionCreate {
   text?: string;
   answersFormat?: AnswersFormat;
   fixAnswers?: string[];
+  rangeOrFix: boolean;
 }
 
 export interface QuestionUpdate {

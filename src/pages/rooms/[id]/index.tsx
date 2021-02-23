@@ -25,7 +25,7 @@ export default function RoomItem({ room }: Props): ReactElement {
         </Link>
       </Can>
       <Link href="/rooms/[id]/questions/" as={`/rooms/${room.id}/questions/`}>
-        <button className="ui button blue">List of all polls</button>
+        <button className="ui button blue">List of all questions</button>
       </Link>
     </>
   );

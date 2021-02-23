@@ -1,9 +1,7 @@
 import React, { ReactElement } from 'react';
-
-
 interface Props {
   fixAnswers: string[];
-  setFixAnswer: any;
+  setFixAnswer: (s: string) => void;
 }
 
 export default function FixAnswer({
@@ -25,12 +23,10 @@ export default function FixAnswer({
               value={answer}
               onChange={choice}
               name="answerSelection"
-            />{' '}
-            {answer}
+            />{` ${answer}`}
           </div>
         );
       })}
-
     </div>
   );
 }

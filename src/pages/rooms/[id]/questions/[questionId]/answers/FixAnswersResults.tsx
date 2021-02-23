@@ -3,12 +3,30 @@ import Answer from '../../../../../../types/answer';
 
 interface Props {
   answers: Answer[];
+  rangeOrFix: boolean; //range = true; fix = false --> rangeOrFix is defined in Interface QuestionCreate so it can probably be deleted here?! But how can we push it in Answer[]?
 }
+
 export default function FixAnswersResults(props: Props) {
+
+  const answerType = () => {
+    if (typeof props.answers[0].fixAnswer === 'string') {
+      return props.rangeOrFix === false;
+    } else {
+      return props.rangeOrFix === true;
+    }
+  };
+  answerType();
+
   const votes = [];
-  const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
   const reduceAnswers = props.answers.reduce(function (acc, answer) {
-    const value = answer.fixAnswer;
+    let value: string | number;
+    if (!props.rangeOrFix) {
+      value = answer.fixAnswer;
+    } else {
+      value = answer.fixAnswer;
+    }
+
     if (acc[value]) {
       acc[value] = acc[value] + 1;
     } else {
@@ -18,18 +36,22 @@ export default function FixAnswersResults(props: Props) {
   }, {});
 
   const reducedAnswersEntries = Object.entries(reduceAnswers);
+
   const arrayOfVotes = () => {
     reducedAnswersEntries.map((keyValuePair) => {
       votes.push(keyValuePair[1]);
-      return votes;
     });
   };
+
   arrayOfVotes();
-  const allVotes = votes.reduce(reducer);
+
+  const numberOfVotes = votes.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+  );
 
   return (
     <div>
-      <div>Total amount of answers: {allVotes} </div>
+      <div>Total amount of answers: {numberOfVotes} </div>
       <table className="ui table">
         <tbody>
           <tr>
@@ -43,14 +65,14 @@ export default function FixAnswersResults(props: Props) {
                 <td>{choice}</td>
                 <td>{reduceAnswers[choice]}</td>
                 <td>
-                  {((reduceAnswers[choice] / allVotes) * 100).toFixed(2)} %
+                  {((reduceAnswers[choice] / numberOfVotes) * 100).toFixed(2)} %
                 </td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <div></div>
+      <div />
     </div>
   );
 }

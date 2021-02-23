@@ -20,7 +20,6 @@ export default function FreeAnswersResults(props: Props) {
           </div>
         );
       })}
-      <div></div>
     </div>
   );
 }

@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function Question({ question }: Props): ReactElement {
-  const [rangeAnswer, setRangeAnswer] = useState();
+  const [rangeAnswer, setRangeAnswer] = useState<number | undefined>();
   const [fixAnswer, setFixAnswer] = useState('');
   const [freeAnswer, setFreeAnswer] = useState('');
   const format = question.answersFormat;
@@ -23,7 +23,7 @@ export default function Question({ question }: Props): ReactElement {
   const questionId = question.id;
   const roomId = router.query.id;
 
-  const answerFunc = (): AnswerCreate => {
+  const answerCreate = (): AnswerCreate => {
     if (question.answersFormat === 'range') {
       return { rangeAnswer };
     } else if (question.answersFormat === 'fix') {
@@ -35,14 +35,14 @@ export default function Question({ question }: Props): ReactElement {
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    if (rangeAnswer !== undefined || fixAnswer !== '' || freeAnswer !== '') {
+    if (rangeAnswer || fixAnswer || freeAnswer) {
       api<Answer>(
         'post',
         `api/rooms/${roomId}/questions/${questionId}/answers`,
         () => {
           router.push(`/rooms/${roomId}/questions/${questionId}/answers`);
         },
-        answerFunc(),
+        answerCreate(),
       );
     }
   };
@@ -65,18 +65,25 @@ export default function Question({ question }: Props): ReactElement {
           />
         )}
         {format === 'free' && <FreeAnswer setFreeAnswer={setFreeAnswer} />}
-        <div>
-          <button className="ui button green">Submit</button>
-        </div>
-        <div>
-          <Link
-            href="/rooms/[id]/questions/"
-            as={`/rooms/${roomId}/questions/`}
-          >
-            <button className="ui button blue">List of all polls</button>
-          </Link>
-        </div>
+        <p></p>
+        <button className="ui button green">Submit</button>
       </form>
+      <p></p>
+      <div>
+        <Link href="/rooms/[id]/questions/" as={`/rooms/${roomId}/questions/`}>
+          <button className="ui button blue">List of all polls</button>
+        </Link>
+      </div>
+      <p></p>
+      <div>
+        <Link
+          href="/rooms/[id]/questions/[id]/edit"
+          as={`/rooms/${roomId}/questions/${questionId}/edit`}
+        >
+          <button className="ui button orange">Edit</button>
+        </Link>
+      </div>
+
     </>
   );
 }

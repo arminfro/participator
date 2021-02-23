@@ -1,87 +1,42 @@
 import React from 'react';
 
 interface Props {
-  setRangeAnswer: any;
+  setRangeAnswer: (s: number) => void;
 }
 
 export default function RangeAnswer({ setRangeAnswer }: Props) {
-  const rangeValue = (e: React.ChangeEvent<HTMLInputElement>): void => {
+
+  const selectRangeValue = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setRangeAnswer(parseInt(e.target.value));
   };
+
+  const rangeMax = 10;
+  const rangeArray = [];
+
+  const feedRangeArray = (scale: number) => {
+    for (let i = 0; i < scale; i++) {
+      rangeArray.push(i + 1);
+    }
+  };
+
+  feedRangeArray(rangeMax);
+
+
   return (
-    <>
-      <div>
-        <input
-          type="radio"
-          value="1"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        1 |
-        <input
-          type="radio"
-          value="2"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        2 |
-        <input
-          type="radio"
-          value="3"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        3 |
-        <input
-          type="radio"
-          value="4"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        4 |
-        <input
-          type="radio"
-          value="5"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        5 |
-        <input
-          type="radio"
-          value="6"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        6 |
-        <input
-          type="radio"
-          value="7"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        7 |
-        <input
-          type="radio"
-          value="8"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        8 |
-        <input
-          type="radio"
-          value="9"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        9 |
-        <input
-          type="radio"
-          value="10"
-          onChange={rangeValue}
-          name="typeOfAnswer"
-        />{' '}
-        10 |
-      </div>
-    </>
+    <div>
+      {rangeArray.map((singleRangeValue: number, index: number) => {
+        return (
+          <span key={index}>
+            {` ${singleRangeValue} `}
+            <input
+              type="radio"
+              value={singleRangeValue}
+              onChange={selectRangeValue}
+              name="typeOfAnswer"
+            />
+          </span>
+        )
+      })}
+    </div>
   );
 }

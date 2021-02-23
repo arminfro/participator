@@ -7,18 +7,21 @@ import api from '../../../utils/api';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-interface Props extends QuestionCreate {
+interface Props extends Question {
+  props: QuestionCreate;
   isEdit: boolean;
 }
 
 export default function QuestionForm(props: Props): ReactElement {
   const [text, setText] = useState(props.text);
-  const [fixAnswers, setFixAnswers] = useState(props.fixAnswers);
   const [answersFormat, setAnswersFormat] = useState<AnswersFormat>(
     props.answersFormat,
   );
+
+  const [fixAnswers, setFixAnswers] = useState(props.fixAnswers);
   const router = useRouter();
   const roomId = router.query.id;
+
   const answersFormatSelect = (e: any) => {
     setAnswersFormat(e.target.value);
   };
@@ -52,6 +55,7 @@ export default function QuestionForm(props: Props): ReactElement {
       text,
       answersFormat,
       fixAnswers: answersFormat === 'fix' && fixAnswers,
+      rangeOrFix: answersFormat === 'range' && true,
     };
   };
 
@@ -69,28 +73,6 @@ export default function QuestionForm(props: Props): ReactElement {
 
   return (
     <>
-      <h2>Create poll</h2>
-      <p>
-        Please select a response type for your poll: <b>fix answers</b>,{' '}
-        <b>free answers</b> or <b>temperature check</b>.
-      </p>
-      <ul>
-        <li>
-          <b>Fix answers:</b> You create a set of answers and users select one
-          of them. After choosing an answer users see the relative amount of
-          choices for each answer. Maximun number of answers: 50.
-        </li>
-        <li>
-          <b>Free answers:</b> Users insert their answers in an empty text
-          field. Each answer is displayed in a text block. Maximum number of
-          characters: 500.
-        </li>
-        <li>
-          Temperature check: You create a question to which the answer can be
-          given on a scale from 1 to 10. Users can only select one number. Every
-          response is visualised in a histogram.
-        </li>
-      </ul>
       <form className="ui form" onSubmit={onSubmit}>
         <div className="field">
           <label>
@@ -115,24 +97,21 @@ export default function QuestionForm(props: Props): ReactElement {
             checked={answersFormat === 'fix'}
             onChange={answersFormatSelect}
             name="typeOfAnswer"
-          />{' '}
-          fix answers
+          />{' fix answers '}
           <input
             type="radio"
             value="free"
             checked={answersFormat === 'free'}
             onChange={answersFormatSelect}
             name="typeOfAnswer"
-          />{' '}
-          free answers
+          />{' free answers '}
           <input
             type="radio"
             value="range"
             checked={answersFormat === 'range'}
             onChange={answersFormatSelect}
             name="typeOfAnswer"
-          />{' '}
-          temperature check
+          />{' temperature check '}
         </div>
         <div className="field">
           {answersFormat === 'fix' && (
@@ -140,19 +119,17 @@ export default function QuestionForm(props: Props): ReactElement {
               <label>
                 <h3>Answers</h3>
               </label>
-              {fixAnswers.map((answer, index) => {
-                return (
-                  <div key={index}>
-                    <input
-                      placeholder={`Type answer No.${index + 1}`}
-                      value={answer}
-                      onChange={(e) => {
-                        onChangeFixAnswer(e.target.value, index);
-                      }}
-                    />
-                  </div>
-                );
-              })}
+              {fixAnswers.map((answer, index) =>
+                <div key={index}>
+                  <input
+                    placeholder={`Answer No.${index + 1}`}
+                    value={answer}
+                    onChange={(e) => {
+                      onChangeFixAnswer(e.target.value, index);
+                    }}
+                  />
+                </div>
+              )}
 
               <button onClick={onAddFixAnswer} className="ui mini button blue">
                 +
