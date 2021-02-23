@@ -30,9 +30,10 @@ Register account at `localhost:3000/users/new`.
   * [TypeORM Factories](https://github.com/owl1n/typeorm-factories) - Testing
 * [Passport-jwt](http://www.passportjs.org/packages/passport-jwt/) - Authentication
 * [CASL](https://casl.js.org/v5/en/guide/intro) - Authorization
-* [Class Validator](https://github.com/typestack/class-validator) - Validation
-* [Superstruct](https://docs.superstructjs.org/) - Validation
+* [Class Validator](https://github.com/typestack/class-validator) - Entity Validation
+* [Superstruct](https://docs.superstructjs.org/) - Type Validation
 * [Bcrypt](https://github.com/kelektiv/node.bcrypt.js) - Encryption
+* [Winston](https://github.com/winstonjs/winston#table-of-contents) - Logging
 * [Socket.io v2 Server](https://socket.io/docs/v2/server-api/)
 * [Socket.io v2 Client](https://socket.io/docs/v2/client-api)
 * [SemanticUI](https://semantic-ui.com/) - Css
