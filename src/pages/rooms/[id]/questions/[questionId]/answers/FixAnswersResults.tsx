@@ -17,25 +17,40 @@ export default function FixAnswersResults(props: Props) {
   };
   answerType();
 
+  console.log(props.answers);
   const votes = [];
+  const allAnswers = [];
+  const showAllAnswers = () => {
+    JSON.parse(props.answers[0].question.fixAnswers).map((answerText: string) =>
+      allAnswers.push(answerText),
+      console.log(allAnswers)
+    );
+  };
+  showAllAnswers();
 
   const reduceAnswers = props.answers.reduce(function (acc, answer) {
-    let value: string | number;
-    if (!props.rangeOrFix) {
-      value = answer.fixAnswer;
-    } else {
-      value = answer.fixAnswer;
-    }
-
+    /*  let value: string | number;
+     if (!props.rangeOrFix) {
+       value = answer.fixAnswer;
+     } else {
+       value = answer.fixAnswer;
+     } */
+    const value = answer.fixAnswer;
+    console.log(value);
     if (acc[value]) {
       acc[value] = acc[value] + 1;
     } else {
       acc[value] = 1;
     }
     return acc;
-  }, {});
+  },
+    {}, // was ins Objekt eingefügt wird (z.B. Array) landet im Objekt in den Values.
+  );
+
+  console.log(reduceAnswers);
 
   const reducedAnswersEntries = Object.entries(reduceAnswers);
+  console.log(reducedAnswersEntries);
 
   const arrayOfVotes = () => {
     reducedAnswersEntries.map((keyValuePair) => {
@@ -54,18 +69,18 @@ export default function FixAnswersResults(props: Props) {
       <div>Total amount of answers: {numberOfVotes} </div>
       <table className="ui table">
         <tbody>
-          <tr>
-            <th>Answers</th>
-            <th>Total votes</th>
-            <th>Relative votes</th>
-          </tr>
-          {Object.keys(reduceAnswers).map((choice) => {
+          {allAnswers.map((choice) => {
+            const percentage = ((reduceAnswers[choice] / numberOfVotes) * 100).toFixed(2);
             return (
               <tr key={choice}>
-                <td>{choice}</td>
-                <td>{reduceAnswers[choice]}</td>
                 <td>
-                  {((reduceAnswers[choice] / numberOfVotes) * 100).toFixed(2)} %
+                  <span>{choice}</span>
+                  <span>{reduceAnswers[choice]}</span>
+                  <span style={{ textAlign: 'right' }}>
+                    {reduceAnswers[choice] !== undefined
+                      ? <div style={{ width: `${percentage}%`, backgroundColor: 'blue' }}>{percentage}%</div>
+                      : <div style={{ width: '20px', textAlign: 'left', backgroundColor: 'orange' }}>0%</div>}
+                  </span>
                 </td>
               </tr>
             );
@@ -73,6 +88,6 @@ export default function FixAnswersResults(props: Props) {
         </tbody>
       </table>
       <div />
-    </div>
+    </div >
   );
 }

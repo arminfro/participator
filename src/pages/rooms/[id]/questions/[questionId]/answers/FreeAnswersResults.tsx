@@ -15,7 +15,7 @@ export default function FreeAnswersResults(props: Props) {
               Antwort von {answerObject.user.name},{' '}
               {`${answerObject.createdAt.toLocaleTimeString()}, ${answerObject.createdAt.toLocaleTimeString()}`}
             </h5>
-            <p> {answerObject.freeAnswer}</p>
+            <p>{answerObject.freeAnswer}</p>
             <br />
           </div>
         );
