@@ -26,7 +26,7 @@ export default function HttpException({
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [reqUrl, router, status]);
 
   if (loading) {
     return <LoadingSpinner text="validate token" />;

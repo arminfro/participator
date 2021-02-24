@@ -1,6 +1,6 @@
 import { subject } from '@casl/ability';
-import Room from '../types/room';
-import User from '../types/user';
+import { Room } from '../types/room';
+import { User } from '../types/user';
 import { ability } from './ability';
 import { Action } from './action';
 

@@ -1,73 +1,90 @@
-import Room from './room';
+import { equals } from 'class-validator';
+import {
+  any,
+  array,
+  boolean,
+  Describe,
+  Infer,
+  is,
+  number,
+  object,
+  optional,
+  refine,
+  string,
+  validate,
+} from 'superstruct';
+import Answer from './answer';
+import { Chat } from './chat';
+import Question from './question';
+import { Room } from './room';
+import { stringMinLength } from './utils';
 
-export interface UserCreate {
-  name: string;
-  pw1: string;
-  pw2: string;
-}
+export type UserCreate = Infer<typeof UserCreate>;
+export const UserCreate = object({
+  name: stringMinLength(2, 'name'),
+  pws: refine(object({ pw1: string(), pw2: string() }), 'pws', (value) =>
+    equals(value.pw1, value.pw2),
+  ),
+});
 
-export interface UserUpdate extends Partial<UserCreate> {
-  hasHandUp?: boolean;
-  randomGroup?: boolean;
-  active?: boolean;
-}
+export type UserUpdateToggle = Partial<Infer<typeof UserUpdateToggle>>;
+export type UserUpdateToggleKeys = keyof UserUpdateToggle;
+export const UserUpdateToggle = object({
+  hasHandUp: optional(boolean()),
+  randomGroup: optional(boolean()),
+  active: optional(boolean()),
+});
 
-export interface UserLogin {
-  username: string;
-  password: string;
-}
+export type UserUpdate = Partial<Infer<typeof UserUpdate>>;
+export const UserUpdate = object({
+  name: stringMinLength(2, 'name'),
+  hasHandUp: optional(boolean()),
+  randomGroup: optional(boolean()),
+  active: optional(boolean()),
+});
 
-export default interface User {
+export type UserLogin = Infer<typeof UserLogin>;
+export const UserLogin = object({
+  username: stringMinLength(2, 'username'),
+  password: string(),
+});
+
+export type User = {
   readonly id: number;
   name: string;
+  password?: string | null;
+  readonly joinedRooms?: Room[];
+  readonly ownedRooms?: Room[];
+  readonly chats?: Chat[];
+  readonly questions?: Question[];
+  readonly answers?: Answer[];
   hasHandUp: boolean;
   randomGroup: boolean;
   active: boolean;
-  readonly joinedRooms: Room[];
-  readonly ownedRooms: Room[];
-  readonly createdAt?: Date;
-  readonly updatedAt?: Date;
-}
+  readonly createdAt?: Date | string;
+  readonly updatedAt?: Date | string;
+};
+export const User: Describe<User> = object({
+  id: number(),
+  name: string(),
+  password: optional(string()),
+  joinedRooms: optional(array(any())),
+  ownedRooms: optional(array(any())),
+  chats: optional(array(any())),
+  questions: optional(array(any())),
+  answers: optional(array(any())),
+  hasHandUp: boolean(),
+  randomGroup: boolean(),
+  active: boolean(),
+  createdAt: optional(any()),
+  updatedAt: optional(any()),
+});
 
-// export interface UserModel extends User {
-//   password: string;
-// }
-
-export type UserEditBooleanAttrs = 'hasHandUp' | 'randomGroup' | 'active';
-export type UserEditAttrs = UserEditBooleanAttrs & 'name';
-export const userEditBooleanAttrs: UserEditBooleanAttrs[] = [
-  'hasHandUp',
-  'randomGroup',
-  'active',
-];
-
-export type ValidationErrors = string[];
-
-export function validateUserCreate(user: UserCreate): ValidationErrors {
-  const errors: string[] = [];
-  if (user.pw1 !== user.pw2) {
-    errors.push('Passwords not identical');
+export function isUser(user: User): user is User {
+  if (is(user, User)) {
+    return true;
+  } else {
+    console.debug("isn't a User:", validate(user, User));
+    return false;
   }
-  if (user.name === '') {
-    errors.push('Username empty');
-  }
-  return errors;
-}
-
-export function validateUserUpdate(userUpdate: UserUpdate): ValidationErrors {
-  const errors: string[] = validateUserCreate({
-    name: userUpdate.name,
-    pw1: userUpdate.pw1,
-    pw2: userUpdate.pw2,
-  });
-  return errors;
-}
-
-export function isUser(data: User): data is User {
-  return (
-    data instanceof Object &&
-    (['id', 'name'] as Array<keyof User>).every(
-      (attribute) => (data as User)[attribute],
-    )
-  );
 }

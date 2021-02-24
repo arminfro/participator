@@ -6,7 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
 import { Socket } from 'socket.io';
-import Chat, { ChatCreate, ChatUpdate, Events } from '../../types/chat';
+import { Chat, ChatCreate, ChatUpdate, Events } from '../../types/chat';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
 import { ChatsService } from './chats.service';
@@ -68,10 +68,14 @@ export class ChatsGateway implements NestGateway {
   }
 
   @SubscribeMessage(Events.remove)
-  remove(@MessageBody() id: number, @ConnectedSocket() client: Socket) {
-    client.broadcast.emit(Events.remove, id);
-    client.emit(Events.remove, id);
-    return this.chatsService.remove(id);
+  remove(
+    @MessageBody() idObj: { id: number },
+    @ConnectedSocket() client: Socket,
+  ): { id: number } {
+    this.chatsService.remove(idObj.id);
+    client.broadcast.emit(Events.remove, idObj);
+    client.emit(Events.remove, idObj);
+    return idObj;
   }
 
   // todo, un-DRY

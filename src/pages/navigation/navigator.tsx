@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import User, { isUser } from '../../types/user';
+import { User, isUser } from '../../types/user';
 import api from '../utils/api';
 import { useStore } from '../utils/store/context';
 
@@ -26,16 +26,15 @@ export default function Navigator() {
   useEffect(() => {
     if (!userFetched) {
       api<User>('get', 'api/users/token-to-user', (user) => {
-        setIsLoading(false);
         if (isUser(user)) {
           console.debug('dispatch LOGIN:', user.name);
           dispatch({ type: 'LOGIN', user });
         } else {
           console.error('not valid token');
         }
-      });
+      }).finally(() => setIsLoading(false));
     }
-  }, []);
+  }, [dispatch, userFetched]);
 
   console.debug('render navigator');
   return (

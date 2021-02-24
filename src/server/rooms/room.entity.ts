@@ -1,20 +1,21 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
-  ManyToOne,
   BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
   OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../users/user.entity';
-import RoomModel from '../../types/room';
+import { Room as RoomModel } from '../../types/room';
 import { Chat } from '../chats/chat.entity';
 import { Question } from '../questions/question.entity';
-import { Link } from '../links/link.entity';
+import { User } from '../users/user.entity';
 
 @Entity()
 export class Room extends BaseEntity implements RoomModel {
@@ -25,23 +26,21 @@ export class Room extends BaseEntity implements RoomModel {
   name!: string;
 
   @Column({ default: '' })
-  description?: string;
+  description: string;
 
   @Column({ default: false })
   openToJoin!: boolean;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @ManyToMany((type) => User, (user) => user.joinedRooms, {
-    cascade: true,
-  })
+  @ManyToMany(() => User, (user) => user.joinedRooms)
   @JoinTable()
   members: User[];
 
   @ManyToOne(() => User, (user) => user.ownedRooms)
   admin: User;
 
-  @OneToMany(() => Chat, (chat) => chat.room)
-  chats: Chat[];
+  @OneToOne(() => Chat, (chat) => chat.room)
+  @JoinColumn()
+  chat?: Chat;
 
   @OneToMany(() => Question, (question) => question.room)
   questions: Question[];

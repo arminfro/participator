@@ -4,7 +4,7 @@ import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 
 import { User as UserEntity } from './../users/user.entity';
 import { UsersService } from '../users/users.service';
-import User from '../../types/user';
+import { User } from '../../types/user';
 import { JwtPayload } from './jwt.strategy';
 
 export interface AccessToken {

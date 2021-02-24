@@ -1,42 +1,43 @@
+import { subject } from '@casl/ability';
 import Link from 'next/link';
 import React, { ReactElement } from 'react';
-import User, { UserEditBooleanAttrs } from '../../types/user';
-import useUser from './utils/use-user';
+import { Action } from '../../casl/action';
+import { User, UserUpdateToggleKeys } from '../../types/user';
+import { useAbility } from '../utils/casl-context';
+import { useUserUpdate } from './utils/hooks/use-user';
 
-const iconStyles = {
-  cursor: 'pointer',
-};
-
-const onlineColorStyle = {
+const onlineStyle = {
   color: 'green',
 };
 
-const offlineColorStyle = {
+const offlineStyle = {
   color: 'black',
 };
 
 export interface Props {
   user: User;
-  updateUser?: (user: User) => void;
 }
 
-export default function UserCard({ user, updateUser }: Props): ReactElement {
-  const stateUser = useUser(user);
-  const onToggle = (attr: UserEditBooleanAttrs) => {
-    const newUser = stateUser.set[attr](!stateUser.get[attr], true);
-    updateUser && updateUser(newUser);
+export default function UserCard({ user }: Props): ReactElement {
+  const stateUser = useUserUpdate(user.id, user, true, true);
+  const ability = useAbility();
+
+  const canReadUser = () => ability.can(Action.Read, subject('User', user));
+
+  const onToggle = (attr: UserUpdateToggleKeys) => {
+    canReadUser() && stateUser.set[attr](!stateUser.get[attr]);
   };
 
-  const stylesForIcon = (attr: UserEditBooleanAttrs) => {
-    const stateStyle = stateUser.get[attr]
-      ? onlineColorStyle
-      : offlineColorStyle;
-    return { ...iconStyles, ...stateStyle };
+  const stylesForIcon = (attr: UserUpdateToggleKeys) => {
+    return stateUser.get[attr] ? onlineStyle : offlineStyle;
   };
 
   return (
-    <Link href={`/users/[id]`} as={`/users/${user.id}`}>
-      <div className="ui card" style={{ width: 120 }}>
+    <LinkWrapper canReadAbility={canReadUser()} id={user.id}>
+      <div
+        className={`ui card ${(canReadUser() && 'pointer') || ''}`}
+        style={{ width: 120 }}
+      >
         <div className="image">
           <img
             alt=""
@@ -61,19 +62,27 @@ export default function UserCard({ user, updateUser }: Props): ReactElement {
             style={stylesForIcon('hasHandUp')}
             onClick={() => onToggle('hasHandUp')}
           />
-          <i
-            title={`${
-              stateUser.get.randomGroup ? 'Un' : 'R'
-            }egister for Random Group Routine`}
-            className="cloud upload icon"
-            style={stylesForIcon('randomGroup')}
-            onClick={() => onToggle('randomGroup')}
-          />
         </div>
         <div className="extra content">
           <small>{user.name}</small>
         </div>
       </div>
-    </Link>
+    </LinkWrapper>
   );
+}
+
+function LinkWrapper(props: {
+  children: ReactElement;
+  canReadAbility: boolean;
+  id: number;
+}): ReactElement {
+  if (props.canReadAbility) {
+    return (
+      <Link href={`/users/[id]`} as={`/users/${props.id}`}>
+        {props.children}
+      </Link>
+    );
+  } else {
+    return props.children;
+  }
 }

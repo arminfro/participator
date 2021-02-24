@@ -1,14 +1,15 @@
+import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  ManyToMany,
   BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import UserModel from '../../types/user';
+import { User as UserModel } from '../../types/user';
 import { Answer } from '../answers/answer.entity';
 import { Chat } from '../chats/chat.entity';
 import { Question } from '../questions/question.entity';
@@ -20,6 +21,7 @@ export class User extends BaseEntity implements UserModel {
   id!: number;
 
   @Column({ unique: true })
+  @IsNotEmpty()
   name!: string;
 
   @Column()
@@ -28,8 +30,7 @@ export class User extends BaseEntity implements UserModel {
   @OneToMany(() => Room, (room) => room.admin)
   ownedRooms: Room[];
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @ManyToMany((type) => Room, (room) => room.members)
+  @ManyToMany(() => Room, (room) => room.members)
   joinedRooms: Room[];
 
   @OneToMany(() => Chat, (chat) => chat.user)
@@ -42,12 +43,18 @@ export class User extends BaseEntity implements UserModel {
   answers: Answer[];
 
   @Column({ default: false })
+  @IsBoolean()
+  @IsOptional()
   hasHandUp!: boolean;
 
   @Column({ default: false })
+  @IsBoolean()
+  @IsOptional()
   randomGroup!: boolean;
 
   @Column({ default: true })
+  @IsBoolean()
+  @IsOptional()
   active!: boolean;
 
   @CreateDateColumn()

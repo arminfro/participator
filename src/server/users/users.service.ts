@@ -1,23 +1,19 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { validate } from 'class-validator';
+import { Failure } from 'superstruct';
 import {
+  DeleteResult,
+  FindManyOptions,
+  FindOneOptions,
   Repository,
   UpdateResult,
-  DeleteResult,
-  FindOneOptions,
-  FindManyOptions,
 } from 'typeorm';
-import { validate, ValidationError } from 'class-validator';
 
-import { User } from './user.entity';
-import {
-  UserCreate,
-  UserUpdate,
-  validateUserCreate,
-  validateUserUpdate,
-  ValidationErrors,
-} from '../../types/user';
+import { UserCreate, UserUpdate } from '../../types/user';
+import { validateUserCreate } from '../../types/user.validation';
 import { AuthService } from '../auth/auth.service';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
@@ -38,25 +34,20 @@ export class UsersService {
 
   async create(userCreate: UserCreate): Promise<User | never> {
     const user = await this.build(userCreate);
-    this.validateUser(user, validateUserCreate(userCreate));
+    this.validateUser(user, validateUserCreate(userCreate)[0] || []);
     return await this.usersRepository.save(user);
   }
 
-  async update(
-    id: number,
-    userUpdate: UserUpdate,
-  ): Promise<UpdateResult | never> {
+  async update(id: number, userUpdate: UserUpdate): Promise<User> {
     const user = await this.findOne(id);
-    console.log('before', user);
 
     if (userUpdate.name) user.name = userUpdate.name;
-    if (userUpdate.hasHandUp) user.hasHandUp = userUpdate.hasHandUp;
-    if (userUpdate.randomGroup) user.randomGroup = userUpdate.randomGroup;
-    if (userUpdate.active) user.active = userUpdate.active;
-    await this.validateUser(user, validateUserUpdate(userUpdate));
-    if (userUpdate.pw1 && userUpdate.pw2 && userUpdate.pw1 === userUpdate.pw2)
-      user.password = AuthService.hashPassword(userUpdate.pw1);
-    return await this.usersRepository.update(id, user);
+    if (userUpdate.hasHandUp !== undefined)
+      user.hasHandUp = userUpdate.hasHandUp;
+    if (userUpdate.randomGroup !== undefined)
+      user.randomGroup = userUpdate.randomGroup;
+    if (userUpdate.active !== undefined) user.active = userUpdate.active;
+    return await user.save();
   }
 
   async delete(id: number): Promise<DeleteResult> {
@@ -73,14 +64,14 @@ export class UsersService {
 
   private async validateUser(
     user: User,
-    errorsFromDto: ValidationErrors,
+    failures: Failure[],
   ): Promise<void | never> {
     const validationErrors = user ? await validate(user) : [];
-    const errorsClassValidator = validationErrors.map((err: ValidationError) =>
-      err.toString(),
-    );
 
-    const errors = [...errorsFromDto, ...errorsClassValidator];
+    const errors = [
+      ...failures.map((failure) => failure.message),
+      ...validationErrors.map((err) => err.toString(false)),
+    ];
     console.debug('user create', user, errors.join('. '));
 
     if (errors.length > 0 || !user) {
@@ -92,7 +83,7 @@ export class UsersService {
     const user = new User();
     if (user) {
       user.name = userCreate.name;
-      user.password = AuthService.hashPassword(userCreate.pw1);
+      user.password = AuthService.hashPassword(userCreate.pws.pw1);
       return user;
     } else {
       console.error('Error in build', userCreate);

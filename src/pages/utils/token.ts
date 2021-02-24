@@ -1,7 +1,7 @@
 const key = 'access_token';
 
 export function setToken(token: string): void {
-  window.localStorage.setItem(key, token);
+  token && window.localStorage.setItem(key, token);
 }
 
 export function removeToken(): void {

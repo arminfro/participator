@@ -3,9 +3,25 @@ import { NextModule } from './server/nextjs/next.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './server/app.module';
+import {
+  WinstonModule,
+  utilities as nestWinstonModuleUtilities,
+} from 'nest-winston';
+import * as winston from 'winston';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger({
+      transports: [
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            nestWinstonModuleUtilities.format.nestLike(),
+          ),
+        }),
+      ],
+    }),
+  });
 
   const options = new DocumentBuilder()
     .setTitle('Participator')
