@@ -98,7 +98,6 @@ export default function ChatInputForm({
           setUserInput((currentInput) => currentInput + e.key);
         }
       } else if (isSpace(e.key)) {
-        console.log('space:' + e.key);
         resetAtMention();
       }
       setAction(e.key);
