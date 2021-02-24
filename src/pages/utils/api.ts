@@ -49,6 +49,5 @@ export default async function api<T>(
     })
     .catch((err) => {
       console.error('error in api', err);
-      throw err;
     });
 }
