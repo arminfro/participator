@@ -51,6 +51,7 @@ export class RoomsApiController {
     return await this.roomsService.findOne(id);
   }
 
+  // todo, can't join room cause of policy
   @Patch(':id')
   @HttpCode(204)
   @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.room))

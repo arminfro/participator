@@ -8,6 +8,11 @@ export default async function getInitialProps<T>(
   { server, client },
 ): Promise<T> {
   const isServer = !!req;
-  const props = await (isServer ? server(query, req) : client(query, req));
+  const props = await (isServer
+    ? server(query, req)
+    : client(query, req).catch(() => {
+        // quick fix, todo, use swr instead of getInitialProps
+        window.location.href = '/';
+      }));
   return transformDateString(props) as T;
 }

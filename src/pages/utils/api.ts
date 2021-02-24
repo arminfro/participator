@@ -1,4 +1,4 @@
-import axios, { Method as HttpMethod } from 'axios';
+import axios, { AxiosResponse, Method as HttpMethod } from 'axios';
 import { getToken } from './token';
 
 /*
@@ -34,18 +34,21 @@ export default async function api<T>(
   callback: (data: T) => void | undefined = undefined,
   data = {},
 ): Promise<T | void> {
-  const response = await axios({
+  return axios({
     method: method,
     headers: { Authorization: `bearer ${getToken()}` },
     url: `http://localhost:3000/${path}`,
     data,
-  }).catch((err) => {
-    console.error('error', err);
-    throw err;
-  });
-  if (callback) {
-    callback(response.data);
-  } else {
-    return response.data;
-  }
+  })
+    .then((response: AxiosResponse<T>) => {
+      if (callback && response) {
+        callback(response.data);
+      } else {
+        return response.data;
+      }
+    })
+    .catch((err) => {
+      console.error('error in api', err);
+      throw err;
+    });
 }
