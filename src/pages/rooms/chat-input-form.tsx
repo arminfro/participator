@@ -55,6 +55,10 @@ export default function ChatInputForm({
     return /[a-zA-Z]/.test(char) && char.length == 1;
   };
 
+  const isSpace = (char: string): boolean => {
+    return /\s/.test(char) && char.length == 1;
+  };
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (doAtMention) {
       e.preventDefault();
@@ -70,6 +74,7 @@ export default function ChatInputForm({
             setTypeAhead((currentTypeAhead) =>
               currentTypeAhead.substr(0, currentTypeAhead.length - 1),
             );
+
             setReducedUserList(
               users.filter((e) =>
                 e.name.toLowerCase().startsWith(tempTypeAhead),
@@ -81,12 +86,20 @@ export default function ChatInputForm({
         resetAtMention();
         onCancel(oldMsg);
       } else if (isLetter(e.key)) {
-        const tempTypeAhead = typeAhead + e.key;
-        setTypeAhead((currentTypeAhead) => currentTypeAhead + e.key);
-        setReducedUserList(
-          users.filter((e) => e.name.toLowerCase().startsWith(tempTypeAhead)),
-        );
-        setUserInput((currentInput) => currentInput + e.key);
+        if (reducedUserList.length == 0) {
+          // no match found last time but user kept on typing
+          resetAtMention();
+        } else {
+          const tempTypeAhead = typeAhead + e.key;
+          setTypeAhead((currentTypeAhead) => currentTypeAhead + e.key);
+          setReducedUserList(
+            users.filter((e) => e.name.toLowerCase().startsWith(tempTypeAhead)),
+          );
+          setUserInput((currentInput) => currentInput + e.key);
+        }
+      } else if (isSpace(e.key)) {
+        console.log('space:' + e.key);
+        resetAtMention();
       }
       setAction(e.key);
     }
