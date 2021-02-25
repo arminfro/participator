@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import AnswerModel from '../../types/answer';
-import { QuestionDBModel } from '../../types/question';
+import IQuestion from '../../types/question';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
 
@@ -28,7 +28,7 @@ export class Answer extends BaseEntity implements AnswerModel {
   fixAnswer?: string;
 
   @ManyToOne(() => Question, (question) => question.answers)
-  question: QuestionDBModel;
+  question: IQuestion;
 
   @ManyToOne(() => User, (user) => user.answers)
   user: User;

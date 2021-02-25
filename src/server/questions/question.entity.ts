@@ -28,7 +28,7 @@ export class Question extends BaseEntity implements IQuestion {
   answersFormat!: AnswersFormat;
 
   @OneToMany(() => FixAnswer, (fixAnswer) => fixAnswer.question)
-  fixAnswers!: FixAnswer[];
+  fixAnswers!: IFixAnswer[];
 
   @ManyToOne(() => Room, (room) => room.questions)
   room: Room;

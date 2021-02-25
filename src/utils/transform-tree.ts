@@ -1,3 +1,4 @@
+import { array, is } from 'superstruct';
 import TreeModel from 'tree-model';
 
 interface Tree<T> {
@@ -6,10 +7,13 @@ interface Tree<T> {
   children?: T[];
 }
 
-export function transformDateString<T extends Tree<T>>(treeModel: T): T {
+export function transformDateStringObject<T extends Tree<T>>(
+  treeModel: T,
+  childrenPropertyName = 'children',
+): T {
   let tree: TreeModel.Node<T>;
   try {
-    tree = newTree<T>(treeModel);
+    tree = newTree<T>(treeModel, childrenPropertyName);
   } catch (e) {
     console.debug('catched, invalid data in transformDateString', treeModel);
     return treeModel;
@@ -21,6 +25,21 @@ export function transformDateString<T extends Tree<T>>(treeModel: T): T {
     }
   });
   return tree.model;
+}
+
+export function transformDateString<T extends Tree<T>>(
+  treeModel: T | T[],
+  childrenPropertyName = 'children',
+): T | T[] {
+  if (is(treeModel, array())) {
+    console.log('array in transformDateString');
+    return treeModel.map(
+      (treeModel_) => transformDateStringObject(treeModel_),
+      childrenPropertyName,
+    );
+  } else {
+    return transformDateStringObject(treeModel, childrenPropertyName);
+  }
 }
 
 export function replaceChild<T extends Tree<T>>(
@@ -57,6 +76,9 @@ export function removeChild<T extends Tree<T>>(treeModel: T, id: number): T {
   return tree.model;
 }
 
-export function newTree<T>(treeModel: T): TreeModel.Node<T> {
-  return new TreeModel().parse(treeModel);
+export function newTree<T>(
+  treeModel: T,
+  childrenPropertyName = 'children',
+): TreeModel.Node<T> {
+  return new TreeModel({ childrenPropertyName }).parse(treeModel);
 }

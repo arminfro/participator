@@ -6,8 +6,16 @@ export default async function getInitialProps<T>(
   req: IncomingMessage,
   query: ParsedUrlQuery,
   { server, client },
+  childrenPropertyNames: string[] = null,
 ): Promise<T> {
   const isServer = !!req;
-  const props = await (isServer ? server(query, req) : client(query, req));
-  return transformDateString(props) as T;
+  let props = await (isServer ? server(query, req) : client(query, req));
+  if (childrenPropertyNames) {
+    childrenPropertyNames.forEach((childrenPropertyName) => {
+      props = transformDateString(props, childrenPropertyName);
+    });
+  } else {
+    props = transformDateString(props);
+  }
+  return props;
 }

@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
+import { FixAnswer as IFixAnswer } from '../../../../../types/question';
 interface Props {
-  fixAnswers: string[];
+  fixAnswers: IFixAnswer[];
   setFixAnswer: (s: string) => void;
 }
 
@@ -15,15 +16,16 @@ export default function FixAnswer({
   return (
     <div>
       <p>Choose one answer</p>
-      {fixAnswers.map((answer: string, index: number) => {
+      {fixAnswers.map((fixAnswer, index: number) => {
         return (
           <div key={index}>
             <input
               type="radio"
-              value={answer}
+              value={fixAnswer.answer}
               onChange={choice}
               name="answerSelection"
-            />{` ${answer}`}
+            />
+            {` ${fixAnswer.answer}`}
           </div>
         );
       })}

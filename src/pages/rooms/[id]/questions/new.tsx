@@ -29,7 +29,7 @@ export default function QuestionCreate() {
       <QuestionForm
         text=""
         answersFormat="fix"
-        fixAnswers={['']}
+        fixAnswers={[{ answer: '' }]}
         isEdit={false}
       />
     </>

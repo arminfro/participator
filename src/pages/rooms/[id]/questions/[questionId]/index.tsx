@@ -2,7 +2,7 @@ import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import { NextPageContext } from 'next';
 import api from '../../../../utils/api';
 import getInitialProps from '../../../../utils/get-initial-props';
-import IQuestion, { QuestionDBModel } from '../../../../../types/question';
+import IQuestion from '../../../../../types/question';
 import FreeAnswer from './FreeAnswer';
 import RangeAnswer from './RangeAnswer';
 import FixAnswer from './FixAnswer';
@@ -11,7 +11,7 @@ import Answer, { AnswerCreate } from '../../../../../types/answer';
 import Link from 'next/link';
 
 interface Props {
-  question: QuestionDBModel;
+  question: IQuestion;
 }
 
 export default function Question({ question }: Props): ReactElement {
@@ -61,7 +61,7 @@ export default function Question({ question }: Props): ReactElement {
         {format === 'fix' && (
           <FixAnswer
             setFixAnswer={setFixAnswer}
-            fixAnswers={JSON.parse(question.fixAnswers)}
+            fixAnswers={question.fixAnswers}
           />
         )}
         {format === 'free' && <FreeAnswer setFreeAnswer={setFreeAnswer} />}
@@ -83,16 +83,20 @@ export default function Question({ question }: Props): ReactElement {
           <button className="ui button orange">Edit</button>
         </Link>
       </div>
-
     </>
   );
 }
 
 Question.getInitialProps = async ({ req, query }: NextPageContext) => {
-  const question = await getInitialProps<IQuestion>(req, query, {
-    server: () => query.question,
-    client: async () =>
-      await api('get', `api/rooms/${query.id}/questions/${query.questionId}`),
-  });
+  const question = await getInitialProps<IQuestion>(
+    req,
+    query,
+    {
+      server: () => query.question,
+      client: async () =>
+        await api('get', `api/rooms/${query.id}/questions/${query.questionId}`),
+    },
+    ['answers'],
+  );
   return { question };
 };

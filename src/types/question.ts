@@ -17,19 +17,19 @@ export default interface Question {
 }
 
 export interface FixAnswer {
-  id: number;
+  id?: number;
   answer: string;
 }
 
 export interface QuestionCreate {
-  text?: string;
+  text: string;
   answersFormat?: AnswersFormat;
-  fixAnswers?: string[];
+  fixAnswers?: FixAnswer[];
   rangeOrFix: boolean;
 }
 
 export interface QuestionUpdate {
   text?: string;
   answersFormat?: AnswersFormat;
-  fixAnswers?: string[];
+  fixAnswers?: FixAnswer[];
 }

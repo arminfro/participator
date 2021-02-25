@@ -3,11 +3,10 @@ import Answer from '../../../../../../types/answer';
 
 interface Props {
   answers: Answer[];
-  rangeOrFix: boolean; //range = true; fix = false --> rangeOrFix is defined in Interface QuestionCreate so it can probably be deleted here?! But how can we push it in Answer[]?
+  rangeOrFix?: boolean; //range = true; fix = false --> rangeOrFix is defined in Interface QuestionCreate so it can probably be deleted here?! But how can we push it in Answer[]?
 }
 
 export default function FixAnswersResults(props: Props) {
-
   const answerType = () => {
     if (typeof props.answers[0].fixAnswer === 'string') {
       return props.rangeOrFix === false;

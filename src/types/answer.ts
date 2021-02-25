@@ -17,6 +17,7 @@ export default interface Answer {
   id: number;
   freeAnswer?: string;
   fixAnswer?: string;
+  rangeAnswer?: number;
   question: Question;
   user?: User;
   createdAt: Date;

@@ -8,7 +8,6 @@ import Link from 'next/link';
 import FreeAnswersResults from './FreeAnswersResults';
 import FixAnswersResults from './FixAnswersResults';
 import RangeAnswersResults from './RangeAnswersResults';
-import { query } from 'express';
 
 interface Props {
   answers: Answer[];
@@ -61,5 +60,5 @@ Answers.getInitialProps = async ({ req, query }: NextPageContext) => {
         `api/rooms/${query.id}/questions/${query.questionId}/answers/`,
       ),
   });
-  return { answers, questionId: query.questionId };
+  return { answers };
 };

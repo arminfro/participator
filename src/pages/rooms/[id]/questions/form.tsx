@@ -6,9 +6,9 @@ import Question, {
 import api from '../../../utils/api';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { FixAnswer } from '../../../../../dist/src/types/question';
 
-interface Props extends Question {
-  props: QuestionCreate;
+interface Props extends Partial<QuestionCreate> {
   isEdit: boolean;
 }
 
@@ -18,7 +18,7 @@ export default function QuestionForm(props: Props): ReactElement {
     props.answersFormat,
   );
 
-  const [fixAnswers, setFixAnswers] = useState(props.fixAnswers);
+  const [fixAnswers, setFixAnswers] = useState<FixAnswer[]>(props.fixAnswers);
   const router = useRouter();
   const roomId = router.query.id;
 
@@ -29,14 +29,17 @@ export default function QuestionForm(props: Props): ReactElement {
   const onChangeFixAnswer = (newValue: string, index: number) => {
     setFixAnswers((currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
-      copyFixAnswers[index] = newValue;
+      copyFixAnswers[index] = { ...copyFixAnswers[index], answer: newValue };
       return copyFixAnswers;
     });
   };
 
   const onAddFixAnswer = (e: SyntheticEvent) => {
     e.preventDefault();
-    setFixAnswers((currentFixAnswers) => [...currentFixAnswers, '']);
+    setFixAnswers((currentFixAnswers) => [
+      ...currentFixAnswers,
+      { answer: '' },
+    ]);
   };
 
   const onRemoveFixAnswer = (e: SyntheticEvent) => {
@@ -97,21 +100,24 @@ export default function QuestionForm(props: Props): ReactElement {
             checked={answersFormat === 'fix'}
             onChange={answersFormatSelect}
             name="typeOfAnswer"
-          />{' fix answers '}
+          />
+          {' fix answers '}
           <input
             type="radio"
             value="free"
             checked={answersFormat === 'free'}
             onChange={answersFormatSelect}
             name="typeOfAnswer"
-          />{' free answers '}
+          />
+          {' free answers '}
           <input
             type="radio"
             value="range"
             checked={answersFormat === 'range'}
             onChange={answersFormatSelect}
             name="typeOfAnswer"
-          />{' temperature check '}
+          />
+          {' temperature check '}
         </div>
         <div className="field">
           {answersFormat === 'fix' && (
@@ -119,17 +125,17 @@ export default function QuestionForm(props: Props): ReactElement {
               <label>
                 <h3>Answers</h3>
               </label>
-              {fixAnswers.map((answer, index) =>
+              {fixAnswers.map((fixAnswer, index) => (
                 <div key={index}>
                   <input
                     placeholder={`Answer No.${index + 1}`}
-                    value={answer}
+                    value={fixAnswer.answer}
                     onChange={(e) => {
                       onChangeFixAnswer(e.target.value, index);
                     }}
                   />
                 </div>
-              )}
+              ))}
 
               <button onClick={onAddFixAnswer} className="ui mini button blue">
                 +

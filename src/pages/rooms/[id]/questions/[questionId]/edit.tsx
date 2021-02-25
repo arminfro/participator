@@ -10,18 +10,19 @@ interface Props {
 }
 
 export default function QuestionEdit({ question }: Props): ReactElement {
-
   console.log(question);
   return (
     <>
       <h2> Edit poll</h2>
       <QuestionForm
         text={question.text}
-        isEdit={true} />
+        answersFormat={question.answersFormat}
+        fixAnswers={question.fixAnswers}
+        isEdit={true}
+      />
     </>
   );
 }
-
 QuestionEdit.getInitialProps = async ({ req, query }: NextPageContext) => {
   const question = await getInitialProps<Question>(req, query, {
     server: () => query.question,

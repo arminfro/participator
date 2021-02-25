@@ -18,7 +18,7 @@ export default function Questions({ questions }: Props): ReactElement {
     <>
       <h2>All polls of this room</h2>
       <ol>
-        {questions.map((oneQuestion) =>
+        {questions.map((oneQuestion) => (
           <li key={oneQuestion.id}>
             <Link
               href="/rooms/[id]/questions/[id]"
@@ -27,7 +27,7 @@ export default function Questions({ questions }: Props): ReactElement {
               {oneQuestion.text}
             </Link>
           </li>
-        )}
+        ))}
       </ol>
       <Link
         href="/rooms/[id]/questions/new"
