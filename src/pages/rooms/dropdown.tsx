@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 export interface Position {
   x: number;
@@ -7,51 +7,51 @@ export interface Position {
 
 interface Props {
   entries: string[];
-  callback: (value: string) => void;
+  selectAtMention: (value: string) => void;
   action: string;
 }
 
 export default function Dropdown({
   entries,
-  callback,
+  selectAtMention,
   action,
 }: Props): ReactElement {
   const [selected, setSelected] = useState(0);
-  const dropdownRef = useRef(null);
 
   useEffect(() => {
-    onAction(action);
-  }, [action]);
-
-  const select = (i: number, element: string) => {
-    callback(element);
-  };
-
-  const onAction = (action: string): void => {
-    if (action == 'Enter') {
-      select(selected, entries[selected]);
-    } else if (action == 'ArrowDown') {
-      setSelected((selected + 1) % entries.length);
-    } else if (action == 'ArrowUp') {
-      setSelected(Math.abs(selected - 1) % entries.length);
+    if (action === 'Enter') {
+      selectAtMention(entries[selected]);
     }
-  };
+  }, [action, entries, selected, selectAtMention]);
+
+  useEffect(() => {
+    if (action === 'ArrowUp' || action === 'ArrowDown') {
+      if (action === 'ArrowDown') {
+        setSelected(
+          (currentSelected) => (currentSelected + 1) % entries.length,
+        );
+      } else if (action === 'ArrowUp') {
+        setSelected(
+          (currentSelected) => Math.abs(currentSelected - 1) % entries.length,
+        );
+      }
+    }
+  }, [action, entries.length]);
 
   return (
     entries.length > 0 && (
       <div className="dropdown">
-        <div className="dropdowntext" ref={dropdownRef}>
-          {entries.map((e, i) => {
-            return (
+        <div className="dropdowntext">
+          <div>
+            {entries.map((entry, index) => (
               <div
-                key={i}
-                className={selected === i ? 'selected' : undefined}
-                onClick={() => select(i, e)}
+                key={index}
+                className={selected === index ? 'selected' : undefined}
               >
-                {e}
+                {entry}
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
     )

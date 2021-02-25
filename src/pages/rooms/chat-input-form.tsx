@@ -150,7 +150,7 @@ export default function ChatInputForm({
         {doAtMention && (
           <Dropdown
             entries={reducedUserList.map((u) => u.name)}
-            callback={selectAtMention}
+            selectAtMention={selectAtMention}
             action={action}
           />
         )}
@@ -159,7 +159,8 @@ export default function ChatInputForm({
         onClick={onClickSubmit}
         className="ui blue labled submit icon button "
       >
-        <i className="icon edit"></i>send
+        <i className="icon edit" />
+        send
       </button>
       <span className="actions">
         or <b>Ctrl-Return</b>
@@ -171,7 +172,8 @@ export default function ChatInputForm({
           onClick={onClickCancel}
           className="ui red labled submit icon button "
         >
-          <i className="icon cancel"></i>cancel
+          <i className="icon cancel" />
+          cancel
         </button>
       )}
     </form>
