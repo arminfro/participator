@@ -71,7 +71,6 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     chat: Chat,
     callback: Dispatch<SetStateAction<string>>,
   ): void => {
-    console.log('clbk onEdit' + chat);
     socket.emit(Events.update, { id: chat.id, msg: chat.msg }, () =>
       callback(''),
     );
@@ -87,18 +86,12 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     parentId: number = chatId,
   ) => {
     socket.emit(Events.create, { msg, userId: user.id, parentId }, () => {
-      console.log('clbk on create');
       callback('');
     });
   };
 
   const onCancel = () => {
     return;
-  };
-
-  const onReply = (chat: Chat) => {
-    console.log('clbk on reply', chat);
-    setInput(chat.msg);
   };
 
   return (

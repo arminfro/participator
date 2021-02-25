@@ -1,5 +1,5 @@
 import React from 'react';
-import Chat from '../../../dist/src/types/chat';
+import { Chat } from '../../types/chat';
 import ChatLinkListItem from './chat-link-list-item';
 
 interface Props {

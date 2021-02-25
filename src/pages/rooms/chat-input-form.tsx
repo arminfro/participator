@@ -1,5 +1,5 @@
 import React, { useState, Dispatch, SetStateAction, ReactElement } from 'react';
-import User from '../../types/user';
+import { User } from '../../types/user';
 import Dropdown from './dropdown';
 
 interface Props {

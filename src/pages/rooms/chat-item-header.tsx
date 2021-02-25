@@ -1,6 +1,6 @@
 import { formatDistance } from 'date-fns';
 import React from 'react';
-import Chat from '../../../dist/src/types/chat';
+import { Chat } from '../../types/chat';
 
 interface Props {
   chat: Chat;

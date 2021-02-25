@@ -1,4 +1,10 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from 'react';
 
 export interface Position {
   x: number;
@@ -19,36 +25,42 @@ export default function Dropdown({
   const [selected, setSelected] = useState(0);
   const dropdownRef = useRef(null);
 
+  const select = useCallback(
+    (i: number, element: string) => {
+      callback(i, element);
+    },
+    [callback],
+  );
+
+  const onAction = useCallback(
+    (action: string): void => {
+      if (action == 'Enter') {
+        select(selected, entries[selected]);
+      } else if (action == 'ArrowDown') {
+        setSelected((selected + 1) % entries.length);
+      } else if (action == 'ArrowUp') {
+        setSelected(Math.abs(selected - 1) % entries.length);
+      }
+    },
+    [entries, select, selected],
+  );
+
   useEffect(() => {
     onAction(action);
-  }, [action]);
-
-  const select = (i: number, element: string) => {
-    callback(i, element);
-  };
-
-  const onAction = (action: string): void => {
-    if (action == 'Enter') {
-      select(selected, entries[selected]);
-    } else if (action == 'ArrowDown') {
-      setSelected((selected + 1) % entries.length);
-    } else if (action == 'ArrowUp') {
-      setSelected(Math.abs(selected - 1) % entries.length);
-    }
-  };
+  }, [action, onAction]);
 
   return (
     entries.length > 0 && (
       <div className="dropdown">
         <div className="dropdowntext" ref={dropdownRef}>
-          {entries.map((e, i) => {
+          {entries.map((entry, index) => {
             return (
               <div
-                key={i}
-                className={selected == i ? 'selected' : undefined}
-                onClick={(ev) => select(i, e)}
+                key={index}
+                className={selected == index ? 'selected' : undefined}
+                onClick={() => select(index, entry)}
               >
-                {e}
+                {entry}
               </div>
             );
           })}

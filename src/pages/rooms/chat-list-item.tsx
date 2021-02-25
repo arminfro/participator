@@ -3,7 +3,7 @@ import marked from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import emoji from 'node-emoji';
 
-import Chat from '../../types/chat';
+import { Chat } from '../../types/chat';
 import ChatInputForm from './chat-input-form';
 import ChatItemHeader from './chat-item-header';
 import ChatLinkList from './chat-link-list';
@@ -38,11 +38,11 @@ export default function ChatListItem({
     gfm: true,
   });
 
-  const onClickEdit = (e: React.MouseEvent<HTMLAnchorElement>): void => {
+  const onClickEdit = (): void => {
     setEdit(true);
   };
 
-  const onClickReply = (e: React.MouseEvent<HTMLAnchorElement>): void => {
+  const onClickReply = (): void => {
     setReply(true);
   };
 
@@ -51,7 +51,7 @@ export default function ChatListItem({
     setEdit(false);
   };
 
-  const onCancel = (msg: string) => {
+  const onCancel = () => {
     resetStatus();
   };
 
