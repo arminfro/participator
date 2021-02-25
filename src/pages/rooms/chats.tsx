@@ -18,6 +18,7 @@ import ChatInputForm from './chat-input-form';
 import ChatMessage from './chat-message';
 import { useSocket } from '../utils/useSocket';
 import User from '../../types/user';
+import ChatList from './chat-list';
 
 interface Props {
   roomId: number;
@@ -102,21 +103,14 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
   return (
     <div className="ui segment">
       <h3 className="ui dividing header">Chat</h3>
-      {chats && (
-        <div className="ui relaxed divided list">
-          {chats.children.map((chat) => (
-            <ChatMessage
-              key={chat.id}
-              onCreate={onCreate}
-              onEdit={onEdit}
-              onRemove={onRemove}
-              chat={chat}
-              setInput={setInput}
-              depth={0}
-            />
-          ))}
-        </div>
-      )}
+      <ChatList
+        chats={chats}
+        onCreate={onCreate}
+        onEdit={onEdit}
+        onRemove={onRemove}
+        setInput={setInput}
+      />
+
       <ChatInputForm
         onCreate={onCreate}
         onCancel={onCancel}

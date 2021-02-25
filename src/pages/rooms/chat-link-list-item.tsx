@@ -4,7 +4,7 @@ import Link from '../../types/link';
 interface Props {
   link: Link;
 }
-export default function ChatLink({ link }: Props): ReactElement {
+export default function ChatLinkListItem({ link }: Props): ReactElement {
   return (
     <div className="item">
       <a href={link.url}>
