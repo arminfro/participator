@@ -9,12 +9,14 @@ interface Props {
 
 export default function ChatLinkList({ chat }: Props) {
   return (
-    chat.links && (
-      <div className="ui link list">
-        {chat.links.map((link) => (
-          <ChatLinkListItem link={link} key={link.id} />
-        ))}
-      </div>
-    )
+    <>
+      {chat.links && (
+        <div className="ui link list">
+          {chat.links.map((link) => (
+            <ChatLinkListItem link={link} key={link.id} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
