@@ -15,7 +15,6 @@ import {
 import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
 import ChatInputForm from './chat-input-form';
-import ChatMessage from './chat-message';
 import { useSocket } from '../utils/useSocket';
 import User from '../../types/user';
 import ChatList from './chat-list';
@@ -72,6 +71,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     chat: Chat,
     callback: Dispatch<SetStateAction<string>>,
   ): void => {
+    console.log('clbk onEdit' + chat);
     socket.emit(Events.update, { id: chat.id, msg: chat.msg }, () =>
       callback(''),
     );
@@ -87,7 +87,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     parentId: number = chatId,
   ) => {
     socket.emit(Events.create, { msg, userId: user.id, parentId }, () => {
-      console.log('callback on create');
+      console.log('clbk on create');
       callback('');
     });
   };
@@ -97,6 +97,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
   };
 
   const onReply = (chat: Chat) => {
+    console.log('clbk on reply', chat);
     setInput(chat.msg);
   };
 
@@ -109,6 +110,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
         onEdit={onEdit}
         onRemove={onRemove}
         setInput={setInput}
+        depth={0}
       />
 
       <ChatInputForm
