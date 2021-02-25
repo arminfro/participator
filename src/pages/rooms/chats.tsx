@@ -2,24 +2,30 @@ import React, {
   Dispatch,
   ReactElement,
   SetStateAction,
-  useMemo,
   useState,
+  useMemo,
 } from 'react';
-import { Chat, Events } from '../../types/chat';
+
 import {
   addChild,
   removeChild,
   replaceChild,
 } from '../../utils/transform-tree';
-import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
 import { useSocket } from '../utils/hooks/use-socket';
+import { User } from '../../types/user';
+import { Chat, Events } from '../../types/chat';
+import LoadingSpinner from '../shared/loading-spinner';
+import ChatList from './chat-list';
+import ChatInputForm from './chat-input-form';
 
 interface Props {
   roomId: number;
+  chatId: number;
+  users: User[];
 }
 
-export default function Chats({ roomId }: Props): ReactElement {
+export default function Chats({ roomId, chatId, users }: Props): ReactElement {
   const [input, setInput] = useState('');
   const {
     store: { user },
@@ -39,19 +45,19 @@ export default function Chats({ roomId }: Props): ReactElement {
           payload: Chat,
           setData: Dispatch<SetStateAction<Chat>>,
         ) => {
-          setData((chat) => addChild<Chat>(chat, payload));
+          setData((chat) => ({ ...addChild<Chat>(chat, payload) }));
         },
         [Events.update]: (
           payload: Chat,
           setData: Dispatch<SetStateAction<Chat>>,
         ) => {
-          setData((chat) => replaceChild<Chat>(chat, payload));
+          setData((chat) => ({ ...replaceChild<Chat>(chat, payload) }));
         },
         [Events.remove]: (
           payload: { id: number },
           setData: Dispatch<SetStateAction<Chat>>,
         ) => {
-          setData((chat) => removeChild<Chat>(chat, payload.id));
+          setData((chat) => ({ ...removeChild<Chat>(chat, payload.id) }));
         },
       };
     }, []),
@@ -61,77 +67,53 @@ export default function Chats({ roomId }: Props): ReactElement {
     return <LoadingSpinner />;
   }
 
-  const onSend = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    socket.emit(
-      Events.create,
-      {
-        msg: input,
-        userId: user.id,
-        parentId: 23, // test, wait for `chat` branch
-      },
-      () => setInput(''),
+  const onEdit = (
+    chat: Chat,
+    callback: Dispatch<SetStateAction<string>>,
+  ): void => {
+    socket.emit(Events.update, { id: chat.id, msg: chat.msg }, () =>
+      callback(''),
     );
   };
 
-  const editChat = (id: number) => {
-    socket.emit(Events.update, { id, msg: '01011' }); // test, wait for `chat` branch
+  const onRemove = (chat: Chat): void => {
+    socket.emit(Events.remove, { id: chat.id });
   };
 
-  const onDelete = (chatId: number) => {
-    socket.emit(Events.remove, { id: chatId }, (chat) =>
-      console.log('Chat Deleted', chat),
-    );
+  const onCreate = (
+    msg: string,
+    callback: Dispatch<SetStateAction<string>>,
+    parentId: number = chatId,
+  ) => {
+    socket.emit(Events.create, { msg, userId: user.id, parentId }, () => {
+      callback('');
+    });
+  };
+
+  const onCancel = () => {
+    return;
   };
 
   return (
-    <div>
-      <div className="ui relaxed divided list">
-        {chats &&
-          chats.children.map((chat) => (
-            <ChatItem
-              key={chat.id}
-              chat={chat}
-              editChat={editChat}
-              onDelete={onDelete}
-            />
-          ))}
-      </div>
-      <form onSubmit={onSend}>
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Your Message"
-        />
-      </form>
+    <div className="ui segment">
+      <h3 className="ui dividing header">Chat</h3>
+      <ChatList
+        chats={chats}
+        onCreate={onCreate}
+        onEdit={onEdit}
+        onRemove={onRemove}
+        setInput={setInput}
+        depth={0}
+      />
+
+      <ChatInputForm
+        onCreate={onCreate}
+        onCancel={onCancel}
+        preSetInput={input}
+        setInput={setInput}
+        allowEscape={false}
+        users={users}
+      />
     </div>
-  );
-}
-
-function ChatItem({ chat, onDelete, editChat, depth = 0 }: any): ReactElement {
-  return (
-    <>
-      <div key={chat.id} className="item">
-        <div className="content">
-          <div className="meta">
-            Lvl: {depth}, id: {chat.id}
-          </div>
-          <a className="header">{chat.msg}</a>
-          <i className="icon delete" onClick={() => onDelete(chat.id)} />
-          <i className="icon pencil" onClick={() => editChat(chat.id)} />
-        </div>
-      </div>
-      {chat.children &&
-        chat.children.length > 0 &&
-        chat.children.map((chat: Chat) => (
-          <ChatItem
-            key={chat.id}
-            chat={chat}
-            editChat={editChat}
-            depth={depth + 1}
-            onDelete={onDelete}
-          />
-        ))}
-    </>
   );
 }
