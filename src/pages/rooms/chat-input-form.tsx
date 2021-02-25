@@ -3,10 +3,12 @@ import { User } from '../../types/user';
 import Dropdown from './dropdown';
 
 interface Props {
-  onCreate: (input: string, callback: Dispatch<SetStateAction<string>>) => void;
+  onCreate: (
+    input: string,
+    callback?: Dispatch<SetStateAction<string>>,
+  ) => void;
   onCancel: () => void;
-  preSetInput: string;
-  setInput: Dispatch<SetStateAction<string>>;
+  preSetInput?: string;
   users?: User[];
   allowEscape: boolean;
 }
@@ -14,13 +16,12 @@ interface Props {
 export default function ChatInputForm({
   onCreate,
   onCancel,
-  setInput,
   preSetInput,
   users,
   allowEscape,
 }: Props): ReactElement {
-  const [userInput, setUserInput] = useState(preSetInput);
-  const [oldMsg, setOldMsg] = useState(userInput);
+  const [input, setInput] = useState(preSetInput || '');
+  const [oldMsg, setOldMsg] = useState(input);
 
   /* For @ Mention Dropdown */
   const [doAtMention, setDoAtmention] = useState(false);
@@ -29,25 +30,23 @@ export default function ChatInputForm({
   const [reducedUserList, setReducedUserList] = useState(users);
   const [caretPosition, setCaretPosition] = useState(0);
 
-  // const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
   const onClickSubmit = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ): void => {
     e.preventDefault();
     if (preSetInput !== '') {
-      userInput.replace('\n', ' \n');
+      input.replace('\n', ' \n');
     }
-    onCreate(userInput, setInput);
+    onCreate(input);
     setInput('');
-    setUserInput('');
   };
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-    setUserInput(e.target.value);
+    setInput(e.target.value);
   };
 
   const onClickCancel = (): void => {
-    setUserInput(oldMsg);
+    setInput(oldMsg);
     onCancel();
   };
 
@@ -63,12 +62,12 @@ export default function ChatInputForm({
     if (doAtMention) {
       e.preventDefault();
       if (e.key == 'Backspace') {
-        if (userInput.length > 0) {
-          if (userInput[userInput.length - 1] === '@') {
+        if (input.length > 0) {
+          if (input[input.length - 1] === '@') {
             resetAtMention();
           }
-          const input_ = userInput.substr(0, userInput.length - 1);
-          setUserInput(input_);
+          const input_ = input.substr(0, input.length - 1);
+          setInput(input_);
           if (typeAhead.length > 0) {
             const tempTypeAhead = typeAhead.substr(0, typeAhead.length - 1);
             setTypeAhead((currentTypeAhead) =>
@@ -95,7 +94,7 @@ export default function ChatInputForm({
           setReducedUserList(
             users.filter((e) => e.name.toLowerCase().startsWith(tempTypeAhead)),
           );
-          setUserInput((currentInput) => currentInput + e.key);
+          setInput((currentInput) => currentInput + e.key);
         }
       } else if (isSpace(e.key)) {
         resetAtMention();
@@ -104,14 +103,14 @@ export default function ChatInputForm({
     }
 
     if (e.key == 'Enter' && e.ctrlKey) {
-      userInput.replace('\n', ' \n');
-      onCreate(userInput, () => setUserInput(''));
+      input.replace('\n', ' \n');
+      onCreate(input, () => setInput(''));
     } else if (allowEscape && e.key == 'Escape') {
       onCancel();
     } else if (e.key == '@') {
       console.log('selectionstart', e.target);
-      if (!/\w/.test(userInput.charAt(e.target.selectionStart - 1))) {
-        setOldMsg(userInput);
+      if (!/\w/.test(input.charAt(e.target.selectionStart - 1))) {
+        setOldMsg(input);
         setDoAtmention(true);
         setCaretPosition(e.target.selectionStart);
       }
@@ -120,7 +119,7 @@ export default function ChatInputForm({
 
   const selectAtMention = (value: string): void => {
     const addSpace = oldMsg.charAt(caretPosition - 1) !== ' ' ? ' ' : '';
-    setUserInput(
+    setInput(
       oldMsg.slice(0, caretPosition) +
         addSpace +
         '**@' +
@@ -142,7 +141,7 @@ export default function ChatInputForm({
     <form className="ui reply form">
       <div className="dropdown-container">
         <textarea
-          value={userInput}
+          value={input}
           onChange={onChange}
           onKeyDown={onKeyDown}
           placeholder="Your Message"

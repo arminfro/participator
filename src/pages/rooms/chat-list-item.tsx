@@ -12,7 +12,6 @@ import ChatList from './chat-list';
 interface Props {
   chat: Chat;
   depth: number;
-  setInput: Dispatch<SetStateAction<string>>;
   onEdit: (chat: Chat, callback: Dispatch<SetStateAction<string>>) => void;
   onRemove: (chat: Chat) => void;
   onCreate: (
@@ -28,7 +27,6 @@ export default function ChatListItem({
   onCreate,
   onEdit,
   onRemove,
-  setInput,
 }: Props) {
   const [edit, setEdit] = useState<boolean>(false);
   const [reply, setReply] = useState<boolean>(false);
@@ -79,8 +77,7 @@ export default function ChatListItem({
           <ChatInputForm
             onCreate={onSend}
             onCancel={onCancel}
-            preSetInput={reply ? '' : chat.msg}
-            setInput={setInput}
+            preSetInput={edit && chat.msg}
             allowEscape={true}
           />
         ) : (
@@ -88,7 +85,7 @@ export default function ChatListItem({
             <div
               className="text-with-markdown"
               dangerouslySetInnerHTML={{
-                __html: emoji.emojify(sanitizeHtml(marked(chat.msg))),
+                __html: sanitizeHtml(emoji.emojify(marked(chat.msg))),
               }}
             />
           </div>
@@ -100,7 +97,6 @@ export default function ChatListItem({
         onEdit={onEdit}
         onRemove={onRemove}
         chats={chat}
-        setInput={setInput}
         depth={depth + 1}
       />
     </div>

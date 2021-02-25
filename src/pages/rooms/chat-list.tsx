@@ -11,7 +11,6 @@ interface Props {
     callback: Dispatch<SetStateAction<string>>,
     parentId?: number,
   ) => void;
-  setInput: React.Dispatch<React.SetStateAction<string>>;
   depth: number;
 }
 
@@ -20,7 +19,6 @@ export default function ChatList({
   onCreate,
   onEdit,
   onRemove,
-  setInput,
   depth,
 }: Props) {
   return (
@@ -37,7 +35,6 @@ export default function ChatList({
               onEdit={onEdit}
               onRemove={onRemove}
               chat={chat}
-              setInput={setInput}
               depth={0}
             />
           ))}

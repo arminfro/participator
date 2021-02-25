@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  ReactElement,
-  SetStateAction,
-  useState,
-  useMemo,
-} from 'react';
+import React, { Dispatch, ReactElement, SetStateAction, useMemo } from 'react';
 
 import {
   addChild,
@@ -26,7 +20,6 @@ interface Props {
 }
 
 export default function Chats({ roomId, chatId, users }: Props): ReactElement {
-  const [input, setInput] = useState('');
   const {
     store: { user },
   } = useStore();
@@ -71,9 +64,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     chat: Chat,
     callback: Dispatch<SetStateAction<string>>,
   ): void => {
-    socket.emit(Events.update, { id: chat.id, msg: chat.msg }, () =>
-      callback(''),
-    );
+    socket.emit(Events.update, { id: chat.id, msg: chat.msg }, callback);
   };
 
   const onRemove = (chat: Chat): void => {
@@ -82,12 +73,10 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
 
   const onCreate = (
     msg: string,
-    callback: Dispatch<SetStateAction<string>>,
+    callback?: Dispatch<SetStateAction<string>>,
     parentId: number = chatId,
   ) => {
-    socket.emit(Events.create, { msg, userId: user.id, parentId }, () => {
-      callback('');
-    });
+    socket.emit(Events.create, { msg, userId: user.id, parentId }, callback);
   };
 
   const onCancel = () => {
@@ -102,15 +91,12 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
         onCreate={onCreate}
         onEdit={onEdit}
         onRemove={onRemove}
-        setInput={setInput}
         depth={0}
       />
 
       <ChatInputForm
         onCreate={onCreate}
         onCancel={onCancel}
-        preSetInput={input}
-        setInput={setInput}
         allowEscape={false}
         users={users}
       />
