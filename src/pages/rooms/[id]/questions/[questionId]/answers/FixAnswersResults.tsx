@@ -7,6 +7,8 @@ interface Props {
 }
 
 export default function FixAnswersResults(props: Props) {
+  // qtodo, answerType with value true or false is not very descriptive
+  // and there is no usage of return value, can be deleted?!
   const answerType = () => {
     if (typeof props.answers[0].fixAnswer === 'string') {
       return props.rangeOrFix === false;
@@ -20,6 +22,7 @@ export default function FixAnswersResults(props: Props) {
 
   const reduceAnswers = props.answers.reduce(function (acc, answer) {
     let value: string | number;
+    // qtodo, in both cases we take answer.fixAnswer, is not needed?!
     if (!props.rangeOrFix) {
       value = answer.fixAnswer;
     } else {
@@ -34,6 +37,7 @@ export default function FixAnswersResults(props: Props) {
     return acc;
   }, {});
 
+  // qtodo, it's used only once, doesn't need to be a variable
   const reducedAnswersEntries = Object.entries(reduceAnswers);
 
   const arrayOfVotes = () => {
@@ -42,6 +46,7 @@ export default function FixAnswersResults(props: Props) {
     });
   };
 
+  // qtodo, we don't use return value, can be deleted?!
   arrayOfVotes();
 
   const numberOfVotes = votes.reduce(

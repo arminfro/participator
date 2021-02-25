@@ -17,6 +17,8 @@ export default function Answers({ answers }: Props) {
   const roomId = router.query.id;
 
   if (answers.length === 0) {
+    // qtodo, we don't print the id of the model to the user
+    // it's just an internal information
     return (
       <p>
         There have no answers been given yet to question No.
@@ -25,6 +27,10 @@ export default function Answers({ answers }: Props) {
     );
   }
 
+  // qtodo, how about saving the question in constant instead of id
+  // then we could replace all calls to answers[0]
+  // and take the information, for answertype out of the question
+  // by accessing property answersFormat of type AnswersFormat
   const questionId = answers[0].question.id;
 
   return (
@@ -34,6 +40,7 @@ export default function Answers({ answers }: Props) {
         {answers[0].freeAnswer && <FreeAnswersResults answers={answers} />}
         {answers[0].fixAnswer && <FixAnswersResults answers={answers} />}
         {/* rangeAnswer not yet defined in interface Answer -> quick fix: exclusion of other answer formats*/}
+        {/* qtodo, range is defined by answersFormat */}
         {answers[0].freeAnswer === null && answers[0].fixAnswer === null && (
           <RangeAnswersResults answers={answers} />
         )}

@@ -10,7 +10,7 @@ export default function FreeAnswersResults(props: Props) {
     <div>
       {props.answers.map((answerObject) => {
         return (
-          <div key={answerObject.id} className="ui container">
+          <div key={answerObject.id}>
             <h5>
               Antwort von {answerObject.user.name},{' '}
               {`${answerObject.createdAt.toLocaleTimeString()}, ${answerObject.createdAt.toLocaleTimeString()}`}

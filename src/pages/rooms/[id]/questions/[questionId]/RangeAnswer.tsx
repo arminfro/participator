@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 
 interface Props {
   setRangeAnswer: (s: number) => void;
 }
 
 export default function RangeAnswer({ setRangeAnswer }: Props) {
-
-  const selectRangeValue = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const selectRangeValue = (e: ChangeEvent<HTMLInputElement>): void => {
     setRangeAnswer(parseInt(e.target.value));
   };
 
@@ -21,7 +20,6 @@ export default function RangeAnswer({ setRangeAnswer }: Props) {
 
   feedRangeArray(rangeMax);
 
-
   return (
     <div>
       {rangeArray.map((singleRangeValue: number, index: number) => {
@@ -35,7 +33,7 @@ export default function RangeAnswer({ setRangeAnswer }: Props) {
               name="typeOfAnswer"
             />
           </span>
-        )
+        );
       })}
     </div>
   );

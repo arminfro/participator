@@ -15,9 +15,10 @@ interface Props {
 }
 
 export default function Question({ question }: Props): ReactElement {
-  const [rangeAnswer, setRangeAnswer] = useState<number | undefined>();
+  const [rangeAnswer, setRangeAnswer] = useState<number>();
   const [fixAnswer, setFixAnswer] = useState('');
   const [freeAnswer, setFreeAnswer] = useState('');
+
   const format = question.answersFormat;
   const router = useRouter();
   const questionId = question.id;

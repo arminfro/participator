@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, ChangeEvent } from 'react';
 import { FixAnswer as IFixAnswer } from '../../../../../types/question';
 interface Props {
   fixAnswers: IFixAnswer[];
@@ -9,7 +9,7 @@ export default function FixAnswer({
   fixAnswers,
   setFixAnswer,
 }: Props): ReactElement {
-  const choice = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const choice = (e: ChangeEvent<HTMLInputElement>): void => {
     setFixAnswer(e.target.value);
   };
 

@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { FixAnswer } from '../../../../../dist/src/types/question';
 
 interface Props extends Partial<QuestionCreate> {
+  // qtodo, we don't use this prop here, but we should ;)
   isEdit: boolean;
 }
 
@@ -58,12 +59,14 @@ export default function QuestionForm(props: Props): ReactElement {
       text,
       answersFormat,
       fixAnswers: answersFormat === 'fix' && fixAnswers,
+      // qtodo, `something && true` has no effect, just `answersFormat === 'range'`
       rangeOrFix: answersFormat === 'range' && true,
     };
   };
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    // qtodo, use props.isEdit for different http method and different url
     api<Question>(
       'post',
       `api/rooms/${roomId}/questions`,

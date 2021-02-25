@@ -23,6 +23,12 @@ export default function RangeAnswersResults(props: Props) {
   }, {});
 
   const reducedAnswersEntries = Object.entries(reduceAnswers);
+
+  // qtodo, we don't need to wrap a statemant in a function and call
+  // the function on the next line, we could just do `const arrayOfVotes = reducedAnswersEntries.map(...)`
+  // qtodo, we don't need a sideeffect here, in the case of a sideeffect we could just call `forEach` instead of `map`
+  // I suggest we stay with map and remove the line with `const votes = []`, then we could call map and assign
+  // the return value to votes, like  `const votes = reducedAnswersEntries.map(...)` will lead to the same result
   const arrayOfVotes = () => {
     reducedAnswersEntries.map((keyValuePair) => {
       votes.push(keyValuePair[1]);
@@ -30,6 +36,7 @@ export default function RangeAnswersResults(props: Props) {
     });
   };
   arrayOfVotes();
+  // qtodo, reducer is used only once, no need to put it in a variable, just define it inline
   const allVotes = votes.reduce(reducer);
 
   return (
