@@ -1,22 +1,24 @@
-import Room from './room';
+import Answer from './answer';
+import { Room } from './room';
+import { User } from './user';
 
 export type AnswersFormat = 'free' | 'fix' | 'range';
 
-export interface QuestionBase {
-  id: number;
+export default interface Question {
+  readonly id: number;
   text: string;
-  room: Room;
-  answersFormat: AnswersFormat;
-  createdAt: Date;
-  updatedAt: Date;
+  readonly answersFormat: AnswersFormat;
+  readonly fixAnswers?: FixAnswer[];
+  readonly room?: Room;
+  readonly user?: User;
+  readonly answers?: Answer[];
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 }
 
-export interface QuestionDBModel extends QuestionBase {
-  fixAnswers?: string;
-}
-
-export default interface Question extends QuestionBase {
-  fixAnswers?: string[];
+export interface FixAnswer {
+  id: number;
+  answer: string;
 }
 
 export interface QuestionCreate {

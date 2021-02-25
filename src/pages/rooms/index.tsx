@@ -1,7 +1,7 @@
 import { NextPageContext } from 'next';
 import Link from 'next/link';
 import React, { ReactElement } from 'react';
-import Room from '../../types/room';
+import { Room } from '../../types/room';
 import api from '../utils/api';
 import getInitialProps from '../utils/get-initial-props';
 import RoomTable from './room-table';

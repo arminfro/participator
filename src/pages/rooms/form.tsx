@@ -5,7 +5,12 @@ import React, {
   SyntheticEvent,
   useState,
 } from 'react';
-import Room, { JoinConditions } from '../../types/room';
+import { Room, JoinConditions, RoomCreate, RoomUpdate } from '../../types/room';
+import {
+  validateRoomCreate,
+  validateRoomUpdate,
+} from '../../types/room.validation';
+import { useFormValidation } from '../users/utils/hooks/use-form-validation';
 import api from '../utils/api';
 
 interface Props {
@@ -17,24 +22,14 @@ interface Props {
 }
 
 export default function RoomForm(props: Props): ReactElement {
+  const router = useRouter();
   const [name, setName] = useState(props.name);
   const [description, setDescription] = useState(props.description);
   const [openToJoin, setOpenToJoin] = useState<JoinConditions>(
     props.openToJoin,
   );
 
-  const router = useRouter();
-
-  const onSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
-    let payload: any = {
-      name,
-      description,
-      openToJoin: openToJoin === JoinConditions.Open,
-    };
-    if (props.isEdit) {
-      payload = { updateAttrs: payload };
-    }
+  const submit = (payload: RoomCreate | RoomUpdate) => {
     api(
       props.isEdit ? 'patch' : 'post',
       props.isEdit ? `api/rooms/${props.roomId}` : 'api/rooms',
@@ -43,6 +38,28 @@ export default function RoomForm(props: Props): ReactElement {
       },
       payload,
     );
+  };
+
+  const [errorList, onValidSubmit] = useFormValidation<RoomCreate | RoomUpdate>(
+    props.isEdit ? validateRoomUpdate : validateRoomCreate,
+    submit,
+  );
+
+  const submitPayload = (): RoomCreate | RoomUpdate => {
+    let payload: RoomCreate | RoomUpdate = {
+      name,
+      description,
+      openToJoin: openToJoin === JoinConditions.Open,
+    };
+    if (props.isEdit) {
+      payload = { updateAttrs: payload };
+    }
+    return payload;
+  };
+
+  const onSubmit = (e: SyntheticEvent) => {
+    e.preventDefault();
+    onValidSubmit(submitPayload());
   };
 
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) =>
@@ -99,6 +116,7 @@ export default function RoomForm(props: Props): ReactElement {
       />
 
       <div className="ui section divider"></div>
+      {errorList}
       <button className="ui button">Submit</button>
     </form>
   );

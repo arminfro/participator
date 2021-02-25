@@ -6,18 +6,18 @@ import React, {
   useMemo,
 } from 'react';
 
-import Chat, { Events } from '../../types/chat';
 import {
   addChild,
   removeChild,
   replaceChild,
 } from '../../utils/transform-tree';
-import LoadingSpinner from '../shared/loading-spinner';
 import { useStore } from '../utils/store/context';
-import ChatInputForm from './chat-input-form';
-import { useSocket } from '../utils/useSocket';
-import User from '../../types/user';
+import { useSocket } from '../utils/hooks/use-socket';
+import { User } from '../../types/user';
+import { Chat, Events } from '../../types/chat';
+import LoadingSpinner from '../shared/loading-spinner';
 import ChatList from './chat-list';
+import ChatInputForm from './chat-input-form';
 
 interface Props {
   roomId: number;

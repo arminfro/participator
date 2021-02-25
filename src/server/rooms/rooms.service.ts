@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { validate } from 'class-validator';
+import { Failure } from 'superstruct';
 import { Repository, UpdateResult } from 'typeorm';
 import { RoomCreate, RoomUpdate } from '../../types/room';
+import { validateRoomCreate } from '../../types/room.validation';
 import { ChatsService } from '../chats/chats.service';
 import { User } from '../users/user.entity';
 import { Room } from './room.entity';
@@ -15,6 +18,7 @@ export class RoomsService {
 
   async create(roomCreate: RoomCreate): Promise<Room> {
     const room = await this.build(roomCreate);
+    this.validateRoom(room, validateRoomCreate(roomCreate)[0] || []);
     await this.roomsRepository.save(room);
     room.chat = await this.chatsService.create(
       { userId: room.admin.id, msg: `Room chat for ${room.name}` },
@@ -76,5 +80,18 @@ export class RoomsService {
     room.openToJoin = roomCreate.openToJoin;
     room.description = roomCreate.description;
     return room;
+  }
+
+  private async validateRoom(room: Room, failures: Failure[]) {
+    const validationErrors = room ? await validate(room) : [];
+
+    const errors = [
+      ...failures.map((failure) => failure.message),
+      ...validationErrors.map((err) => err.toString(false)),
+    ];
+
+    if (errors.length > 0 || !room) {
+      throw new HttpException(errors.join('. '), HttpStatus.BAD_REQUEST);
+    }
   }
 }

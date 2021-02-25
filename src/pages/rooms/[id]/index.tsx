@@ -2,7 +2,7 @@ import { subject } from '@casl/ability';
 import { NextPageContext } from 'next';
 import Link from 'next/link';
 import React, { ReactElement } from 'react';
-import Room from '../../../types/room';
+import { Room } from '../../../types/room';
 import Users from '../../users';
 import api from '../../utils/api';
 import { Can } from '../../utils/casl-context';

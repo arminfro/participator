@@ -12,6 +12,8 @@ import { NextService } from '../nextjs/next.service';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RoomsService } from './rooms.service';
+import { UsePolicy } from '../casl/use-policy.decorator';
+import { Action } from '../../casl/action';
 
 @Controller('rooms')
 @UseGuards(JwtAuthGuard)
@@ -36,6 +38,7 @@ export class RoomsController {
   }
 
   @Get(':id/edit')
+  @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.room))
   public async showEdit(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: IncomingMessage,
@@ -46,6 +49,7 @@ export class RoomsController {
   }
 
   @Get(':id')
+  @UsePolicy((ability, subjects) => ability.can(Action.Read, subjects.room))
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: IncomingMessage,

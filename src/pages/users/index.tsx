@@ -2,7 +2,7 @@ import React, { useState, ReactElement } from 'react';
 
 import UserCard from './card';
 import UserFilterCtrl from './filter-ctrl';
-import User from '../../types/user';
+import { User } from '../../types/user';
 import { NextPageContext } from 'next';
 import api from '../utils/api';
 import getInitialProps from '../utils/get-initial-props';
@@ -16,22 +16,11 @@ interface Props {
 }
 
 export default function Users({
-  filter = (a: User) => !!a,
+  filter = () => true,
   group = false,
   users,
 }: Props): ReactElement {
-  const [usersRef, setUsersRef] = useState(users);
   const [filterCtl, setFilterCtl] = useState([filter]);
-
-  const onUpdateUser = (newUser: User): void => {
-    const oldUser = usersRef.find((user) => user.id === newUser.id);
-    if (oldUser) {
-      const index = usersRef.indexOf(oldUser);
-      const _users = [...usersRef];
-      _users[index] = { ...newUser };
-      setUsersRef(_users);
-    }
-  };
 
   return (
     <>
@@ -45,8 +34,8 @@ export default function Users({
         </>
       )}
       <div className="ui container cards">
-        {usersRef.filter(filterCtl[filterCtl.length - 1]).map((user: User) => (
-          <UserCard user={user} key={user.id} updateUser={onUpdateUser} />
+        {users.filter(filterCtl[filterCtl.length - 1]).map((user: User) => (
+          <UserCard user={user} key={user.id} />
         ))}
       </div>
     </>

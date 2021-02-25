@@ -1,4 +1,5 @@
-import { QuestionDBModel } from './question';
+import Question from './question';
+import { User } from './user';
 
 export interface AnswerUpdate {
   textAnswer?: string;
@@ -14,7 +15,8 @@ export default interface Answer {
   id: number;
   textAnswer?: string;
   fixAnswer?: string;
-  question: QuestionDBModel;
+  question: Question;
+  user?: User;
   createdAt: Date;
   updatedAt: Date;
 }

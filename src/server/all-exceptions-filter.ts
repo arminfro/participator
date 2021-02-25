@@ -1,14 +1,20 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
+  Inject,
+  Logger,
+  LoggerService,
 } from '@nestjs/common';
 import { NextService } from './nextjs/next.service';
 
 @Catch(HttpException)
 export class HttpExceptionsFilter implements ExceptionFilter {
-  constructor(private readonly next: NextService) {}
+  constructor(
+    private readonly next: NextService,
+    @Inject(Logger) private readonly logger: LoggerService,
+  ) {}
 
   catch(exception: HttpException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -21,8 +27,15 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       reqUrl: req.url,
     };
 
-    console.error('HTTP Error', data.status, data.message, data.reqUrl);
+    const contentType = req.headers['content-type'];
 
-    this.next.render(`/http-exception`, data, req, res);
+    this.logger.warn(
+      `${data.status} @ ${data.reqUrl} is ${data.message} from ${req.headers['referer']} with ${req.headers['user-agent']}`,
+      'HttpExceptionsFilter',
+    );
+
+    /\/json/.test(contentType)
+      ? res.status(data.status).send(data)
+      : this.next.render(`/http-exception`, data, req, res);
   }
 }

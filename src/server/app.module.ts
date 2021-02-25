@@ -3,6 +3,7 @@ import {
   NestModule,
   MiddlewareConsumer,
   RequestMethod,
+  Logger,
 } from '@nestjs/common';
 import { NextModule } from './nextjs/next.module';
 import { NextMiddleware } from './nextjs/next.middleware';
@@ -29,6 +30,7 @@ import { ChatsModule } from './chats/chats.module';
   ],
   controllers: [AppController],
   providers: [
+    Logger,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionsFilter,

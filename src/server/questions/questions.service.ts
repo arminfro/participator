@@ -3,8 +3,7 @@ import { getManager, Repository, UpdateResult } from 'typeorm';
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
-import { Question } from './question.entity';
-import QuestionsModel from '../../types/question';
+import { FixAnswer, Question } from './question.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -24,16 +23,12 @@ export class QuestionsService {
     return question;
   }
 
-  async findAll(roomId: number): Promise<QuestionsModel[]> {
+  async findAll(roomId: number): Promise<Question[]> {
     const room = await this.findRoom(roomId);
-    const questions = await getManager().find(Question, {
+    return await getManager().find(Question, {
       where: { room },
       relations: ['user', 'answers'],
     });
-    return questions.map((question) => ({
-      ...question,
-      fixAnswers: JSON.parse(question.fixAnswers),
-    }));
   }
 
   async findOne(id: number): Promise<Question> {
@@ -43,10 +38,11 @@ export class QuestionsService {
     return question;
   }
 
-  update(id: number, questionUpdate: QuestionUpdate) {
+  async update(id: number, questionUpdate: QuestionUpdate) {
+    const fixAnswers = this.mapToFixAnswers(questionUpdate.fixAnswers);
     return this.questionRepository.update(id, {
       ...questionUpdate,
-      fixAnswers: JSON.stringify(questionUpdate.fixAnswers),
+      fixAnswers,
     });
   }
 
@@ -62,7 +58,7 @@ export class QuestionsService {
     const question = new Question();
     question.text = questionCreate.text;
     question.answersFormat = questionCreate.answersFormat;
-    question.fixAnswers = JSON.stringify(questionCreate.fixAnswers);
+    question.fixAnswers = this.mapToFixAnswers(questionCreate.fixAnswers);
     question.room = await this.findRoom(roomId);
     question.user = user;
     return question;
@@ -71,5 +67,13 @@ export class QuestionsService {
   private async findRoom(roomId: number): Promise<Room> {
     const room = await getManager().findOne(Room, roomId);
     return room;
+  }
+
+  private mapToFixAnswers(answers: string[]): FixAnswer[] {
+    return answers.map((answer) => {
+      const fixAnswer = new FixAnswer();
+      fixAnswer.answer = answer;
+      return fixAnswer;
+    });
   }
 }

@@ -7,7 +7,13 @@ interface Tree<T> {
 }
 
 export function transformDateString<T extends Tree<T>>(treeModel: T): T {
-  const tree = newTree<T>(treeModel);
+  let tree: TreeModel.Node<T>;
+  try {
+    tree = newTree<T>(treeModel);
+  } catch (e) {
+    console.debug('catched, invalid data in transformDateString', treeModel);
+    return treeModel;
+  }
   tree.walk(null, (node) => {
     if (node.model.createdAt && node.model.updatedAt) {
       node.model.createdAt = new Date(node.model.createdAt);

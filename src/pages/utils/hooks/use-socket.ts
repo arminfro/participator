@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import { Events } from '../../types/chat';
-import { transformDateString } from '../../utils/transform-tree';
-import { getToken } from './token';
+import { Events } from '../../../types/chat';
+import { transformDateString } from '../../../utils/transform-tree';
+import { getToken } from '../token';
 
 interface WithId {
   id: number;
