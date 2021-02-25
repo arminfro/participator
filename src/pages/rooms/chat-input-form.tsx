@@ -4,7 +4,7 @@ import Dropdown from './dropdown';
 
 interface Props {
   onCreate: (input: string, callback: Dispatch<SetStateAction<string>>) => void;
-  onCancel: (input: string) => void;
+  onCancel: () => void;
   preSetInput: string;
   setInput: Dispatch<SetStateAction<string>>;
   users?: User[];
@@ -84,7 +84,7 @@ export default function ChatInputForm({
         }
       } else if (e.key == 'Escape') {
         resetAtMention();
-        onCancel(oldMsg);
+        onCancel();
       } else if (isLetter(e.key)) {
         if (reducedUserList.length == 0) {
           // no match found last time but user kept on typing
@@ -107,8 +107,9 @@ export default function ChatInputForm({
       userInput.replace('\n', ' \n');
       onCreate(userInput, () => setUserInput(''));
     } else if (allowEscape && e.key == 'Escape') {
-      onCancel(oldMsg);
+      onCancel();
     } else if (e.key == '@') {
+      console.log('selectionstart', e.target);
       if (!/\w/.test(userInput.charAt(e.target.selectionStart - 1))) {
         setOldMsg(userInput);
         setDoAtmention(true);
@@ -117,7 +118,7 @@ export default function ChatInputForm({
     }
   };
 
-  const selectAtMention = (index: number, value: string): void => {
+  const selectAtMention = (value: string): void => {
     const addSpace = oldMsg.charAt(caretPosition - 1) !== ' ' ? ' ' : '';
     setUserInput(
       oldMsg.slice(0, caretPosition) +
