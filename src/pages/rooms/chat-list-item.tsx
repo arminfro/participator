@@ -5,9 +5,9 @@ import emoji from 'node-emoji';
 
 import Chat from '../../types/chat';
 import ChatInputForm from './chat-input-form';
-import ChatLink from './chat-link';
 import ChatItemHeader from './chat-item-header';
 import ChatLinkList from './chat-link-list';
+import ChatList from './chat-list';
 
 interface Props {
   chat: Chat;
@@ -66,7 +66,7 @@ export default function ChatListItem({
   };
 
   return (
-    <div className="item pa-tb-20" style={{ marginLeft: depth * 30 }}>
+    <div className="item pa-tb-20">
       <ChatItemHeader
         chat={chat}
         onClickEdit={onClickEdit}
@@ -94,18 +94,15 @@ export default function ChatListItem({
           </div>
         )}
       </div>
-      {chat.children &&
-        chat.children.map((chat: Chat) => (
-          <ChatListItem
-            key={chat.id}
-            chat={chat}
-            onCreate={onCreate}
-            onEdit={onEdit}
-            onRemove={onRemove}
-            setInput={setInput}
-            depth={depth + 1}
-          />
-        ))}
+      <ChatList
+        key={chat.id}
+        onCreate={onCreate}
+        onEdit={onEdit}
+        onRemove={onRemove}
+        chats={chat}
+        setInput={setInput}
+        depth={depth + 1}
+      />
     </div>
   );
 }

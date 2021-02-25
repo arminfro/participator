@@ -1,10 +1,9 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import Chat from '../../types/chat';
 import ChatListItem from './chat-list-item';
-import ChatMessage from './chat-message';
 
 interface Props {
-  chats: any;
+  chats: Chat;
   onRemove: (chat: Chat) => void;
   onEdit: (chat: Chat, callback: Dispatch<SetStateAction<string>>) => void;
   onCreate: (
@@ -13,6 +12,7 @@ interface Props {
     parentId?: number,
   ) => void;
   setInput: React.Dispatch<React.SetStateAction<string>>;
+  depth: number;
 }
 
 export default function ChatList({
@@ -21,22 +21,28 @@ export default function ChatList({
   onEdit,
   onRemove,
   setInput,
+  depth,
 }: Props) {
   return (
-    chats && (
-      <div className="ui relaxed divided list">
-        {chats.children.map((chat) => (
-          <ChatListItem
-            key={chat.id}
-            onCreate={onCreate}
-            onEdit={onEdit}
-            onRemove={onRemove}
-            chat={chat}
-            setInput={setInput}
-            depth={0}
-          />
-        ))}
-      </div>
-    )
+    <>
+      {chats.children && (
+        <div
+          className="ui relaxed divided list"
+          style={{ marginLeft: depth * 30 }}
+        >
+          {chats.children.map((chat) => (
+            <ChatListItem
+              key={chat.id}
+              onCreate={onCreate}
+              onEdit={onEdit}
+              onRemove={onRemove}
+              chat={chat}
+              setInput={setInput}
+              depth={0}
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
