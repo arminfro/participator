@@ -15,7 +15,10 @@ async function bootstrap() {
       transports: [
         new winston.transports.Console({
           format: winston.format.combine(
+            winston.format.errors({ stack: true }),
+            winston.format.splat(),
             winston.format.timestamp(),
+            winston.format.colorize(),
             nestWinstonModuleUtilities.format.nestLike(),
           ),
         }),
