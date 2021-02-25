@@ -23,8 +23,8 @@ export default function RoomTable({ rooms }: Props) {
     return ability.can(Action.Read, subject('Room', room));
   };
 
-  const onGoToRoom = (room: Room) => {
-    canReadRoom(room) && router.push(`/rooms/${room.id}`);
+  const onGoToRoom = (room: Room, justJoined = false) => {
+    (canReadRoom(room) || justJoined) && router.push(`/rooms/${room.id}`);
   };
 
   const onJoin = (event: SyntheticEvent, roomId: number) => {
@@ -32,8 +32,12 @@ export default function RoomTable({ rooms }: Props) {
     const data: RoomUpdate = { addMember: user };
     api<Room>(
       'patch',
-      `api/rooms/${roomId}`,
-      () => onGoToRoom(rooms.find((r) => r.id === roomId)),
+      `api/rooms/${roomId}/addMember`,
+      () =>
+        onGoToRoom(
+          rooms.find((r) => r.id === roomId),
+          true,
+        ),
       data,
     );
   };
