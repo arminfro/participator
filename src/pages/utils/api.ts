@@ -1,5 +1,8 @@
 import axios, { AxiosResponse, Method as HttpMethod } from 'axios';
-import { getToken } from './token';
+import { Dispatch } from 'react';
+import { isUser, User } from '../../types/user';
+import { Actions } from './store/actions';
+import { getToken, setToken } from './token';
 
 /*
  * @param method [string], http method
@@ -50,4 +53,27 @@ export default async function api<T>(
     .catch((err) => {
       console.error('error in api', err);
     });
+}
+
+export async function apiLogin(
+  dispatch: Dispatch<Actions>,
+  payload: any,
+  successCallback: () => void = null,
+  failureCallback: () => void = null,
+): Promise<void> {
+  api<{ access_token: string; user: User }>(
+    'POST',
+    'login',
+    ({ access_token, user }) => {
+      console.log('user in login callback', user, access_token);
+      if (access_token && isUser(user)) {
+        dispatch({ type: 'LOGIN', user });
+        setToken(access_token);
+        successCallback && successCallback();
+      } else {
+        failureCallback && failureCallback();
+      }
+    },
+    payload,
+  );
 }
