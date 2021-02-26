@@ -8,6 +8,7 @@ import ChatInputForm from './chat-input-form';
 import ChatItemHeader from './chat-item-header';
 import ChatLinkList from './chat-link-list';
 import ChatList from './chat-list';
+import { ApiCreatedResponse } from '@nestjs/swagger';
 
 interface Props {
   chat: Chat;
@@ -65,6 +66,37 @@ export default function ChatListItem({
     resetStatus();
   };
 
+  const createdResponse = () => {
+    const msgContent: JSX.Element = (
+      <div className="content">
+        <div
+          className="text-with-markdown"
+          dangerouslySetInnerHTML={{
+            __html: emoji.emojify(sanitizeHtml(marked(chat.msg))),
+          }}
+        />
+      </div>
+    );
+
+    const inputForm: JSX.Element = (
+      <ChatInputForm
+        onCreate={onSend}
+        onCancel={onCancel}
+        preSetInput={reply ? '' : chat.msg}
+        setInput={setInput}
+        allowEscape={true}
+      />
+    );
+
+    if (edit) {
+      return inputForm as JSX.Element;
+    } else if (reply) {
+      return [msgContent, inputForm];
+    } else {
+      return msgContent;
+    }
+  };
+
   return (
     <div className="item pa-tb-20">
       <ChatItemHeader
@@ -75,24 +107,7 @@ export default function ChatListItem({
       />
       <div className="description">
         <ChatLinkList chat={chat} />
-        {edit || reply ? (
-          <ChatInputForm
-            onCreate={onSend}
-            onCancel={onCancel}
-            preSetInput={reply ? '' : chat.msg}
-            setInput={setInput}
-            allowEscape={true}
-          />
-        ) : (
-          <div className="content">
-            <div
-              className="text-with-markdown"
-              dangerouslySetInnerHTML={{
-                __html: emoji.emojify(sanitizeHtml(marked(chat.msg))),
-              }}
-            />
-          </div>
-        )}
+        {createdResponse()}
       </div>
       <ChatList
         key={chat.id}
