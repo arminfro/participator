@@ -89,7 +89,7 @@ export default function ChatListItem({
     );
 
     if (edit) {
-      return inputForm as JSX.Element;
+      return inputForm;
     } else if (reply) {
       return [msgContent, inputForm];
     } else {
