@@ -24,6 +24,8 @@ Register account at `localhost:3000/users/new`.
 
 ## Docs
 
+Call `yarn doc` for `compodoc` docs generation. It'll show documentation about the backend.
+
 * [Next.js](https://nextjs.org/docs) - Frontend Framework
 * [Nest.js](https://docs.nestjs.com/) - Backend Framework
 * [TypeORM](https://typeorm.io/) - Database ORM
