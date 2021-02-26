@@ -75,6 +75,7 @@ export default function FixAnswersResults(props: Props) {
               <tr key={choice}>
                 <td>
                   <span>{choice}</span>
+                  <br />
                   <span>{reduceAnswers[choice]}</span>
                   <span style={{ textAlign: 'right' }}>
                     {reduceAnswers[choice] !== undefined
