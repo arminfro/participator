@@ -1,3 +1,4 @@
+import { subject } from '@casl/ability';
 import {
   Body,
   Controller,
@@ -10,9 +11,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UpdateResult } from 'typeorm';
-import { AppAbility } from '../../casl/ability';
+import { ability, AppAbility } from '../../casl/ability';
 import { Action } from '../../casl/action';
-import { Room } from '../../types/room';
+import { Room, RoomUpdate } from '../../types/room';
 import { User } from '../../types/user';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { IPolicyHandler } from '../casl/policies.guard';
@@ -51,15 +52,42 @@ export class RoomsApiController {
     return await this.roomsService.findOne(id);
   }
 
-  // todo, can't join room cause of policy
   @Patch(':id')
   @HttpCode(204)
   @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.room))
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body(new RoomUpdatePipe()) roomUpdate: any,
+    @Body(new RoomUpdatePipe()) roomUpdate: RoomUpdate,
   ): Promise<UpdateResult | void> {
     return this.roomsService.update(id, roomUpdate);
+  }
+
+  @Patch(':id/removeMember')
+  @HttpCode(204)
+  @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.room))
+  async removeMember(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new RoomUpdatePipe()) roomUpdate: RoomUpdate,
+  ): Promise<UpdateResult | void> {
+    return this.roomsService.update(id, {
+      removeMember: roomUpdate.removeMember,
+    });
+  }
+
+  @Patch(':id/addMember')
+  @HttpCode(204)
+  async addMember(
+    @Param('id', ParseIntPipe) id: number,
+    @UserDecorator() user: User,
+    @Body(new RoomUpdatePipe()) roomUpdate: RoomUpdate,
+  ): Promise<UpdateResult | void> {
+    const room = await this.roomsService.findOne(id);
+    if (
+      room.openToJoin ||
+      ability(user).can(Action.Update, subject('Room', room))
+    ) {
+      return this.roomsService.update(id, { addMember: roomUpdate.addMember });
+    }
   }
 
   // @Delete(':id')

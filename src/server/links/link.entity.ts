@@ -24,7 +24,7 @@ export class Link extends BaseEntity implements LinkModel {
   @Column()
   domain!: string;
 
-  @Column()
+  @Column({ nullable: true })
   imgUrl!: string;
 
   @Column()

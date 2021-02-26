@@ -1,4 +1,4 @@
-import { equals } from 'class-validator';
+import { equals, isNotEmpty } from 'class-validator';
 import {
   any,
   array,
@@ -22,8 +22,10 @@ import { stringMinLength } from './utils';
 export type UserCreate = Infer<typeof UserCreate>;
 export const UserCreate = object({
   name: stringMinLength(2, 'name'),
-  pws: refine(object({ pw1: string(), pw2: string() }), 'pws', (value) =>
-    equals(value.pw1, value.pw2),
+  pws: refine(
+    object({ pw1: string(), pw2: string() }),
+    'pws',
+    (value) => equals(value.pw1, value.pw2) && isNotEmpty(value.pw1),
   ),
 });
 

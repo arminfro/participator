@@ -10,8 +10,8 @@ interface Props {
   user: User;
 }
 
-export default function UserEditForm({ user }: Props): ReactElement {
-  const stateUser = useUserUpdate(user.id, user, true, true);
+export default function UserEditForm(props: Props): ReactElement {
+  const user = useUserUpdate(props.user.id, props.user, true, true);
 
   return (
     <div className="ui segment">
@@ -21,9 +21,9 @@ export default function UserEditForm({ user }: Props): ReactElement {
         <label>Benutzername</label>
         <input
           type="text"
-          value={stateUser.get.name}
+          value={user.get.name}
           onChange={(e) => {
-            stateUser.set.name(e.target.value, true);
+            user.set.name(e.target.value, true);
           }}
         />
         {['hasHandUp', 'randomGroup', 'active'].map(
@@ -33,10 +33,8 @@ export default function UserEditForm({ user }: Props): ReactElement {
                 <div className="ui toggle checkbox">
                   <input
                     type="checkbox"
-                    onChange={(e) =>
-                      stateUser.set[attr](e.target.checked, true)
-                    }
-                    checked={stateUser.get[attr]}
+                    onChange={(e) => user.set[attr](e.target.checked, true)}
+                    checked={user.get[attr]}
                   />
                   <label>{attr}</label>
                 </div>
@@ -44,9 +42,9 @@ export default function UserEditForm({ user }: Props): ReactElement {
             </div>
           ),
         )}
-        {stateUser.validationErrors.length !== 0 && (
+        {user.validationErrors.length !== 0 && (
           <ul className="ui negative message">
-            {stateUser.validationErrors.map((failure) => (
+            {user.validationErrors.map((failure) => (
               <li key={failure.key}>{failure.message}</li>
             ))}
           </ul>

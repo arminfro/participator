@@ -1,9 +1,9 @@
-import Router from 'next/router';
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
+import Router from 'next/router';
 import { User, UserCreate } from '../../types/user';
-import { validateUserCreate } from '../../types/user.validation';
-import api from '../utils/api';
-import { useFormValidation } from './utils/hooks/use-form-validation';
+import api, { apiLogin } from '../utils/api';
+import { useUserCreate } from './utils/hooks/use-user';
+import { useStore } from '../utils/store/context';
 
 interface Props {
   userName?: string;
@@ -14,33 +14,43 @@ interface Props {
 export default function UserForm({
   userName = 'Joe',
   userId,
-  edit = false,
+  edit = false, // todo, edit isn't used
 }: Props): ReactElement {
-  const [name, setName] = useState(userName);
-  const [pw1, setPw1] = useState('hi');
-  const [pw2, setPw2] = useState('hi');
+  const user = useUserCreate(
+    { name: userName, pws: { pw1: 'hi', pw2: 'hi' } },
+    true,
+  );
+
+  const { dispatch } = useStore();
+
+  const [showErrors, setShowErrors] = useState(false);
 
   const submit = (payload: UserCreate) => {
     api<User>(
       edit ? 'PATCH' : 'POST',
       edit ? `api/users/${userId}` : 'api/users',
-      (newUser) => Router.push(`/users/${newUser.id}`),
+      (createdUser: User) =>
+        apiLogin(
+          dispatch,
+          { username: createdUser.name, password: payload.pws.pw1 },
+          () => {
+            Router.push(`/users/${createdUser.id}`);
+          },
+        ),
       payload,
     );
   };
 
-  const [errorList, onValidSubmit] = useFormValidation(
-    validateUserCreate,
-    submit,
-  );
-
-  const userCreate = (): UserCreate => {
-    return { name, pws: { pw1, pw2 } };
-  };
-
   const onSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    onValidSubmit(userCreate());
+    if (user.validationErrors.length) {
+      setShowErrors(true);
+    } else {
+      submit({
+        name: user.get.name,
+        pws: { pw1: user.get.pw1, pw2: user.get.pw2 },
+      });
+    }
   };
 
   return (
@@ -50,29 +60,34 @@ export default function UserForm({
         <label>Username</label>
         <input
           type="text"
-          value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-          }}
+          value={user.get.name}
+          onChange={(e) => user.set.name(e.target.value)}
         />
         <label>Password</label>
         <input
           type="text"
-          value={pw1}
-          onChange={(e) => {
-            setPw1(e.target.value);
-          }}
+          value={user.get.pw1}
+          onChange={(e) => user.set.pw1(e.target.value)}
         />
         <label>Repeat password</label>
         <input
           type="text"
-          value={pw2}
-          onChange={(e) => {
-            setPw2(e.target.value);
-          }}
+          value={user.get.pw2}
+          onChange={(e) => user.set.pw2(e.target.value)}
         />
-        {errorList}
-        <button className="ui button">Submit</button>
+        {showErrors && user.validationErrors.length !== 0 && (
+          <ul className="ui negative message">
+            {user.validationErrors.map((failure) => (
+              <li key={failure.key}>{failure.message}</li>
+            ))}
+          </ul>
+        )}
+        <button
+          disabled={showErrors && user.validationErrors.length > 0}
+          className="ui button"
+        >
+          Submit
+        </button>
       </form>
     </>
   );

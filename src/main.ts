@@ -1,6 +1,8 @@
+import dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import { NextModule } from './server/nextjs/next.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import helmet from 'helmet';
 
 import { AppModule } from './server/app.module';
 import {
@@ -15,14 +17,18 @@ async function bootstrap() {
       transports: [
         new winston.transports.Console({
           format: winston.format.combine(
+            winston.format.errors({ stack: true }),
+            winston.format.splat(),
             winston.format.timestamp(),
-            winston.format.prettyPrint(),
+            winston.format.colorize(),
             nestWinstonModuleUtilities.format.nestLike(),
           ),
         }),
       ],
     }),
   });
+
+  console.log(process.env.Bla);
 
   const options = new DocumentBuilder()
     .setTitle('Participator')
@@ -33,6 +39,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 
+  app.use(
+    helmet({
+      // see https://github.com/vercel/next.js/issues/256
+      contentSecurityPolicy: false,
+    }),
+  );
   app
     .get(NextModule)
     .prepare()
@@ -43,4 +55,5 @@ async function bootstrap() {
     });
 }
 
+dotenv.config();
 bootstrap();

@@ -92,7 +92,7 @@ export class ChatsService {
   }
 
   async remove(id: number): Promise<DeleteResult> {
-    return await this.chatsRepository.delete(id);
+    return await this.chatsRepository.softDelete(id);
   }
 
   private async build(chatCreate: ChatCreate, roomId: number): Promise<Chat> {

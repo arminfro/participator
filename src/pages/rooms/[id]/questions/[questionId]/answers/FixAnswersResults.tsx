@@ -22,6 +22,9 @@ export default function FixAnswersResults(props: Props) {
   const votes = [];
   const allAnswers = [];
   const showAllAnswers = () => {
+    // this breaks the code, fixAnswer is a relational data,
+    // relational data is not available if accessed by another relation
+    // fix may should be to get question in parent component, may need some changes in backend
     props.answers[0].question.fixAnswers.map(
       (fixAnswer) => allAnswers.push(fixAnswer.answer),
       console.log(allAnswers),
