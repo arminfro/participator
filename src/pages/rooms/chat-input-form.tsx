@@ -1,5 +1,6 @@
 import React, { useState, Dispatch, SetStateAction, ReactElement } from 'react';
 import { User } from '../../types/user';
+import { useStore } from '../utils/store/context';
 import Dropdown from './dropdown';
 
 interface Props {
@@ -22,6 +23,10 @@ export default function ChatInputForm({
   const [userInput, setUserInput] = useState(preSetInput);
   const [oldMsg, setOldMsg] = useState(userInput);
 
+  const {
+    store: { user },
+  } = useStore();
+
   /* For @ Mention Dropdown */
   const [doAtMention, setDoAtmention] = useState(false);
   const [action, setAction] = useState('');
@@ -29,7 +34,8 @@ export default function ChatInputForm({
   const [reducedUserList, setReducedUserList] = useState(users);
   const [caretPosition, setCaretPosition] = useState(0);
 
-  // const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const youExtension: string = ' - (you)';
+
   const onClickSubmit = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ): void => {
@@ -120,6 +126,7 @@ export default function ChatInputForm({
 
   const selectAtMention = (value: string): void => {
     const addSpace = oldMsg.charAt(caretPosition - 1) !== ' ' ? ' ' : '';
+    value = value.replace(youExtension, '');
     setUserInput(
       oldMsg.slice(0, caretPosition) +
         addSpace +
@@ -150,7 +157,9 @@ export default function ChatInputForm({
         />
         {doAtMention && (
           <Dropdown
-            entries={reducedUserList.map((u) => u.name)}
+            entries={reducedUserList.map((u) =>
+              u.id === user.id ? u.name + youExtension : u.name,
+            )}
             callback={selectAtMention}
             action={action}
           />
