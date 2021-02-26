@@ -11,7 +11,7 @@ export class AnswersService {
   constructor(
     @InjectRepository(Answer)
     private answerRepository: Repository<Answer>,
-  ) { }
+  ) {}
 
   async create(answerCreate: AnswerCreate, questionId: number, user: User) {
     const answer = await this.build(questionId, answerCreate, user);
@@ -23,7 +23,7 @@ export class AnswersService {
     const question = await this.findQuestion(questionId);
     return await getManager().find(Answer, {
       where: { question },
-      relations: ['user', 'question'],
+      relations: ['user', 'question', 'question.fixAnswers'],
     });
   }
 
