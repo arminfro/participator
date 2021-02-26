@@ -37,3 +37,4 @@ tags*
 .next/
 
 documentation
+.env

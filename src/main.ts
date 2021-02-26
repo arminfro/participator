@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import { NextModule } from './server/nextjs/next.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -27,6 +28,8 @@ async function bootstrap() {
     }),
   });
 
+  console.log(process.env.Bla);
+
   const options = new DocumentBuilder()
     .setTitle('Participator')
     .setDescription('The participator API description')
@@ -52,4 +55,5 @@ async function bootstrap() {
     });
 }
 
+dotenv.config();
 bootstrap();

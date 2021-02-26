@@ -36,6 +36,7 @@
     "bcrypt": "^5.0.0",
     "class-validator": "^0.13.0",
     "date-fns": "^2.16.1",
+    "dotenv": "^8.2.0",
     "faker": "^5.3.1",
     "helmet": "^4.4.1",
     "link-preview-generator": "^0.0.4",
