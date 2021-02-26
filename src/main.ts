@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { NextModule } from './server/nextjs/next.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import helmet from 'helmet';
 
 import { AppModule } from './server/app.module';
 import {
@@ -35,6 +36,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 
+  app.use(
+    helmet({
+      // see https://github.com/vercel/next.js/issues/256
+      contentSecurityPolicy: false,
+    }),
+  );
   app
     .get(NextModule)
     .prepare()
