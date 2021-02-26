@@ -5,10 +5,10 @@ import { apiLogin } from './utils/api';
 import { useStore } from './utils/store/context';
 
 interface Props {
-  redirectUrl: string;
+  redirectUrl?: string;
 }
 
-export default function LoginForm({ redirectUrl = '' }: Props): ReactElement {
+export default function LoginForm({ redirectUrl }: Props): ReactElement {
   const router = useRouter();
   const { dispatch } = useStore();
   const [error, setError] = useState(false);

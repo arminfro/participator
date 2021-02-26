@@ -68,7 +68,6 @@ export function useStruct<T>(
   };
 
   const struct = reduceStructArg();
-  console.log('struct', struct);
 
   const buildUpdateStruct = (key: Keys<T>, newValue: Values<T>): T => {
     return { ...struct.get, [key]: newValue };
@@ -77,7 +76,7 @@ export function useStruct<T>(
   const genericSetter = (
     key: StringKeys<T>,
     newValue: Values<T>,
-    sync,
+    sync: boolean,
     setter: Dispatch<SetStateAction<Values<T>>>,
     callback: SetCallback<T>,
   ): T => {
