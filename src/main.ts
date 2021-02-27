@@ -28,8 +28,6 @@ async function bootstrap() {
     }),
   });
 
-  console.log(process.env.Bla);
-
   const options = new DocumentBuilder()
     .setTitle('Participator')
     .setDescription('The participator API description')

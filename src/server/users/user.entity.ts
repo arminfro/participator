@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -20,27 +20,17 @@ export class User extends BaseEntity implements UserModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ unique: true })
+  @Column()
   @IsNotEmpty()
   name!: string;
 
+  @Column({ unique: true })
+  @IsNotEmpty()
+  @IsEmail()
+  email!: string;
+
   @Column()
   password!: string;
-
-  @OneToMany(() => Room, (room) => room.admin)
-  ownedRooms: Room[];
-
-  @ManyToMany(() => Room, (room) => room.members)
-  joinedRooms: Room[];
-
-  @OneToMany(() => Chat, (chat) => chat.user)
-  chats: Chat[];
-
-  @OneToMany(() => Question, (question) => question.user)
-  questions: Question[];
-
-  @OneToMany(() => Answer, (answer) => answer.user)
-  answers: Answer[];
 
   @Column({ default: false })
   @IsBoolean()
@@ -56,6 +46,21 @@ export class User extends BaseEntity implements UserModel {
   @IsBoolean()
   @IsOptional()
   active!: boolean;
+
+  @OneToMany(() => Room, (room) => room.admin)
+  ownedRooms: Room[];
+
+  @ManyToMany(() => Room, (room) => room.members)
+  joinedRooms: Room[];
+
+  @OneToMany(() => Chat, (chat) => chat.user)
+  chats: Chat[];
+
+  @OneToMany(() => Question, (question) => question.user)
+  questions: Question[];
+
+  @OneToMany(() => Answer, (answer) => answer.user)
+  answers: Answer[];
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -1,10 +1,9 @@
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { IncomingMessage, ServerResponse } from 'http';
-import { Controller, Get, Req, Res, Post, UseGuards } from '@nestjs/common';
-import { NextService } from './nextjs/next.service';
-import { LocalAuthGuard } from './auth/local-auth.guard';
-import { AuthService } from './auth/auth.service';
-import { AccessToken } from './auth/auth.service';
 import { User } from '../types/user';
+import { AccessToken, AuthService } from './auth/auth.service';
+import { LocalAuthGuard } from './auth/local-auth.guard';
+import { NextService } from './nextjs/next.service';
 import { UsersService } from './users/users.service';
 
 @Controller()

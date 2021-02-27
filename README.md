@@ -1,6 +1,6 @@
 # Participator
 
-in early stage development companion app for video/audio chats.
+in early stage development companion app for video/audio chats. \
 Specifically for teaching environments.
 
 ## Installation
@@ -12,6 +12,18 @@ Example Ubuntu: `sudo apt-get install sqlite python build-essential`
 
 Then simply do `yarn install`
 
+## Configuration
+
+E-Mail configuration for `smtp` support by setting env variables, e.g. in `.env` file
+
+```bash
+EMAIL_HOST   # eg, smtp.example.com
+EMAIL_SENDER # eg, myEmail@example.com
+EMAIL_PASS   # eg, password 
+```
+
+For `jwt` security secret key set `JWT_SECRET` to a random string
+
 ## Running the app
 
 Just `yarn start`, or `yarn start:debug` for server debugging and hot reloading.
@@ -19,8 +31,6 @@ Just `yarn start`, or `yarn start:debug` for server debugging and hot reloading.
 Once started, you can go to `localhost:3000/api` to see a summary of all `http` routes.
 
 All routes prefixed with `api/` return json. Others call Next.js to render components.
-
-Register account at `localhost:3000/users/new`.
 
 ## Docs
 
@@ -36,6 +46,8 @@ Call `yarn doc` for `compodoc` docs generation. It'll show documentation about t
 * [Superstruct](https://docs.superstructjs.org/) - Type Validation
 * [Bcrypt](https://github.com/kelektiv/node.bcrypt.js) - Encryption
 * [Winston](https://github.com/winstonjs/winston#table-of-contents) - Logging
+* [NodeMailer](https://nodemailer.com/about/) - E-Mails
+  * [NodeMailer React](https://github.com/mathieutu/nodemailer-react#nodemailer-react)
 * [Socket.io v2 Server](https://socket.io/docs/v2/server-api/)
 * [Socket.io v2 Client](https://socket.io/docs/v2/client-api)
 * [SemanticUI](https://semantic-ui.com/) - Css

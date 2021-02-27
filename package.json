@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
+    "seed": "node -r ts-node/register --experimental-modules ./bin/seed.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start --path ./tsconfig.server.json",
@@ -45,6 +46,8 @@
     "next": "^10.0.5",
     "next-secure-headers": "^2.2.0",
     "node-emoji": "^1.10.0",
+    "nodemailer": "^6.5.0",
+    "nodemailer-react": "^0.1.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

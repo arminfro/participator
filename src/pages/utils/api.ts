@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, Method as HttpMethod } from 'axios';
 import { Dispatch } from 'react';
-import { isUser, User } from '../../types/user';
+import { isUser, User, UserLogin } from '../../types/user';
 import { Actions } from './store/actions';
 import { getToken, setToken } from './token';
 
@@ -51,13 +51,16 @@ export default async function api<T>(
       }
     })
     .catch((err) => {
-      console.error('error in api', err);
+      if (!/token-to-user$/.test(err.config.url)) {
+        console.error('error in api', err);
+        throw err;
+      }
     });
 }
 
 export async function apiLogin(
   dispatch: Dispatch<Actions>,
-  payload: any,
+  payload: UserLogin,
   successCallback: () => void = null,
   failureCallback: () => void = null,
 ): Promise<void> {
@@ -65,7 +68,6 @@ export async function apiLogin(
     'POST',
     'login',
     ({ access_token, user }) => {
-      console.log('user in login callback', user, access_token);
       if (access_token && isUser(user)) {
         dispatch({ type: 'LOGIN', user });
         setToken(access_token);
@@ -75,5 +77,11 @@ export async function apiLogin(
       }
     },
     payload,
-  );
+  ).catch((err) => {
+    if (failureCallback) {
+      failureCallback();
+    } else {
+      throw err;
+    }
+  });
 }

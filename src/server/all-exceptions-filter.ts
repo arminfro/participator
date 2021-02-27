@@ -34,6 +34,7 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       'HttpExceptionsFilter',
     );
 
+    // todo, use some on text/html,application/xhtml+xml,application/xml for next.render
     /\/json/.test(contentType)
       ? res.status(data.status).send(data)
       : this.next.render(`/http-exception`, data, req, res);

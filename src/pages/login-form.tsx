@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
-
-import { apiLogin } from './utils/api';
+import { useUserLogin } from './users/utils/hooks/use-user';
+import api, { apiLogin } from './utils/api';
 import { useStore } from './utils/store/context';
 
 interface Props {
@@ -12,44 +12,70 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
   const router = useRouter();
   const { dispatch } = useStore();
   const [error, setError] = useState(false);
-  const [name, setName] = useState('Joey');
-  const [password, setPassword] = useState('hi');
+  const [resetPassword, setResetPassword] = useState(false);
+
+  const user = useUserLogin();
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    (resetPassword ? onReset : onLogin)();
+  };
+
+  const onReset = () => {
+    api(
+      'post',
+      'password-recover',
+      () => {
+        // todo, send notification
+        setResetPassword(false);
+      },
+      { email: user.get.email },
+    );
+  };
+
+  const onLogin = () => {
     apiLogin(
       dispatch,
-      { username: name, password },
+      user.get,
       () => router.push(redirectUrl || '/users'),
       () => {
         setError(true);
-        setPassword('');
+        user.set.password('');
       },
     );
   };
 
   return (
     <>
-      <h4>Login</h4>
+      <h4>{resetPassword ? 'Password Recover' : 'Login'}</h4>
       <form className="ui form" onSubmit={onSubmit}>
-        <label>Benutzername</label>
+        <label>E-Mail</label>
         <input
-          type="text"
-          value={name}
+          type="email"
+          value={user.get.email}
           onChange={(e) => {
-            setName(e.target.value);
+            user.set.email(e.target.value);
           }}
         />
-        <label>Passwort</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-        />
-        {error && <p className="ui negative message">Login failed</p>}
+        {!resetPassword && (
+          <>
+            <label>Password</label>
+            <input
+              type="password"
+              value={user.get.password}
+              onChange={(e) => {
+                user.set.password(e.target.value);
+              }}
+            />
+            {error && <p className="ui negative message">Login failed</p>}
+          </>
+        )}
         <button className="ui button">Submit</button>
+        {!resetPassword && (
+          <a className="pointer" onClick={() => setResetPassword(true)}>
+            reset Password
+          </a>
+        )}
       </form>
     </>
   );

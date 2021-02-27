@@ -7,17 +7,19 @@ import { useStore } from '../utils/store/context';
 
 interface Props {
   userName?: string;
+  email?: string;
   edit?: boolean;
   userId?: number;
 }
 
 export default function UserForm({
-  userName = 'Joe',
+  userName = '',
+  email = '',
   userId,
   edit = false, // todo, edit isn't used
 }: Props): ReactElement {
   const user = useUserCreate(
-    { name: userName, pws: { pw1: 'hi', pw2: 'hi' } },
+    { name: userName, email, pws: { pw1: 'hi', pw2: 'hi' } },
     true,
   );
 
@@ -25,19 +27,19 @@ export default function UserForm({
 
   const [showErrors, setShowErrors] = useState(false);
 
-  const submit = (payload: UserCreate) => {
+  const submit = (userCreate: UserCreate) => {
     api<User>(
       edit ? 'PATCH' : 'POST',
       edit ? `api/users/${userId}` : 'api/users',
       (createdUser: User) =>
         apiLogin(
           dispatch,
-          { username: createdUser.name, password: payload.pws.pw1 },
+          { email: userCreate.email, password: userCreate.pws.pw1 },
           () => {
             Router.push(`/users/${createdUser.id}`);
           },
         ),
-      payload,
+      userCreate,
     );
   };
 
@@ -48,6 +50,7 @@ export default function UserForm({
     } else {
       submit({
         name: user.get.name,
+        email: user.get.email,
         pws: { pw1: user.get.pw1, pw2: user.get.pw2 },
       });
     }
@@ -63,15 +66,21 @@ export default function UserForm({
           value={user.get.name}
           onChange={(e) => user.set.name(e.target.value)}
         />
+        <label>E-Mail</label>
+        <input
+          type="email"
+          value={user.get.email}
+          onChange={(e) => user.set.email(e.target.value)}
+        />
         <label>Password</label>
         <input
-          type="text"
+          type="password"
           value={user.get.pw1}
           onChange={(e) => user.set.pw1(e.target.value)}
         />
         <label>Repeat password</label>
         <input
-          type="text"
+          type="password"
           value={user.get.pw2}
           onChange={(e) => user.set.pw2(e.target.value)}
         />

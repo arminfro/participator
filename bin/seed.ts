@@ -1,9 +1,19 @@
-#!/usr/bin/env node
+import * as Faker from 'faker';
+import { isEmail } from 'class-validator';
+import axios from 'axios';
 
-const axios = require('../node_modules/axios/index.js');
+const emails = process.argv.filter((arg) => isEmail(arg));
+if (emails.length < 2) {
+  console.log(
+    "You need to pass two email adresses to the seeder script. Even if you don't use `smtp` option",
+    emails,
+  );
+  process.exit(1);
+}
+
 const baseUrl = 'http://localhost:3000';
 
-let token;
+let token: string;
 
 const postReq = async (url, data) => {
   return await axios.post(`${baseUrl}/${url}`, data, {
@@ -11,12 +21,12 @@ const postReq = async (url, data) => {
   });
 };
 
-const register = async (username, pw = 'hi') => {
-  await postReq('api/users', { name: username, pw1: pw, pw2: pw });
+const register = async (name, email, pw = 'hi') => {
+  await postReq('api/users', { name, email, pws: { pw1: pw, pw2: pw } });
 };
 
-const login = async (username, password = 'hi') => {
-  const resp = await postReq('login', { username, password });
+const login = async (email, password = 'hi') => {
+  const resp = await postReq('login', { email, password });
   token = resp.data.access_token;
   console.log('token:', token);
   return resp.data;
@@ -48,14 +58,14 @@ const addAnswer = async (answerCreate) => {
   let userWithToken;
 
   // ['Joey', 'Lisa', 'Jens', 'Simon', 'Alfred', 'Anna', 'Judith'].forEach((name) => (await register(name)))
-  await register('Joey');
-  await register('Lisa');
-  await login('Joey');
-  await addRoom('Classroom Joey', 'random description');
+  await register(Faker.name.firstName(), emails[0]);
+  await register(Faker.name.firstName(), emails[1]);
+  await login(emails[0]);
+  await addRoom(Faker.lorem.slug(), Faker.lorem.text());
 
-  userWithToken = await login('Lisa');
-  await addRoom('Classroom Lisa', 'random description');
-  userWithToken = await login('Joey');
+  userWithToken = await login(emails[1]);
+  await addRoom(Faker.lorem.slug(), Faker.lorem.text());
+  userWithToken = await login(emails[1]);
   await joinRoom(userWithToken.user);
 
   await addQuestion({

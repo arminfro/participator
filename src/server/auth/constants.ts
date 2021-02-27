@@ -1,4 +1,3 @@
 export const jwtConstants = {
-  // todo, move for production
-  secret: 'secretKey',
+  secret: process.env.JWT_SECRET || 'secretKey',
 };

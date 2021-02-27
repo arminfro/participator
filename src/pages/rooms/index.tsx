@@ -13,7 +13,7 @@ interface Props {
 export default function Rooms({ rooms }: Props): ReactElement {
   return (
     <>
-      {rooms.length && (
+      {rooms.length > 0 && (
         <>
           <h2>Room Index</h2>
           <RoomTable rooms={rooms} />

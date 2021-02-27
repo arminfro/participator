@@ -8,6 +8,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "target": "es2017",
+    "jsx": "react-jsx",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -21,7 +22,8 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "src/pages",
+    "./src/pages",
+    "./bin",
     "./dist",
     "./next"
   ]

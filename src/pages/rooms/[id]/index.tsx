@@ -17,6 +17,7 @@ export default function RoomItem({ room }: Props): ReactElement {
   return (
     <>
       <h2>Room: {room.name}</h2>
+      {room.description && <p>{room.description}</p>}
       <Can I="update" this={subject('Room', room)}>
         <Link href="/rooms/[id]/edit" as={`/rooms/${room.id}/edit`}>
           <button className="ui button yellow">Edit</button>
