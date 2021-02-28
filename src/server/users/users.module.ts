@@ -1,6 +1,8 @@
 import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CaslModule } from '../casl/casl.module';
+import { LoginService } from '../login/login.service';
+import PasswordRecover from '../login/password-recover.entity';
 import { MailerService } from '../mailer/mailer.service';
 import { NextModule } from '../nextjs/next.module';
 import { UserSubscriber } from '../users/user.subscriber';
@@ -10,8 +12,18 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
-  providers: [UsersService, UserSubscriber, MailerService, Logger],
-  imports: [NextModule, CaslModule, TypeOrmModule.forFeature([User])],
+  providers: [
+    UsersService,
+    LoginService,
+    UserSubscriber,
+    MailerService,
+    Logger,
+  ],
+  imports: [
+    NextModule,
+    CaslModule,
+    TypeOrmModule.forFeature([User, PasswordRecover]),
+  ],
   controllers: [UsersController, UsersApiController],
   exports: [UsersService],
 })

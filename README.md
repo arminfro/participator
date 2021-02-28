@@ -50,6 +50,7 @@ Call `yarn doc` for `compodoc` docs generation. It'll show documentation about t
   * [NodeMailer React](https://github.com/mathieutu/nodemailer-react#nodemailer-react)
 * [Socket.io v2 Server](https://socket.io/docs/v2/server-api/)
 * [Socket.io v2 Client](https://socket.io/docs/v2/client-api)
+* [React Toaster](https://fkhadra.github.io/react-toastify/api/toast) - Notifications
 * [SemanticUI](https://semantic-ui.com/) - Css
 * [date-fns](https://github.com/date-fns/date-fns) - Date functions
 * [marked](https://github.com/markedjs/marked) - Markdown

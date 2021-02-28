@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
+import { toast } from 'react-toastify';
+
 import { useUserLogin } from './users/utils/hooks/use-user';
 import api, { apiLogin } from './utils/api';
 import { useStore } from './utils/store/context';
@@ -11,23 +13,29 @@ interface Props {
 export default function LoginForm({ redirectUrl }: Props): ReactElement {
   const router = useRouter();
   const { dispatch } = useStore();
-  const [error, setError] = useState(false);
-  const [resetPassword, setResetPassword] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+  const [recoverPassword, setRecoverPassword] = useState(false);
 
   const user = useUserLogin();
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    (resetPassword ? onReset : onLogin)();
+    if (!user.validationErrors.length) {
+      (recoverPassword ? onRecover : onLogin)();
+    } else {
+      setShowErrors(true);
+    }
   };
 
-  const onReset = () => {
+  const onRecover = () => {
     api(
       'post',
-      'password-recover',
+      'login/password/recover',
       () => {
-        // todo, send notification
-        setResetPassword(false);
+        toast.success(
+          'Password recovery activated, please see your E-Mail inbox',
+        );
+        setRecoverPassword(false);
       },
       { email: user.get.email },
     );
@@ -39,7 +47,7 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
       user.get,
       () => router.push(redirectUrl || '/users'),
       () => {
-        setError(true);
+        toast.error('Login failed');
         user.set.password('');
       },
     );
@@ -47,17 +55,17 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
 
   return (
     <>
-      <h4>{resetPassword ? 'Password Recover' : 'Login'}</h4>
+      <h4>{recoverPassword ? 'Password Recover' : 'Login'}</h4>
       <form className="ui form" onSubmit={onSubmit}>
         <label>E-Mail</label>
         <input
-          type="email"
+          type="text"
           value={user.get.email}
           onChange={(e) => {
             user.set.email(e.target.value);
           }}
         />
-        {!resetPassword && (
+        {!recoverPassword && (
           <>
             <label>Password</label>
             <input
@@ -67,12 +75,23 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
                 user.set.password(e.target.value);
               }}
             />
-            {error && <p className="ui negative message">Login failed</p>}
           </>
         )}
-        <button className="ui button">Submit</button>
-        {!resetPassword && (
-          <a className="pointer" onClick={() => setResetPassword(true)}>
+        {showErrors && user.validationErrors.length !== 0 && (
+          <ul className="ui negative message">
+            {user.validationErrors.map((failure) => (
+              <li key={failure.key}>{failure.message}</li>
+            ))}
+          </ul>
+        )}
+        <button
+          disabled={showErrors && !!user.validationErrors.length}
+          className="ui button"
+        >
+          Submit
+        </button>
+        {!recoverPassword && (
+          <a className="pointer" onClick={() => setRecoverPassword(true)}>
             reset Password
           </a>
         )}

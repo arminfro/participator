@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { ToastContainer } from 'react-toastify';
 
 import Navigator from './navigation/navigator';
 import { AbilityContextProvider } from './utils/casl-context';
@@ -20,6 +21,7 @@ export default function MyApp({ Component, pageProps }: Props): ReactElement {
           <Component {...pageProps} />
         </div>
       </AbilityContextProvider>
+      <ToastContainer />
     </StoreProvider>
   );
 }

@@ -1,14 +1,19 @@
 import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
 import { isNotEmpty } from 'class-validator';
 import { Mailer } from 'nodemailer-react';
+import PasswordReset from './mails/password-reset';
 import Welcome from './mails/welcome';
 
 @Injectable()
 export class MailerService {
   private mailer;
+  constructor(@Inject(Logger) private readonly logger: LoggerService) {
+    this.mailer = Mailer(this.config, this.templates);
+  }
 
   private templates = {
     welcome: Welcome,
+    resetPassword: PasswordReset,
   };
 
   private config = {
@@ -28,20 +33,15 @@ export class MailerService {
     },
   };
 
-  constructor(@Inject(Logger) private readonly logger: LoggerService) {
-    // todo, print to console if env variables not set
-    this.mailer = Mailer(this.config, this.templates);
-  }
-
   sendWelcome(props: { name: string; email: string }) {
     this.send('welcome', props.email, props);
   }
 
+  resetPassword(props: { url: string; email: string }) {
+    this.send('resetPassword', props.email, props);
+  }
+
   private send(template: string, to: string, props: any) {
-    this.logger.log(
-      `E-Mail Template, ${template}, with props ${props}`,
-      'MailerService',
-    );
     const smtpSupport = [
       'EMAIL_HOST',
       'EMAIL_PASS',
@@ -51,7 +51,9 @@ export class MailerService {
       this.mailer.send(template, props, { to });
     } else {
       this.logger.log(
-        `E-Mail Template, ${template}, with props ${props}`,
+        `E-Mail Template, ${template} isn't called with props ${JSON.stringify(
+          props,
+        )}`,
         'MailerService',
       );
     }

@@ -109,9 +109,11 @@ export default function ChatInputForm({
       onCancel();
     } else if (e.key == '@') {
       console.log('selectionstart', e.target);
+      // @ts-ignore
       if (!/\w/.test(input.charAt(e.target.selectionStart - 1))) {
         setOldMsg(input);
         setDoAtmention(true);
+        // @ts-ignore
         setCaretPosition(e.target.selectionStart);
       }
     }

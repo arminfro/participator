@@ -6,20 +6,21 @@ import { useUserCreate } from './utils/hooks/use-user';
 import { useStore } from '../utils/store/context';
 
 interface Props {
-  userName?: string;
+  name?: string;
   email?: string;
   edit?: boolean;
   userId?: number;
+  passwordResetId?: string;
 }
 
 export default function UserForm({
-  userName = '',
+  name = '',
   email = '',
-  userId,
-  edit = false, // todo, edit isn't used
+  userId = null,
+  passwordResetId = null,
 }: Props): ReactElement {
   const user = useUserCreate(
-    { name: userName, email, pws: { pw1: 'hi', pw2: 'hi' } },
+    { name, email, pws: { pw1: 'hi', pw2: 'hi' } },
     true,
   );
 
@@ -29,17 +30,19 @@ export default function UserForm({
 
   const submit = (userCreate: UserCreate) => {
     api<User>(
-      edit ? 'PATCH' : 'POST',
-      edit ? `api/users/${userId}` : 'api/users',
-      (createdUser: User) =>
-        apiLogin(
+      passwordResetId ? 'PATCH' : 'POST',
+      passwordResetId ? `api/users/${userId}/password-reset` : 'api/users',
+      (createdUser: User) => {
+        console.log('createdUser', createdUser);
+        return apiLogin(
           dispatch,
           { email: userCreate.email, password: userCreate.pws.pw1 },
           () => {
             Router.push(`/users/${createdUser.id}`);
           },
-        ),
-      userCreate,
+        );
+      },
+      { ...userCreate, passwordResetId },
     );
   };
 
@@ -58,20 +61,24 @@ export default function UserForm({
 
   return (
     <>
-      <h2>Join Participator</h2>
+      <h2>{passwordResetId ? 'Reset Password' : 'Join Participator'}</h2>
       <form className="ui form" onSubmit={onSubmit}>
-        <label>Username</label>
-        <input
-          type="text"
-          value={user.get.name}
-          onChange={(e) => user.set.name(e.target.value)}
-        />
-        <label>E-Mail</label>
-        <input
-          type="email"
-          value={user.get.email}
-          onChange={(e) => user.set.email(e.target.value)}
-        />
+        {!passwordResetId && (
+          <>
+            <label>Username</label>
+            <input
+              type="text"
+              value={user.get.name}
+              onChange={(e) => user.set.name(e.target.value)}
+            />
+            <label>E-Mail</label>
+            <input
+              type="email"
+              value={user.get.email}
+              onChange={(e) => user.set.email(e.target.value)}
+            />
+          </>
+        )}
         <label>Password</label>
         <input
           type="password"

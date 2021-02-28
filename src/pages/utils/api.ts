@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, Method as HttpMethod } from 'axios';
 import { Dispatch } from 'react';
+import { toast } from 'react-toastify';
 import { isUser, User, UserLogin } from '../../types/user';
 import { Actions } from './store/actions';
 import { getToken, setToken } from './token';
@@ -50,10 +51,13 @@ export default async function api<T>(
         return response.data;
       }
     })
-    .catch((err) => {
-      if (!/token-to-user$/.test(err.config.url)) {
-        console.error('error in api', err);
-        throw err;
+    .catch((error) => {
+      if (!/token-to-user$/.test(error.config.url)) {
+        if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          throw error;
+        }
       }
     });
 }
