@@ -1,4 +1,10 @@
-import React, { useState, Dispatch, SetStateAction, ReactElement } from 'react';
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  SyntheticEvent,
+  useState,
+} from 'react';
 import { User } from '../../types/user';
 import Dropdown from './dropdown';
 
@@ -30,15 +36,11 @@ export default function ChatInputForm({
   const [reducedUserList, setReducedUserList] = useState(users);
   const [caretPosition, setCaretPosition] = useState(0);
 
-  const onClickSubmit = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ): void => {
+  const onSubmit = (e: SyntheticEvent): void => {
     e.preventDefault();
-    if (preSetInput !== '') {
-      input.replace('\n', ' \n');
-    }
-    onCreate(input);
-    setInput('');
+    onCreate(preSetInput !== '' ? input.replace('\n', ' \n') : input, () =>
+      setInput(''),
+    );
   };
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
@@ -140,7 +142,7 @@ export default function ChatInputForm({
   };
 
   return (
-    <form className="ui reply form">
+    <form onSubmit={onSubmit} className="ui reply form">
       <div className="dropdown-container">
         <textarea
           value={input}
@@ -157,12 +159,9 @@ export default function ChatInputForm({
           />
         )}
       </div>
-      <button
-        onClick={onClickSubmit}
-        className="ui blue labled submit icon button "
-      >
+      <button className="ui blue labled submit icon button">
         <i className="icon edit" />
-        send
+        Send
       </button>
       <span className="actions">
         or <b>Ctrl-Return</b>
@@ -175,7 +174,7 @@ export default function ChatInputForm({
           className="ui red labled submit icon button "
         >
           <i className="icon cancel" />
-          cancel
+          Cancel
         </button>
       )}
     </form>

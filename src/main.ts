@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import { NextModule } from './server/nextjs/next.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
+
+// needed for parallel link parsing in LinksService#getPreview
+require('events').EventEmitter.prototype._maxListeners = 128;
+require('events').defaultMaxListeners = 128;
 
 import { AppModule } from './server/app.module';
 import {

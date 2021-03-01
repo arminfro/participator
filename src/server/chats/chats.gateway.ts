@@ -1,6 +1,7 @@
 import {
   ConnectedSocket,
   MessageBody,
+  OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
@@ -12,7 +13,7 @@ import { UsersService } from '../users/users.service';
 import { ChatsService } from './chats.service';
 
 @WebSocketGateway({ namespace: /^\/rooms\/\d\/chat$/ })
-export class ChatsGateway implements NestGateway {
+export class ChatsGateway implements NestGateway, OnGatewayConnection {
   constructor(
     private readonly chatsService: ChatsService,
     private readonly usersService: UsersService,

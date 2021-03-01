@@ -1,5 +1,6 @@
 import React, { Dispatch, ReactElement, SetStateAction, useMemo } from 'react';
 
+import { noop } from '../../constants';
 import {
   addChild,
   removeChild,
@@ -62,7 +63,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
 
   const onEdit = (
     chat: Chat,
-    callback: Dispatch<SetStateAction<string>>,
+    callback: Dispatch<SetStateAction<string>> = noop,
   ): void => {
     socket.emit(Events.update, { id: chat.id, msg: chat.msg }, callback);
   };
@@ -73,7 +74,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
 
   const onCreate = (
     msg: string,
-    callback?: Dispatch<SetStateAction<string>>,
+    callback: Dispatch<SetStateAction<string>> = noop,
     parentId: number = chatId,
   ) => {
     socket.emit(Events.create, { msg, userId: user.id, parentId }, callback);

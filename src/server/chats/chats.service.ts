@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, getManager, TreeRepository } from 'typeorm';
-import { IncomingMessage } from 'http';
 import TreeModel = require('tree-model');
-import request = require('request');
 
 import { ChatCreate, ChatUpdate } from '../../types/chat';
 import { LinksService } from '../links/links.service';
@@ -25,24 +23,8 @@ export class ChatsService {
   async create(chatCreate: ChatCreate, roomId: number): Promise<Chat> {
     const chat = await this.build(chatCreate, roomId);
     await this.chatsRepository.save(chat);
-    const linkStrings = chat.msg.match(urlRegex);
-    if (linkStrings) {
-      const links = await Promise.all(
-        linkStrings
-          .map(async (url) => {
-            const urlWithProtocol = await this.setHttpPrefix(url);
-            if (urlWithProtocol) {
-              return await this.linksService.create({
-                url: urlWithProtocol,
-                chatId: chat.id,
-              });
-            }
-          })
-          .filter((a) => a),
-      );
-      chat.links = links;
-    }
-    await this.chatsRepository.save(chat);
+    this.linksService.buildLinksForChat(chat.id, chat.msg.match(urlRegex));
+    chat.save();
     return chat;
   }
 
@@ -106,30 +88,6 @@ export class ChatsService {
       chat.room = await this.findRoom(roomId);
     }
     return chat;
-  }
-
-  private async setHttpPrefix(url: string): Promise<string> {
-    if (url.search(/^http[s]?:\/\//) == -1) {
-      if (await this.urlExists(`https://${url}`)) {
-        return `https://${url}`;
-      } else if (await this.urlExists(`http://${url}`)) {
-        return `http://${url}`;
-      }
-    } else {
-      return url;
-    }
-  }
-
-  private async urlExists(url: string): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) =>
-      request(url, { method: 'HEAD' }, (err: Error, res: IncomingMessage) => {
-        if (err || /4\d\d/.test(String(res.statusCode))) {
-          reject(false);
-        } else {
-          resolve(true);
-        }
-      }),
-    ).catch(() => Promise.resolve(false));
   }
 
   // todo, un-DRY
