@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import marked from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import emoji from 'node-emoji';
@@ -37,6 +37,13 @@ export default function ChatListItem({
   const [edit, setEdit] = useState<boolean>(false);
   const [reply, setReply] = useState<boolean>(false);
   const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (chat.children.length > 0) {
+      setCollapsed(collapseAll);
+    }
+    console.log('cA', collapseAll);
+  }, [chat.children.length, collapseAll]);
 
   const {
     store: { user },
@@ -129,14 +136,14 @@ export default function ChatListItem({
         onClickEdit={onClickEdit}
         onClickReply={onClickReply}
         onRemove={onRemove}
-        collapsed={collapsed}
-        setCollapsed={setCollapsed || collapseAll}
+        collapsed={collapsed || collapseAll}
+        setCollapsed={setCollapsed}
       />
       <div className="description">
         <ChatLinkList chat={chat} />
         {createResponse()}
       </div>
-      {(!collapsed || collapseAll) && (
+      {!collapsed && (
         <ChatList
           key={chat.id}
           onCreate={onCreate}

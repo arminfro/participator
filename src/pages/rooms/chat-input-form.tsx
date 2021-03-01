@@ -126,12 +126,11 @@ export default function ChatInputForm({
 
   const selectAtMention = (value: string): void => {
     const addSpace = oldMsg.charAt(caretPosition - 1) !== ' ' ? ' ' : '';
-    value = value.replace(youExtension, '');
     setUserInput(
       oldMsg.slice(0, caretPosition) +
         addSpace +
         '**@' +
-        value +
+        value.replace(youExtension, '') +
         '** ' +
         oldMsg.slice(caretPosition),
     );
