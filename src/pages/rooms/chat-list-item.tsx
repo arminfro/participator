@@ -9,10 +9,12 @@ import ChatItemHeader from './chat-item-header';
 import ChatLinkList from './chat-link-list';
 import ChatList from './chat-list';
 import { ApiCreatedResponse } from '@nestjs/swagger';
+import { useStore } from '../utils/store/context';
 
 interface Props {
   chat: Chat;
   depth: number;
+  collapseAll: boolean;
   setInput: Dispatch<SetStateAction<string>>;
   onEdit: (chat: Chat, callback: Dispatch<SetStateAction<string>>) => void;
   onRemove: (chat: Chat) => void;
@@ -26,6 +28,7 @@ interface Props {
 export default function ChatListItem({
   chat,
   depth,
+  collapseAll,
   onCreate,
   onEdit,
   onRemove,
@@ -33,6 +36,11 @@ export default function ChatListItem({
 }: Props) {
   const [edit, setEdit] = useState<boolean>(false);
   const [reply, setReply] = useState<boolean>(false);
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  const {
+    store: { user },
+  } = useStore();
 
   marked.setOptions({
     breaks: true,
@@ -66,13 +74,30 @@ export default function ChatListItem({
     resetStatus();
   };
 
-  const createdResponse = () => {
+  const createResponse = () => {
     const msgContent: JSX.Element = (
       <div className="content">
+        {chat.msg.includes('**@' + user.name + '**') && (
+          <p>you've been mentionded</p>
+        )}
         <div
           className="text-with-markdown"
           dangerouslySetInnerHTML={{
-            __html: emoji.emojify(sanitizeHtml(marked(chat.msg))),
+            __html: emoji.emojify(
+              sanitizeHtml(
+                marked(
+                  chat.msg.replace(
+                    '**@' + user.name + '**',
+                    `<mention>**@${user.name}**</mention>`,
+                  ),
+                ),
+                {
+                  allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+                    'mention',
+                  ]),
+                },
+              ),
+            ),
           }}
         />
       </div>
@@ -104,20 +129,24 @@ export default function ChatListItem({
         onClickEdit={onClickEdit}
         onClickReply={onClickReply}
         onRemove={onRemove}
+        collapsed={collapsed}
+        setCollapsed={setCollapsed || collapseAll}
       />
       <div className="description">
         <ChatLinkList chat={chat} />
-        {createdResponse()}
+        {createResponse()}
       </div>
-      <ChatList
-        key={chat.id}
-        onCreate={onCreate}
-        onEdit={onEdit}
-        onRemove={onRemove}
-        chats={chat}
-        setInput={setInput}
-        depth={depth + 1}
-      />
+      {(!collapsed || collapseAll) && (
+        <ChatList
+          key={chat.id}
+          onCreate={onCreate}
+          onEdit={onEdit}
+          onRemove={onRemove}
+          chats={chat}
+          setInput={setInput}
+          depth={depth + 1}
+        />
+      )}
     </div>
   );
 }

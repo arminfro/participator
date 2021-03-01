@@ -27,6 +27,8 @@ interface Props {
 
 export default function Chats({ roomId, chatId, users }: Props): ReactElement {
   const [input, setInput] = useState('');
+  const [doCollapseAll, setDoCollapseAll] = useState(false);
+
   const {
     store: { user },
   } = useStore();
@@ -97,6 +99,23 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
   return (
     <div className="ui segment">
       <h3 className="ui dividing header">Chat</h3>
+      {doCollapseAll ? (
+        <button
+          type="button"
+          className="ui green labled submit icon button "
+          onClick={() => setDoCollapseAll(false)}
+        >
+          <i className="icon cancel"></i>expand all
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="ui blue labled submit icon button "
+          onClick={() => setDoCollapseAll(true)}
+        >
+          <i className="icon cancel"></i>collapse all
+        </button>
+      )}
       <ChatList
         chats={chats}
         onCreate={onCreate}
@@ -104,6 +123,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
         onRemove={onRemove}
         setInput={setInput}
         depth={0}
+        collapseAll={doCollapseAll}
       />
 
       <ChatInputForm

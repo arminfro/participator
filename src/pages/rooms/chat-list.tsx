@@ -13,6 +13,7 @@ interface Props {
   ) => void;
   setInput: React.Dispatch<React.SetStateAction<string>>;
   depth: number;
+  collapseAll: boolean;
 }
 
 export default function ChatList({
@@ -22,6 +23,7 @@ export default function ChatList({
   onRemove,
   setInput,
   depth,
+  collapseAll,
 }: Props) {
   return (
     <>
@@ -39,6 +41,7 @@ export default function ChatList({
               chat={chat}
               setInput={setInput}
               depth={0}
+              collapseAll={collapseAll}
             />
           ))}
         </div>
