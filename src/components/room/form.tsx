@@ -10,7 +10,7 @@ import {
   validateRoomCreate,
   validateRoomUpdate,
 } from '../../types/room.validation';
-import { useFormValidation } from '../users/utils/hooks/use-form-validation';
+import { useFormValidation } from '../utils/hooks/use-form-validation';
 import api from '../utils/api';
 
 interface Props {

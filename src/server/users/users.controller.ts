@@ -19,8 +19,8 @@ export class UsersController {
     private readonly usersService: UsersService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get()
+  @UseGuards(JwtAuthGuard)
   public async index(
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
@@ -34,8 +34,8 @@ export class UsersController {
     this.next.render(`/users/new`, req, res);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id/edit')
+  @UseGuards(JwtAuthGuard)
   public async showEdit(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: IncomingMessage,
@@ -45,8 +45,8 @@ export class UsersController {
     await this.next.render(`/users/${id}/edit`, { user }, req, res);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: IncomingMessage,

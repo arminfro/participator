@@ -46,6 +46,7 @@ export class UsersApiController {
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<User | undefined> {
+    console.log('id in findOne User', id);
     return await this.usersService.findOne(id, {
       relations: ['ownedRooms', 'joinedRooms'],
     });

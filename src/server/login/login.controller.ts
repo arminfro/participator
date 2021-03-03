@@ -31,7 +31,7 @@ export class LoginController {
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    await this.next.render('/login-form', req, res);
+    await this.next.render('/login', req, res);
   }
 
   @Get('password/reset/:id')

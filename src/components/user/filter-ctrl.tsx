@@ -5,7 +5,7 @@ import React, {
   SyntheticEvent,
 } from 'react';
 import { User } from '../../types/user';
-import { UserFilter } from './index';
+import { UserFilter } from './list';
 
 function useInput(
   initialValue: string,

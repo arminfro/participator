@@ -1,10 +1,9 @@
 import { useRouter } from 'next/router';
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import { toast } from 'react-toastify';
-
-import { useUserLogin } from './users/utils/hooks/use-user';
-import api, { apiLogin } from './utils/api';
-import { useStore } from './utils/store/context';
+import api, { apiLogin } from '../utils/api';
+import { useUserLogin } from '../utils/hooks/use-user';
+import { useStore } from '../utils/store/context';
 
 interface Props {
   redirectUrl?: string;

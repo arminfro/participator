@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Failure } from 'superstruct';
-import { ValidationResult } from '../../../../types/utils';
+import { ValidationResult } from '../../../types/utils';
 
 type Keys<T> = keyof T;
 type StringKeys<T> = Extract<Keys<T>, string>;

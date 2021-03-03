@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Chat } from '../../types/chat';
-import ChatListItem from './chat-list-item';
+import ChatListItem from './list-item';
 
 interface Props {
   chats: Chat;

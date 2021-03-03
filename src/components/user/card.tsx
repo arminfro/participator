@@ -4,7 +4,7 @@ import React, { ReactElement } from 'react';
 import { Action } from '../../casl/action';
 import { User, UserUpdateToggleKeys } from '../../types/user';
 import { useAbility } from '../utils/casl-context';
-import { useUserUpdate } from './utils/hooks/use-user';
+import { useUserUpdate } from '../utils/hooks/use-user';
 
 const onlineStyle = {
   color: 'green',

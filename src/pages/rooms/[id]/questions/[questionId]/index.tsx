@@ -1,22 +1,14 @@
+import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
-import { NextPageContext } from 'next';
-import api from '../../../../utils/api';
-import getInitialProps from '../../../../utils/get-initial-props';
-import IQuestion from '../../../../../types/question';
+import Question from '../../../../../types/question';
+import QuestionDetails from '../../../../../components/question/details';
+import Fetch from '../../../../../components/utils/fetch';
 
-interface Props {
-  question: IQuestion;
+export default function QuestionEdit(): ReactElement {
+  const { id, questionId } = useRouter().query;
+  return (
+    <Fetch<Question> url={`api/rooms/${id}/questions/${questionId}`}>
+      {(question) => <QuestionDetails question={question} />}
+    </Fetch>
+  );
 }
-
-export default function Question({ question }: Props): ReactElement {
-  return <>{JSON.stringify(question)}</>;
-}
-
-Question.getInitialProps = async ({ req, query }: NextPageContext) => {
-  const question = await getInitialProps<IQuestion>(req, query, {
-    server: () => query.question,
-    client: async () =>
-      await api('get', `api/rooms/${query.id}/questions/${query.questionId}`),
-  });
-  return { question };
-};

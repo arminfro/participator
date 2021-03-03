@@ -1,17 +1,12 @@
 import { useState } from 'react';
-import {
-  User,
-  UserCreate,
-  UserLogin,
-  UserUpdate,
-} from '../../../../types/user';
+import { User, UserCreate, UserLogin, UserUpdate } from '../../../types/user';
 import {
   validateUserCreate,
   validateUserLogin,
   validateUserUpdate,
-} from '../../../../types/user.validation';
-import { ValidationResult } from '../../../../types/utils';
-import api from '../../../utils/api';
+} from '../../../types/user.validation';
+import { ValidationResult } from '../../../types/utils';
+import api from '../api';
 import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
 
 export function useUserUpdate(

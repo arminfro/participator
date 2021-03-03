@@ -11,8 +11,8 @@ import { useSocket } from '../utils/hooks/use-socket';
 import { User } from '../../types/user';
 import { Chat, Events } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
-import ChatList from './chat-list';
-import ChatInputForm from './chat-input-form';
+import ChatList from './list';
+import ChatInputForm from './input-form';
 
 interface Props {
   roomId: number;

@@ -4,10 +4,10 @@ import sanitizeHtml from 'sanitize-html';
 import emoji from 'node-emoji';
 
 import { Chat } from '../../types/chat';
-import ChatInputForm from './chat-input-form';
-import ChatItemHeader from './chat-item-header';
-import ChatLinkList from './chat-link-list';
-import ChatList from './chat-list';
+import ChatInputForm from './input-form';
+import ChatItemHeader from './item-header';
+import ChatLinkList from './link-list';
+import ChatList from './list';
 
 interface Props {
   chat: Chat;

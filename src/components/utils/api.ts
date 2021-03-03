@@ -23,6 +23,13 @@ import { getToken, setToken } from './token';
 
 //   return [data, setData];
 // }
+export async function swrApi(method: HttpMethod, path: string) {
+  return axios({
+    method: method,
+    headers: { Authorization: `bearer ${getToken()}` },
+    url: `http://localhost:3000/${path}`,
+  });
+}
 
 /*
  * Useful for calls on events or in condition
@@ -37,7 +44,7 @@ export default async function api<T>(
   path: string,
   callback: (data: T) => void | undefined = undefined,
   data = {},
-): Promise<T | void> {
+) {
   return axios({
     method: method,
     headers: { Authorization: `bearer ${getToken()}` },

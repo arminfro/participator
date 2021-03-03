@@ -1,4 +1,4 @@
-import { ReactElement, useReducer } from 'react';
+import React, { ReactElement, useReducer } from 'react';
 import reducer from './reducer';
 import Store, { initializeStore } from './store';
 import { StoreContext } from './context';
