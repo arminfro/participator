@@ -17,7 +17,6 @@ export default function UserList({
   users,
 }: Props): ReactElement {
   const [filterCtl, setFilterCtl] = useState([filter]);
-  console.log('users in Users Comp', users);
   return (
     <>
       {!group && (

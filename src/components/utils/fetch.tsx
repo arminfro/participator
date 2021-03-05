@@ -1,7 +1,11 @@
 import React, { ReactElement, Suspense } from 'react';
-import useSWR from 'swr';
-import ErrorBoundary from './error-boundary';
+import { toast } from 'react-toastify';
+import useSWR, { ConfigInterface } from 'swr';
+import { isDev } from '../../utils/environment';
+
 import LoadingSpinner from '../shared/loading-spinner';
+import ErrorBoundary from './error-boundary';
+import useLocalStorage from './hooks/use-local-storage';
 import { getToken } from './token';
 
 interface FetchProps<T> {
@@ -10,19 +14,28 @@ interface FetchProps<T> {
 }
 
 function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
-  const { data, error, isValidating } = useSWR([url, getToken()]);
-  console.log('data', data, 'error', error, 'isValidating', isValidating);
-  if (error) {
-    debugger;
+  const key = [url, getToken()];
+  const [localStorage, setLocalStorage] = useLocalStorage<T>(key.join());
+  const swrConfig: ConfigInterface = {
+    onSuccess: (response: any) => {
+      setLocalStorage(response);
+      if (isDev()) toast.info(`Fetched ${url}`);
+    },
+    onError: (err: Error) => {
+      if (isDev()) toast.error(err);
+    },
+  };
+  if (localStorage) {
+    swrConfig.initialData = localStorage;
   }
-  // if (!data) return <div>loading...</div>;
-  // if (!window) return <LoadingSpinner />;
-  return children(data.data);
+  const { data, error } = useSWR<T>(key, swrConfig);
+  if (error) console.error('error in Fetcher', error);
+  return children(data);
 }
 
 export default function Fetch<T>(props: FetchProps<T>): ReactElement {
   return (
-    <ErrorBoundary fallback={<h1> Error</h1>}>
+    <ErrorBoundary fallback={<h1>Error</h1>}>
       <Suspense fallback={<LoadingSpinner />}>
         <Fetcher {...props} />
       </Suspense>

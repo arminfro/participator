@@ -1,34 +1,18 @@
 import axios, { AxiosResponse, Method as HttpMethod } from 'axios';
 import { Dispatch } from 'react';
 import { toast } from 'react-toastify';
+
 import { isUser, User, UserLogin } from '../../types/user';
+import { transformDateString } from '../../utils/transform-tree';
 import { Actions } from './store/actions';
 import { getToken, setToken } from './token';
 
-/*
- * @param method [string], http method
- * @param path [string], relative path to baseUrl
- * @param bodyData [object]
- * @return, Response Data
- */
-// export function useApi<T>(
-//   method: HttpMethod,
-//   path: string,
-// ): [T | undefined, Dispatch<SetStateAction<T>>] {
-//   const [data, setData] = useState<T>();
-
-//   useEffect(() => {
-//     api<T>(method, path, (data: T) => setData(data));
-//   }, [method, path]);
-
-//   return [data, setData];
-// }
-export async function swrApi(method: HttpMethod, path: string) {
+export async function swrApi(path: string) {
   return axios({
-    method: method,
+    method: 'GET',
     headers: { Authorization: `bearer ${getToken()}` },
     url: `http://localhost:3000/${path}`,
-  });
+  }).then((resp) => transformDateString(resp.data));
 }
 
 /*
@@ -52,10 +36,11 @@ export default async function api<T>(
     data,
   })
     .then((response: AxiosResponse<T>) => {
+      const data = transformDateString<T>(response.data);
       if (callback && response) {
-        callback(response.data);
+        callback(data);
       } else {
-        return response.data;
+        return data;
       }
     })
     .catch((error) => {

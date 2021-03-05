@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react';
-import { SWRConfig } from 'swr';
 import { ToastContainer } from 'react-toastify';
+import { SWRConfig } from 'swr';
 
 import Navigator from '../components/navigation/navigator';
+import { swrApi } from '../components/utils/api';
 import { AbilityContextProvider } from '../components/utils/casl-context';
 import StoreProvider from '../components/utils/store/provider';
-import { swrApi } from '../components/utils/api';
 import './styles.css';
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 
 export default function App({ Component, pageProps }: Props): ReactElement {
   const swrOptions = {
-    fetcher: (resource, init) => swrApi('get', resource),
+    fetcher: (url: string) => swrApi(url),
     suspense: true,
   };
 

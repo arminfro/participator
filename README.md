@@ -14,12 +14,12 @@ Then simply do `yarn install`
 
 ## Configuration
 
-E-Mail configuration for `smtp` support by setting env variables, e.g. in `.env` file
+E-Mail configuration for `smtp` support by setting env variables, e.g. in `.env` file:
 
 ```bash
-EMAIL_HOST   # eg, smtp.example.com
-EMAIL_SENDER # eg, myEmail@example.com
-EMAIL_PASS   # eg, password 
+EMAIL_HOST=smtp.example.com
+EMAIL_SENDER=myEmail@example.com
+EMAIL_PASS=mypassword 
 ```
 
 For `jwt` security secret key set `JWT_SECRET` to a random string
@@ -31,6 +31,19 @@ Just `yarn start`, or `yarn start:debug` for server debugging and hot reloading.
 Once started, you can go to `localhost:3000/api` to see a summary of all `http` routes.
 
 All routes prefixed with `api/` return json. Others call Next.js to render components.
+
+## File Structure
+
+There are three groups of directories in `src`.
+
+* Server code is in `server`
+* Client code is in `pages` and `components`
+  * `pages` is the file-based routing of next.js. It's the bridge betwenn `server` and `components`. That's where data fetching happens.
+  * `components` has all components grouped by subjects. They get called from `pages` when data has arrived.
+* Common code is in `types, casl` and `utils`
+  * `types` has all type definitions and validations using `superstruct`
+  * `casl` defines abilities
+  * `utils` contains common helper functions
 
 ## Docs
 
@@ -46,6 +59,7 @@ Call `yarn doc` for `compodoc` docs generation. It'll show documentation about t
 * [Superstruct](https://docs.superstructjs.org/) - Type Validation
 * [Bcrypt](https://github.com/kelektiv/node.bcrypt.js) - Encryption
 * [Winston](https://github.com/winstonjs/winston#table-of-contents) - Logging
+* [Swr](https://swr.vercel.app/docs/options) - Fetching
 * [NodeMailer](https://nodemailer.com/about/) - E-Mails
   * [NodeMailer React](https://github.com/mathieutu/nodemailer-react#nodemailer-react)
 * [Socket.io v2 Server](https://socket.io/docs/v2/server-api/)
