@@ -1,6 +1,7 @@
 import * as Faker from 'faker';
 import { isEmail } from 'class-validator';
 import axios from 'axios';
+import { url } from '../src/constants';
 
 const emails = process.argv.filter((arg) => isEmail(arg));
 if (emails.length < 2) {
@@ -11,12 +12,10 @@ if (emails.length < 2) {
   process.exit(1);
 }
 
-const baseUrl = 'http://localhost:3000';
-
 let token: string;
 
-const postReq = async (url, data) => {
-  return await axios.post(`${baseUrl}/${url}`, data, {
+const postReq = async (path, data) => {
+  return await axios.post(`${url}/${path}`, data, {
     headers: { Authorization: `bearer ${token}` },
   });
 };
@@ -38,7 +37,7 @@ const addRoom = async (name, description) => {
 
 const joinRoom = async (addMember) => {
   return await axios.patch(
-    `${baseUrl}/api/rooms/2`,
+    `${url}/api/rooms/2`,
     { addMember },
     {
       headers: { Authorization: `bearer ${token}` },

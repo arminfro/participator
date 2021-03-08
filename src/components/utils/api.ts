@@ -1,6 +1,7 @@
 import axios, { AxiosResponse, Method as HttpMethod } from 'axios';
 import { Dispatch } from 'react';
 import { toast } from 'react-toastify';
+import { protocol, url } from '../../constants';
 
 import { isUser, User, UserLogin } from '../../types/user';
 import { transformDateString } from '../../utils/transform-tree';
@@ -11,7 +12,7 @@ export async function swrApi(path: string) {
   return axios({
     method: 'GET',
     headers: { Authorization: `bearer ${getToken()}` },
-    url: `http://localhost:3000/${path}`,
+    url: `${protocol}://${url}/${path}`,
   }).then((resp) => transformDateString(resp.data));
 }
 
@@ -32,7 +33,7 @@ export default async function api<T>(
   return axios({
     method: method,
     headers: { Authorization: `bearer ${getToken()}` },
-    url: `http://localhost:3000/${path}`,
+    url: `${protocol}://${url}/${path}`,
     data,
   })
     .then((response: AxiosResponse<T>) => {

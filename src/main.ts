@@ -15,6 +15,7 @@ import {
   utilities as nestWinstonModuleUtilities,
 } from 'nest-winston';
 import * as winston from 'winston';
+import { domain, port, url } from './constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -52,8 +53,8 @@ async function bootstrap() {
     .get(NextModule)
     .prepare()
     .then(() => {
-      app.listen(3000, 'localhost', () => {
-        console.log('> Ready on http://localhost:3000 with Next.js!');
+      app.listen(port, domain, () => {
+        console.log(`> Ready on http://${url} with Next.js!`);
       });
     });
 }
