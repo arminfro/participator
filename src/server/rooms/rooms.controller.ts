@@ -11,25 +11,20 @@ import {
 import { NextService } from '../nextjs/next.service';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RoomsService } from './rooms.service';
 import { UsePolicy } from '../casl/use-policy.decorator';
 import { Action } from '../../casl/action';
 
 @Controller('rooms')
 @UseGuards(JwtAuthGuard)
 export class RoomsController {
-  constructor(
-    private readonly next: NextService,
-    private readonly roomsService: RoomsService,
-  ) {}
+  constructor(private readonly next: NextService) {}
 
   @Get()
   public async index(
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    const rooms = await this.roomsService.findAll();
-    this.next.render('/rooms', { rooms }, req, res);
+    this.next.render('/rooms', req, res);
   }
 
   @Get('new')
@@ -44,8 +39,7 @@ export class RoomsController {
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    const room = await this.roomsService.findOne(id);
-    await this.next.render(`/rooms/${id}/edit`, { room }, req, res);
+    await this.next.render(`/rooms/${id}/edit`, req, res);
   }
 
   @Get(':id')
@@ -55,7 +49,6 @@ export class RoomsController {
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    const room = await this.roomsService.findOne(id);
-    this.next.render(`/rooms/${id}`, { room }, req, res);
+    this.next.render(`/rooms/${id}`, req, res);
   }
 }
