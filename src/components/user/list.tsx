@@ -7,27 +7,17 @@ export type UserFilter = (a: User) => boolean;
 
 interface Props {
   users: User[];
-  group?: boolean;
-  filter?: UserFilter;
 }
 
-export default function UserList({
-  filter = () => true,
-  group = false,
-  users,
-}: Props): ReactElement {
-  const [filterCtl, setFilterCtl] = useState([filter]);
+export default function UserList({ users }: Props): ReactElement {
+  const [filterCtl, setFilterCtl] = useState<UserFilter[]>([() => true]);
   return (
     <>
-      {!group && (
-        <>
-          <h2>Users</h2>
+      <h2 className="ui dividing header">Users</h2>
 
-          <UserFilterCtrl
-            setFilter={(filterFunc: UserFilter) => setFilterCtl([filterFunc])}
-          />
-        </>
-      )}
+      <UserFilterCtrl
+        setFilter={(filterFunc: UserFilter) => setFilterCtl([filterFunc])}
+      />
       <div className="ui container cards">
         {users.filter(filterCtl[filterCtl.length - 1]).map((user: User) => (
           <UserCard user={user} key={user.id} />

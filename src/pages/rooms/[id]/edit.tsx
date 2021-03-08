@@ -7,7 +7,7 @@ import Fetch from '../../../components/utils/fetch';
 export default function RoomEdit(): ReactElement {
   const router = useRouter();
   return (
-    <Fetch<Room> url={`api/users/${router.query.id}`}>
+    <Fetch<Room> url={`api/rooms/${router.query.id}`}>
       {(room) => <RoomUpdate room={room} />}
     </Fetch>
   );
