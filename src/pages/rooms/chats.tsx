@@ -26,8 +26,8 @@ interface Props {
 }
 
 export default function Chats({ roomId, chatId, users }: Props): ReactElement {
-  const [input, setInput] = useState('');
-  const [doCollapseAll, setDoCollapseAll] = useState(false);
+  const [input, setInput] = useState<string>('');
+  const [doCollapseAll, setDoCollapseAll] = useState<boolean>(false);
 
   const {
     store: { user },
@@ -95,6 +95,8 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
   const onCancel = () => {
     return;
   };
+
+  console.log('DoCollA: ', doCollapseAll);
 
   return (
     <div className="ui segment">

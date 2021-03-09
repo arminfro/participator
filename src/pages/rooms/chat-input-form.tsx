@@ -34,7 +34,7 @@ export default function ChatInputForm({
   const [reducedUserList, setReducedUserList] = useState(users);
   const [caretPosition, setCaretPosition] = useState(0);
 
-  const youExtension: string = ' - (you)';
+  const youExtension = ' - (you)';
 
   const onClickSubmit = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,

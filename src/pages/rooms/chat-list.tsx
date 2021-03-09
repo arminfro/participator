@@ -25,6 +25,8 @@ export default function ChatList({
   depth,
   collapseAll,
 }: Props) {
+  console.log('ChatList, collapseAll', collapseAll, 'depth: ', depth);
+
   return (
     <>
       {chats.children && (
@@ -40,8 +42,8 @@ export default function ChatList({
               onRemove={onRemove}
               chat={chat}
               setInput={setInput}
-              depth={0}
-              collapseAll={collapseAll}
+              depth={depth}
+              collapseAll={depth === 0 ? false : collapseAll}
             />
           ))}
         </div>

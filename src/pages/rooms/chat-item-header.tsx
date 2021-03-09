@@ -23,10 +23,16 @@ export default function ChatItemHeader({
     <div className="header">
       <span
         onClick={() => {
-          if (chat.children.length > 0) setCollapsed(!collapsed);
+          if (chat.children) {
+            if (chat.children.length > 0) setCollapsed(!collapsed);
+          }
         }}
       >
-        {chat.children.length > 0 ? (collapsed ? '+' : '-') : ''}
+        {chat.children && chat.children.length > 0
+          ? collapsed
+            ? '+'
+            : '-'
+          : ''}
       </span>
       <img
         className="ui avatar image"

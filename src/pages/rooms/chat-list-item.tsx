@@ -8,7 +8,6 @@ import ChatInputForm from './chat-input-form';
 import ChatItemHeader from './chat-item-header';
 import ChatLinkList from './chat-link-list';
 import ChatList from './chat-list';
-import { ApiCreatedResponse } from '@nestjs/swagger';
 import { useStore } from '../utils/store/context';
 
 interface Props {
@@ -39,11 +38,10 @@ export default function ChatListItem({
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   useEffect(() => {
-    if (chat.children.length > 0) {
-      setCollapsed(collapseAll);
-    }
+    setCollapsed(collapseAll);
+
     console.log('cA', collapseAll);
-  }, [chat.children.length, collapseAll]);
+  }, [collapseAll]);
 
   const {
     store: { user },
@@ -81,54 +79,6 @@ export default function ChatListItem({
     resetStatus();
   };
 
-  const createResponse = () => {
-    const msgContent: JSX.Element = (
-      <div className="content">
-        {chat.msg.includes('**@' + user.name + '**') && (
-          <p>you've been mentionded</p>
-        )}
-        <div
-          className="text-with-markdown"
-          dangerouslySetInnerHTML={{
-            __html: emoji.emojify(
-              sanitizeHtml(
-                marked(
-                  chat.msg.replace(
-                    '**@' + user.name + '**',
-                    `<mention>**@${user.name}**</mention>`,
-                  ),
-                ),
-                {
-                  allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-                    'mention',
-                  ]),
-                },
-              ),
-            ),
-          }}
-        />
-      </div>
-    );
-
-    const inputForm: JSX.Element = (
-      <ChatInputForm
-        onCreate={onSend}
-        onCancel={onCancel}
-        preSetInput={reply ? '' : chat.msg}
-        setInput={setInput}
-        allowEscape={true}
-      />
-    );
-
-    if (edit) {
-      return inputForm;
-    } else if (reply) {
-      return [msgContent, inputForm];
-    } else {
-      return msgContent;
-    }
-  };
-
   return (
     <div className="item pa-tb-20">
       <ChatItemHeader
@@ -141,7 +91,42 @@ export default function ChatListItem({
       />
       <div className="description">
         <ChatLinkList chat={chat} />
-        {createResponse()}
+        {!edit && (
+          <div className="content">
+            {chat.msg.includes('**@' + user.name + '**') && (
+              <p>you've been mentionded</p>
+            )}
+            <div
+              className="text-with-markdown"
+              dangerouslySetInnerHTML={{
+                __html: emoji.emojify(
+                  sanitizeHtml(
+                    marked(
+                      chat.msg.replace(
+                        '**@' + user.name + '**',
+                        `<mention>**@${user.name}**</mention>`,
+                      ),
+                    ),
+                    {
+                      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+                        'mention',
+                      ]),
+                    },
+                  ),
+                ),
+              }}
+            />
+          </div>
+        )}
+        {(edit || reply) && (
+          <ChatInputForm
+            onCreate={onSend}
+            onCancel={onCancel}
+            preSetInput={reply ? '' : chat.msg}
+            setInput={setInput}
+            allowEscape={true}
+          />
+        )}
       </div>
       {!collapsed && (
         <ChatList
@@ -152,6 +137,7 @@ export default function ChatListItem({
           chats={chat}
           setInput={setInput}
           depth={depth + 1}
+          collapseAll={collapsed}
         />
       )}
     </div>
