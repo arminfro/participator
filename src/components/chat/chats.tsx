@@ -2,6 +2,7 @@ import React, { Dispatch, ReactElement, SetStateAction, useMemo } from 'react';
 
 import {
   addChild,
+  newTree,
   removeChild,
   replaceChild,
 } from '../../utils/transform-tree';
@@ -12,7 +13,6 @@ import { Chat, Events, isChat } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
 import ChatList from './list';
 import ChatInputForm from './input-form';
-import { newTree } from '../../../dist/src/utils/transform-tree';
 import { chatMsgDeleted, noop } from '../../constants';
 
 interface Props {

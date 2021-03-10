@@ -1,8 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
-import { protocol, url } from '../../constants';
+import { urlWithProtocol } from '../../constants';
 import { UserCreate } from '../../types/user';
 import { AuthService } from '../auth/auth.service';
 import PasswordRecover from '../login/password-recover.entity';
@@ -32,7 +31,7 @@ export class LoginService {
     ) {
       const passwordRecover = await this.buildAndSavePasswordRecover(user);
       this.mailerService.resetPassword({
-        url: `${protocol}://${url}/login/password/reset/${passwordRecover.id}`,
+        url: `${urlWithProtocol}/login/password/reset/${passwordRecover.id}`,
         email: user.email,
       });
     } else {
