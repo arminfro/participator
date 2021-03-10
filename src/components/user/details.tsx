@@ -1,8 +1,11 @@
 import Link from 'next/link';
 import Router from 'next/router';
 import React, { ReactElement } from 'react';
+
 import { User } from '../../types/user';
 import api from '../utils/api';
+import { useStore } from '../utils/store/context';
+import { removeToken } from '../utils/token';
 import UserCard from './card';
 
 interface Props {
@@ -10,12 +13,15 @@ interface Props {
 }
 
 export default function UserDetails({ user }: Props): ReactElement {
+  const { dispatch } = useStore();
   const onDelete = () => {
-    // if (window.confirm('Sure?')) {
-    api('DELETE', `api/users/${user.id}`, () => {
-      Router.push('/users');
-    });
-    // }
+    if (window.confirm('Are you sure you want to delete your account?')) {
+      api('DELETE', `api/users/${user.id}`, () => {
+        dispatch({ type: 'LOGOUT' });
+        removeToken();
+        Router.push('/');
+      });
+    }
   };
 
   return (

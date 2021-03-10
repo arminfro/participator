@@ -1,6 +1,5 @@
 import React, { Dispatch, ReactElement, SetStateAction, useMemo } from 'react';
 
-import { noop } from '../../constants';
 import {
   addChild,
   removeChild,
@@ -9,10 +8,12 @@ import {
 import { useStore } from '../utils/store/context';
 import { useSocket } from '../utils/hooks/use-socket';
 import { User } from '../../types/user';
-import { Chat, Events } from '../../types/chat';
+import { Chat, Events, isChat } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
 import ChatList from './list';
 import ChatInputForm from './input-form';
+import { newTree } from '../../../dist/src/utils/transform-tree';
+import { chatMsgDeleted, noop } from '../../constants';
 
 interface Props {
   roomId: number;
@@ -48,10 +49,24 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
           setData((chat) => ({ ...replaceChild<Chat>(chat, payload) }));
         },
         [Events.remove]: (
-          payload: { id: number },
+          payload: { id: number } | Chat,
           setData: Dispatch<SetStateAction<Chat>>,
         ) => {
-          setData((chat) => ({ ...removeChild<Chat>(chat, payload.id) }));
+          if (isChat(payload)) {
+            setData((chat) => {
+              const chatToReplace = newTree(chat).first(
+                (node) => node.model.id === payload.id,
+              ).model;
+              return {
+                ...replaceChild<Chat>(chat, {
+                  ...chatToReplace,
+                  msg: chatMsgDeleted,
+                }),
+              };
+            });
+          } else {
+            setData((chat) => ({ ...removeChild<Chat>(chat, payload.id) }));
+          }
         },
       };
     }, []),

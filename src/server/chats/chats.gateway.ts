@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
 import { Socket } from 'socket.io';
+
 import { Chat, ChatCreate, ChatUpdate, Events } from '../../types/chat';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
@@ -69,14 +70,15 @@ export class ChatsGateway implements NestGateway, OnGatewayConnection {
   }
 
   @SubscribeMessage(Events.remove)
-  remove(
+  async remove(
     @MessageBody() idObj: { id: number },
     @ConnectedSocket() client: Socket,
-  ): { id: number } {
-    this.chatsService.remove(idObj.id);
-    client.broadcast.emit(Events.remove, idObj);
-    client.emit(Events.remove, idObj);
-    return idObj;
+  ): Promise<{ id: number } | Chat> {
+    const removeResult = await this.chatsService.remove(idObj.id);
+    console.log('removeResult', removeResult);
+    client.broadcast.emit(Events.remove, removeResult);
+    client.emit(Events.remove, removeResult);
+    return removeResult;
   }
 
   // todo, un-DRY

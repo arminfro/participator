@@ -1,5 +1,6 @@
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import Router from 'next/router';
+
 import { User, UserCreate } from '../../types/user';
 import api, { apiLogin } from '../utils/api';
 import { useUserCreate } from '../utils/hooks/use-user';
@@ -42,7 +43,7 @@ export default function UserCreateForm({
           },
         );
       },
-      { ...userCreate, passwordResetId },
+      passwordResetId ? { ...userCreate, passwordResetId } : userCreate,
     );
   };
 

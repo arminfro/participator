@@ -1,12 +1,13 @@
 import { subject } from '@casl/ability';
 import Link from 'next/link';
 import React, { ReactElement } from 'react';
+
 import { Room } from '../../types/room';
 import UserList from '../user/list';
 import { Can } from '../utils/casl-context';
 import Chats from '../chat/chats';
 import RoomMemberManage from './member-manage';
-import Fetch from '../../../dist/src/components/utils/fetch';
+import Fetch from '../utils/fetch';
 import { User } from '../../types/user';
 
 interface Props {

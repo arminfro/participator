@@ -69,4 +69,4 @@ Call `yarn doc` for `compodoc` docs generation. It'll show documentation about t
 * [date-fns](https://github.com/date-fns/date-fns) - Date functions
 * [marked](https://github.com/markedjs/marked) - Markdown
 * [faker.js](https://github.com/Marak/Faker.js) - Random Data for testing
-* [TreeModel](https://github.com/joaonuno/tree-model-js)
+* [TreeModel](https://github.com/joaonuno/tree-model-js#api-reference)

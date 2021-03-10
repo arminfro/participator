@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import io from 'socket.io-client';
+
 import { Events } from '../../../types/chat';
 import { transformDateString } from '../../../utils/transform-tree';
 import { getToken } from '../token';
@@ -62,9 +63,9 @@ export function useSocket<T extends WithId>(
           );
       });
 
-      socket.on(Events.remove, (deletedId: { id: number }) => {
+      socket.on(Events.remove, (deleteObj: { id: number } | T) => {
         effectFuncs[Events.remove] &&
-          effectFuncs[Events.remove](deletedId, setData, socket);
+          effectFuncs[Events.remove](deleteObj, setData, socket);
       });
     });
     return () => {
