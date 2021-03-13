@@ -123,14 +123,6 @@ export default function ChatListItem({
             />
           </div>
         )}
-        {(edit || reply) && (
-          <ChatInputForm
-            onCreate={onSend}
-            onCancel={onCancel}
-            preSetInput={reply ? '' : chat.msg}
-            allowEscape={true}
-          />
-        )}
       </div>
       {!collapsed && (
         <ChatList

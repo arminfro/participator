@@ -53,7 +53,9 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
           payload: Chat,
           setData: Dispatch<SetStateAction<Chat>>,
         ) => {
-          setData((chat) => ({ ...replaceChild<Chat>(chat, payload) }));
+          setData((chat) => ({
+            ...replaceChild<Chat>(chat, { ...chat, ...payload }),
+          }));
         },
         [Events.remove]: (
           payload: { id: number } | Chat,
