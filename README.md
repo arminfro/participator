@@ -22,7 +22,9 @@ EMAIL_SENDER=myEmail@example.com
 EMAIL_PASS=mypassword 
 ```
 
-For `jwt` security secret key set `JWT_SECRET` to a random string
+For `jwt` security secret key set `JWT_SECRET` to a random string.
+
+These settings are not required.
 
 ## Running the app
 
@@ -31,6 +33,8 @@ Just `yarn start`, or `yarn start:debug` for server debugging and hot reloading.
 Once started, you can go to `localhost:3000/api` to see a summary of all `http` routes.
 
 All routes prefixed with `api/` return json. Others call Next.js to render components.
+
+You can call `yarn seed <EMAIL> [<EMAIL2>]` to populate dev db with some data.
 
 ## File Structure
 
@@ -47,7 +51,7 @@ There are three groups of directories in `src`.
 
 ## Docs
 
-Call `yarn doc` for `compodoc` docs generation. It'll show documentation about the backend.
+Call `yarn doc` for `compodoc` docs generation. It'll show documentation about backend code.
 
 * [Next.js](https://nextjs.org/docs) - Frontend Framework
 * [Nest.js](https://docs.nestjs.com/) - Backend Framework

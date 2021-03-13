@@ -4,9 +4,9 @@ import axios from 'axios';
 import { urlWithProtocol } from '../src/constants';
 
 const emails = process.argv.filter((arg) => isEmail(arg));
-if (emails.length < 2) {
+if (!emails.length) {
   console.log(
-    "You need to pass two email adresses to the seeder script. Even if you don't use `smtp` option",
+    "You need to pass at least one email adresses to the seeder script. Even if you don't use `smtp` option",
     emails,
   );
   process.exit(1);
@@ -58,14 +58,15 @@ const addAnswer = async (answerCreate) => {
   let userWithToken;
 
   // ['Joey', 'Lisa', 'Jens', 'Simon', 'Alfred', 'Anna', 'Judith'].forEach((name) => (await register(name)))
+  const secondMail = emails[1] || Faker.internet.email();
   await register(Faker.name.firstName(), emails[0]);
-  await register(Faker.name.firstName(), emails[1]);
+  await register(Faker.name.firstName(), secondMail);
   await login(emails[0]);
   await addRoom(Faker.lorem.slug(), Faker.lorem.text());
 
-  userWithToken = await login(emails[1]);
+  userWithToken = await login(secondMail);
   await addRoom(Faker.lorem.slug(), Faker.lorem.text());
-  userWithToken = await login(emails[1]);
+  userWithToken = await login(secondMail);
   await joinRoom(userWithToken.user);
 
   await addQuestion({
