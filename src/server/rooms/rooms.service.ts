@@ -56,13 +56,12 @@ export class RoomsService {
           ...room.members.filter((user) => user.id !== roomUpdate.addMember.id),
           roomUpdate.addMember as User,
         ];
-        await this.roomsRepository.save(room);
-        // todo, use this case
+        room.save();
       } else if (roomUpdate.removeMember) {
         room.members = room.members.filter(
           (user) => user.id !== roomUpdate.removeMember.id,
         );
-        return await this.roomsRepository.update(id, room);
+        room.save();
       } else if (roomUpdate.updateAttrs) {
         return await this.roomsRepository.update(id, roomUpdate.updateAttrs);
       }

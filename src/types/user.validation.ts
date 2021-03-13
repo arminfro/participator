@@ -33,7 +33,10 @@ export function validateUser<T>(
   return customValidate<T>(user, struct, (failure) => {
     switch (failure.key) {
       case 'pws':
-        failure.message = 'Passwords are not identical';
+        failure.message = 'Passwords are not identical, or empty';
+        break;
+      case 'email':
+        failure.message = 'E-Mail address seems invalid';
         break;
       case 'name':
         failure.message = 'Name needs to have at least two characters';

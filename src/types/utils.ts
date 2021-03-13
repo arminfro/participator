@@ -1,4 +1,4 @@
-import { length } from 'class-validator';
+import { length, isEmail as isEmailValidator } from 'class-validator';
 import { Failure, refine, string, Struct, validate } from 'superstruct';
 
 export type ValidationResult<T> = [Failure[], undefined] | [undefined, T];
@@ -8,6 +8,10 @@ export const stringMinLength = (
   key: string,
 ): Struct<string, null> => {
   return refine(string(), key, (value) => length(value, minLength));
+};
+
+export const isEmail = (key: string): Struct<string, null> => {
+  return refine(string(), key, (value) => isEmailValidator(value));
 };
 
 export function customValidate<T>(

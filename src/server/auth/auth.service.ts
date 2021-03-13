@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { JwtService, JwtVerifyOptions } from '@nestjs/jwt';
 import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 
-import { User as UserEntity } from './../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { User } from '../../types/user';
 import { JwtPayload } from './jwt.strategy';
@@ -18,8 +17,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<User | null> {
-    const user = await this.usersService.findByName(username);
+  async validateUser(email: string, password: string): Promise<User | null> {
+    const user = await this.usersService.findByEMail(email);
     if (user && user.password && AuthService.comparePassword(password, user)) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
@@ -29,7 +28,7 @@ export class AuthService {
   }
 
   async login(user: User): Promise<AccessToken> {
-    const payload = { username: user.name, userId: user.id };
+    const payload = { email: user.name, userId: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -43,7 +42,7 @@ export class AuthService {
     return hashSync(password, genSaltSync(10));
   }
 
-  static comparePassword(password: string, user: UserEntity): boolean {
+  static comparePassword(password: string, user: User): boolean {
     return compareSync(password, user.password);
   }
 }

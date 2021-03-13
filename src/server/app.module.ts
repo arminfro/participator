@@ -17,6 +17,7 @@ import { HttpExceptionsFilter } from './all-exceptions-filter';
 import { CaslModule } from './casl/casl.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { ChatsModule } from './chats/chats.module';
+import { LoginModule } from './login/login.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ChatsModule } from './chats/chats.module';
     CaslModule,
     NextModule,
     UsersModule,
+    LoginModule,
     ChatsModule,
     RoomsModule,
     TypeOrmModule.forRoot(),

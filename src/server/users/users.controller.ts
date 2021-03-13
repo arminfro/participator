@@ -9,24 +9,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { NextService } from '../nextjs/next.service';
-import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly next: NextService,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly next: NextService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get()
+  @UseGuards(JwtAuthGuard)
   public async index(
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    const users = await this.usersService.findAll();
-    this.next.render('/users', { users }, req, res);
+    this.next.render('/users', req, res);
   }
 
   @Get('new')
@@ -34,25 +29,23 @@ export class UsersController {
     this.next.render(`/users/new`, req, res);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id/edit')
+  @UseGuards(JwtAuthGuard)
   public async showEdit(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    const user = await this.usersService.findOne(id);
-    await this.next.render(`/users/${id}/edit`, { user }, req, res);
+    await this.next.render(`/users/${id}/edit`, req, res);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse,
   ): Promise<void> {
-    const user = await this.usersService.findOne(id);
-    this.next.render(`/users/${id}`, { user }, req, res);
+    this.next.render(`/users/${id}`, req, res);
   }
 }

@@ -1,4 +1,4 @@
-import { equals } from 'class-validator';
+import { equals, isNotEmpty } from 'class-validator';
 import {
   any,
   array,
@@ -17,13 +17,16 @@ import Answer from './answer';
 import { Chat } from './chat';
 import Question from './question';
 import { Room } from './room';
-import { stringMinLength } from './utils';
+import { isEmail, stringMinLength } from './utils';
 
 export type UserCreate = Infer<typeof UserCreate>;
 export const UserCreate = object({
   name: stringMinLength(2, 'name'),
-  pws: refine(object({ pw1: string(), pw2: string() }), 'pws', (value) =>
-    equals(value.pw1, value.pw2),
+  email: isEmail('email'),
+  pws: refine(
+    object({ pw1: string(), pw2: string() }),
+    'pws',
+    (value) => equals(value.pw1, value.pw2) && isNotEmpty(value.pw1),
   ),
 });
 
@@ -45,13 +48,14 @@ export const UserUpdate = object({
 
 export type UserLogin = Infer<typeof UserLogin>;
 export const UserLogin = object({
-  username: stringMinLength(2, 'username'),
+  email: isEmail('email'),
   password: string(),
 });
 
 export type User = {
   readonly id: number;
   name: string;
+  email: string;
   password?: string | null;
   readonly joinedRooms?: Room[];
   readonly ownedRooms?: Room[];
@@ -67,6 +71,7 @@ export type User = {
 export const User: Describe<User> = object({
   id: number(),
   name: string(),
+  email: string(),
   password: optional(string()),
   joinedRooms: optional(array(any())),
   ownedRooms: optional(array(any())),

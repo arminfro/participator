@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, getManager, TreeRepository } from 'typeorm';
-import { IncomingMessage } from 'http';
+import { getManager, TreeRepository } from 'typeorm';
 import TreeModel = require('tree-model');
-import request = require('request');
 
 import { ChatCreate, ChatUpdate } from '../../types/chat';
 import { LinksService } from '../links/links.service';
@@ -11,6 +9,7 @@ import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { Chat } from './chat.entity';
+import { chatMsgDeleted } from '../../constants';
 
 const urlRegex = /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/gi;
 
@@ -25,24 +24,11 @@ export class ChatsService {
   async create(chatCreate: ChatCreate, roomId: number): Promise<Chat> {
     const chat = await this.build(chatCreate, roomId);
     await this.chatsRepository.save(chat);
-    const linkStrings = chat.msg.match(urlRegex);
-    if (linkStrings) {
-      const links = await Promise.all(
-        linkStrings
-          .map(async (url) => {
-            const urlWithProtocol = await this.setHttpPrefix(url);
-            if (urlWithProtocol) {
-              return await this.linksService.create({
-                url: urlWithProtocol,
-                chatId: chat.id,
-              });
-            }
-          })
-          .filter((a) => a),
-      );
-      chat.links = links;
+    const urls = chat.msg.match(urlRegex);
+    if (urls) {
+      await this.linksService.buildLinksForChat(chat.id, urls);
     }
-    await this.chatsRepository.save(chat);
+    chat.save();
     return chat;
   }
 
@@ -91,8 +77,18 @@ export class ChatsService {
     return await this.findOne(chatUpdate.id);
   }
 
-  async remove(id: number): Promise<DeleteResult> {
-    return await this.chatsRepository.softDelete(id);
+  async remove(id: number): Promise<{ id: number } | Chat> {
+    const chat = await this.chatsRepository.findOne(id, {
+      relations: ['children', 'user', 'links'],
+    });
+    console.log('chat to remove', chat);
+    if (chat.children && chat.children.length > 0) {
+      chat.msg = chatMsgDeleted;
+      return await chat.save();
+    } else {
+      await this.chatsRepository.softDelete(id);
+      return { id };
+    }
   }
 
   private async build(chatCreate: ChatCreate, roomId: number): Promise<Chat> {
@@ -106,30 +102,6 @@ export class ChatsService {
       chat.room = await this.findRoom(roomId);
     }
     return chat;
-  }
-
-  private async setHttpPrefix(url: string): Promise<string> {
-    if (url.search(/^http[s]?:\/\//) == -1) {
-      if (await this.urlExists(`https://${url}`)) {
-        return `https://${url}`;
-      } else if (await this.urlExists(`http://${url}`)) {
-        return `http://${url}`;
-      }
-    } else {
-      return url;
-    }
-  }
-
-  private async urlExists(url: string): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) =>
-      request(url, { method: 'HEAD' }, (err: Error, res: IncomingMessage) => {
-        if (err || /4\d\d/.test(String(res.statusCode))) {
-          reject(false);
-        } else {
-          resolve(true);
-        }
-      }),
-    ).catch(() => Promise.resolve(false));
   }
 
   // todo, un-DRY

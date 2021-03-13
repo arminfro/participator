@@ -6,7 +6,7 @@ interface Tree<T> {
   children?: T[];
 }
 
-export function transformDateString<T extends Tree<T>>(treeModel: T): T {
+export function transformDateString<T>(treeModel: T): T {
   let tree: TreeModel.Node<T>;
   try {
     tree = newTree<T>(treeModel);

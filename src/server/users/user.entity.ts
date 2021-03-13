@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -14,18 +14,39 @@ import { Answer } from '../answers/answer.entity';
 import { Chat } from '../chats/chat.entity';
 import { Question } from '../questions/question.entity';
 import { Room } from '../rooms/room.entity';
+import PasswordRecover from '../login/password-recover.entity';
 
 @Entity()
 export class User extends BaseEntity implements UserModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ unique: true })
+  @Column()
   @IsNotEmpty()
   name!: string;
 
+  @Column({ unique: true })
+  @IsNotEmpty()
+  @IsEmail()
+  email!: string;
+
   @Column()
   password!: string;
+
+  @Column({ default: false })
+  @IsBoolean()
+  @IsOptional()
+  hasHandUp!: boolean;
+
+  @Column({ default: false })
+  @IsBoolean()
+  @IsOptional()
+  randomGroup!: boolean;
+
+  @Column({ default: true })
+  @IsBoolean()
+  @IsOptional()
+  active!: boolean;
 
   @OneToMany(() => Room, (room) => room.admin)
   ownedRooms: Room[];
@@ -42,20 +63,8 @@ export class User extends BaseEntity implements UserModel {
   @OneToMany(() => Answer, (answer) => answer.user)
   answers: Answer[];
 
-  @Column({ default: false })
-  @IsBoolean()
-  @IsOptional()
-  hasHandUp!: boolean;
-
-  @Column({ default: false })
-  @IsBoolean()
-  @IsOptional()
-  randomGroup!: boolean;
-
-  @Column({ default: true })
-  @IsBoolean()
-  @IsOptional()
-  active!: boolean;
+  @OneToMany(() => PasswordRecover, (passwordRecover) => passwordRecover.user)
+  passwordRecovers: PasswordRecover[];
 
   @CreateDateColumn()
   createdAt!: Date;

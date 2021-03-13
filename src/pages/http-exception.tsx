@@ -2,9 +2,9 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 
-import LoginForm from './login-form';
-import { getToken } from './utils/token';
-import LoadingSpinner from './shared/loading-spinner';
+import { getToken } from '../components/utils/token';
+import LoadingSpinner from '../components/shared/loading-spinner';
+import LoginForm from '../components/authentication/login-form';
 
 interface Props {
   reqUrl: string;
@@ -52,11 +52,3 @@ export default function HttpException({
 }
 
 HttpException.getInitialProps = async ({ query }: NextPageContext) => query;
-
-// HttpException().getInitialProps = async ({ req, query }: NextPageContext) => {
-// const queryD = await getInitialProps<any>(req, query, {
-// server: (query) => query,
-// client: (query) => query,
-// });
-// return queryD;
-// };
