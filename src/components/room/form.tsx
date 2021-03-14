@@ -1,78 +1,36 @@
 import { useRouter } from 'next/router';
-import React, {
-  ChangeEvent,
-  ReactElement,
-  SyntheticEvent,
-  useState,
-} from 'react';
-import { Room, JoinConditions, RoomCreate, RoomUpdate } from '../../types/room';
-import {
-  validateRoomCreate,
-  validateRoomUpdate,
-} from '../../types/room.validation';
-import { useFormValidation } from '../utils/hooks/use-form-validation';
-import api from '../utils/api';
+import React, { ChangeEvent, ReactElement, SyntheticEvent } from 'react';
+import { JoinConditions, RoomCreate, RoomUpdate } from '../../types/room';
+import { UseStructWithValidation } from '../utils/hooks/use-struct';
 
 interface Props {
-  name: string;
-  description: string;
-  openToJoin: JoinConditions;
-  isEdit: boolean;
-  roomId?: number;
+  room:
+    | UseStructWithValidation<RoomCreate>
+    | UseStructWithValidation<RoomUpdate>;
+  roomId?: number; // present if `isEdit`
 }
 
-export default function RoomForm(props: Props): ReactElement {
+export default function RoomForm({ room, roomId }: Props): ReactElement {
   const router = useRouter();
-  const [name, setName] = useState(props.name);
-  const [description, setDescription] = useState(props.description);
-  const [openToJoin, setOpenToJoin] = useState<JoinConditions>(
-    props.openToJoin,
-  );
-
-  const submit = (payload: RoomCreate | RoomUpdate) => {
-    api(
-      props.isEdit ? 'patch' : 'post',
-      props.isEdit ? `api/rooms/${props.roomId}` : 'api/rooms',
-      (room: Room) => {
-        router.push(`/rooms/${room ? room.id : props.roomId}`);
-      },
-      payload,
-    );
-  };
-
-  const [errorList, onValidSubmit] = useFormValidation<RoomCreate | RoomUpdate>(
-    props.isEdit ? validateRoomUpdate : validateRoomCreate,
-    submit,
-  );
-
-  const submitPayload = (): RoomCreate | RoomUpdate => {
-    let payload: RoomCreate | RoomUpdate = {
-      name,
-      description,
-      openToJoin: openToJoin === JoinConditions.Open,
-    };
-    if (props.isEdit) {
-      payload = { updateAttrs: payload };
-    }
-    return payload;
-  };
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    onValidSubmit(submitPayload());
+    room.sync(() => {
+      router.push(`/rooms${roomId ? `/${roomId}` : ''}`);
+    });
   };
 
-  const onChangeInput = (e: ChangeEvent<HTMLInputElement>) =>
-    setOpenToJoin(e.target.value as JoinConditions);
+  const onChangeJoinPolicy = (e: ChangeEvent<HTMLInputElement>) =>
+    room.set.openToJoin(e.target.value === JoinConditions.Open, false);
 
   return (
     <form className="ui form" style={{ marginTop: 0 }} onSubmit={onSubmit}>
       <label>Name</label>
       <input
         type="text"
-        value={name}
+        value={room.get.name}
         onChange={(e) => {
-          setName(e.target.value);
+          room.set.name(e.target.value, false);
         }}
       />
 
@@ -85,8 +43,8 @@ export default function RoomForm(props: Props): ReactElement {
             <input
               type="radio"
               name="openToJoin"
-              onChange={onChangeInput}
-              checked={openToJoin === JoinConditions.Open}
+              onChange={onChangeJoinPolicy}
+              checked={room.get.openToJoin}
               value={JoinConditions.Open}
             />
             <label htmlFor={JoinConditions.Open}>Open To Join</label>
@@ -98,8 +56,8 @@ export default function RoomForm(props: Props): ReactElement {
             <input
               type="radio"
               name="openToJoin"
-              onChange={onChangeInput}
-              checked={openToJoin === JoinConditions.Closed}
+              onChange={onChangeJoinPolicy}
+              checked={!room.get.openToJoin}
               value={JoinConditions.Closed}
             />
             <label htmlFor={JoinConditions.Closed}>Only on invitation</label>
@@ -111,12 +69,18 @@ export default function RoomForm(props: Props): ReactElement {
 
       <label>Description</label>
       <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        value={room.get.description}
+        onChange={(e) => room.set.description(e.target.value, false)}
       />
 
       <div className="ui section divider"></div>
-      {errorList}
+      {room.validationErrors.length > 0 && (
+        <ul className="ui negative message">
+          {room.validationErrors.map((failure) => (
+            <li key={failure.key}>{failure.message}</li>
+          ))}
+        </ul>
+      )}
       <button className="ui button">Submit</button>
     </form>
   );

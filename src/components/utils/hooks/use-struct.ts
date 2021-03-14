@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Failure } from 'superstruct';
+import { noop } from '../../../constants';
 import { ValidationResult } from '../../../types/utils';
 
 type Keys<T> = keyof T;
@@ -16,9 +17,10 @@ type UseStruct<T> = {
       callback?: SetCallback<T>,
     ) => T;
   };
+  sync: (callback?: SetCallback<T>) => void;
 };
 
-type UseStructArg<T> = {
+type StructArg<T> = {
   [P in keyof T]: [T[P], Dispatch<T[P]>];
 };
 
@@ -33,23 +35,17 @@ export type UseStructWithValidation<T> = UseStruct<T> & {
 };
 
 export function useStruct<T>(
-  structArg: UseStructArg<T>,
+  structArg: StructArg<T>,
   validator: ValidatorArg<T>,
   remoteUpdate: RemoteUpdateArg<T>,
 ): UseStructWithValidation<T> {
   const [validationErrors, setValidationErrors] = useState<Failure[]>([]);
 
   const reduceStructArg = (): UseStruct<T> => {
-    return Object.keys(structArg).reduce(
+    const struct = Object.keys(structArg).reduce(
       (acc: UseStruct<T>, key: StringKeys<T>) => {
         acc.get[key] = structArg[key][0];
-        acc.set[key] = (
-          newValue,
-          sync = !!remoteUpdate,
-          callback = (): void => {
-            /* no-op */
-          },
-        ) => {
+        acc.set[key] = (newValue, sync = !!remoteUpdate, callback = noop) => {
           return genericSetter(
             key,
             newValue,
@@ -65,6 +61,14 @@ export function useStruct<T>(
         set: {},
       } as UseStruct<T>, // todo, better way to express
     );
+    if (validator && remoteUpdate) {
+      struct.sync = (callback = noop) => {
+        if (validator(struct.get)) {
+          remoteUpdate(callback, struct.get);
+        }
+      };
+    }
+    return struct;
   };
 
   const struct = reduceStructArg();

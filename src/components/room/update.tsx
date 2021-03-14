@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
-import { JoinConditions, Room } from '../../types/room';
+import { Room } from '../../types/room';
+import { useRoomUpdate } from '../utils/hooks/use-room';
 import RoomForm from './form';
 
 interface Props {
@@ -7,18 +8,11 @@ interface Props {
 }
 
 export default function RoomUpdate({ room }: Props): ReactElement {
+  const roomUpdate = useRoomUpdate(room.id, room, true, true);
   return (
     <>
-      <h2>RoomEdit</h2>
-      <RoomForm
-        name={room.name}
-        description={room.description}
-        openToJoin={
-          room.openToJoin ? JoinConditions.Open : JoinConditions.Closed
-        }
-        isEdit={true}
-        roomId={room.id}
-      />
+      <h2>Room Edit</h2>
+      <RoomForm room={roomUpdate} roomId={room.id} />
     </>
   );
 }
