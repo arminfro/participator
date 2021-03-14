@@ -58,7 +58,8 @@ const addAnswer = async (answerCreate) => {
   let userWithToken;
 
   // ['Joey', 'Lisa', 'Jens', 'Simon', 'Alfred', 'Anna', 'Judith'].forEach((name) => (await register(name)))
-  const secondMail = emails[1] || Faker.internet.email();
+  const secondMail =
+    emails[1] || Faker.internet.email().replace(/@.*$/, '@not.existing.url');
   await register(Faker.name.firstName(), emails[0]);
   await register(Faker.name.firstName(), secondMail);
   await login(emails[0]);

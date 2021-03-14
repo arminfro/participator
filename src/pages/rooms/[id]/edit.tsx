@@ -8,7 +8,7 @@ export default function RoomEdit(): ReactElement {
   const router = useRouter();
   return (
     <Fetch<Room> url={`api/rooms/${router.query.id}`}>
-      {(room) => <RoomUpdate room={room} />}
+      {(room, mutate) => <RoomUpdate room={room} mutate={mutate} />}
     </Fetch>
   );
 }

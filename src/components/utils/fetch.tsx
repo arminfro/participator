@@ -1,17 +1,22 @@
 import React, { ReactElement, Suspense } from 'react';
 import { toast } from 'react-toastify';
 import useSWR, { ConfigInterface } from 'swr';
+import { mutateCallback } from 'swr/dist/types';
 import { isDev } from '../../utils/environment';
-
 import LoadingSpinner from '../shared/loading-spinner';
 import ErrorBoundary from './error-boundary';
 import useLocalStorage from './hooks/use-local-storage';
 import { getToken } from './token';
 
 interface FetchProps<T> {
-  children: (data: T) => ReactElement;
+  children: (data: T, mutate: MutateFunc<T>) => ReactElement;
   url: string;
 }
+
+export type MutateFunc<T> = (
+  data?: T | Promise<T> | mutateCallback<T>,
+  shouldRevalidate?: boolean,
+) => Promise<T | undefined>;
 
 function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
   const key = [url, getToken()];
@@ -28,9 +33,9 @@ function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
   if (localStorage) {
     swrConfig.initialData = localStorage;
   }
-  const { data, error } = useSWR<T>(key, swrConfig);
+  const { data, mutate, error } = useSWR<T>(key, swrConfig);
   if (error) console.error('error in Fetcher', error);
-  return children(data);
+  return children(data, mutate);
 }
 
 export default function Fetch<T>(props: FetchProps<T>): ReactElement {
