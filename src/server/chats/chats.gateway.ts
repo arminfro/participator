@@ -7,10 +7,10 @@ import {
 } from '@nestjs/websockets';
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
 import { Socket } from 'socket.io';
-
 import { Chat, ChatCreate, ChatUpdate, Events } from '../../types/chat';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
+import { ChatCreatePipe, ChatUpdatePipe } from './chat.pipes';
 import { ChatsService } from './chats.service';
 
 @WebSocketGateway({ namespace: /^\/rooms\/\d\/chat$/ })
@@ -37,7 +37,7 @@ export class ChatsGateway implements NestGateway, OnGatewayConnection {
 
   @SubscribeMessage(Events.create)
   async create(
-    @MessageBody() chatCreate: ChatCreate,
+    @MessageBody(new ChatCreatePipe()) chatCreate: ChatCreate,
     @ConnectedSocket() client: Socket,
   ): Promise<Chat> {
     const roomId = this.roomIdByNsp(client.nsp.name);
@@ -60,7 +60,7 @@ export class ChatsGateway implements NestGateway, OnGatewayConnection {
   @SubscribeMessage(Events.update)
   async update(
     @ConnectedSocket() client: Socket,
-    @MessageBody() chatUpdate: ChatUpdate,
+    @MessageBody(new ChatUpdatePipe()) chatUpdate: ChatUpdate,
   ): Promise<Chat> {
     await this.chatsService.update(chatUpdate);
     const chat = await this.chatsService.findOne(chatUpdate.id);
@@ -75,7 +75,6 @@ export class ChatsGateway implements NestGateway, OnGatewayConnection {
     @ConnectedSocket() client: Socket,
   ): Promise<{ id: number } | Chat> {
     const removeResult = await this.chatsService.remove(idObj.id);
-    console.log('removeResult', removeResult);
     client.broadcast.emit(Events.remove, removeResult);
     client.emit(Events.remove, removeResult);
     return removeResult;

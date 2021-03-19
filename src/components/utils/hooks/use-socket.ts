@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 import { Events } from '../../../types/chat';
 import { transformDateString } from '../../../utils/transform-tree';
 import { getToken } from '../token';
+import { noop } from '../../../constants';
 
 interface WithId {
   id: number;
@@ -17,9 +18,15 @@ type EffectFuncs<T extends WithId> = {
   ) => void;
 };
 
+interface Exception {
+  status: string;
+  message: string;
+}
+
 export function useSocket<T extends WithId>(
   namespace: string,
   effectFuncs: EffectFuncs<T> = {},
+  errorFunc: (error: string, failures: string[]) => void = noop,
 ): [T, SocketIOClient.Socket] {
   const [socket] = useState(
     io.connect(namespace, {
@@ -67,12 +74,18 @@ export function useSocket<T extends WithId>(
         effectFuncs[Events.remove] &&
           effectFuncs[Events.remove](deleteObj, setData, socket);
       });
+
+      socket.on(Events.exception, (exception: Exception) => {
+        const [message, ...failures] = exception.message.split('\n');
+        errorFunc(message, failures);
+      });
     });
     return () => {
       socket.off(Events.create);
       socket.off(Events.update);
       socket.off(Events.remove);
+      socket.off(Events.exception);
     };
-  }, [namespace, socket, effectFuncs]);
+  }, [namespace, socket, effectFuncs, errorFunc]);
   return [data, socket];
 }

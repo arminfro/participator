@@ -1,4 +1,10 @@
-import React, { Dispatch, ReactElement, SetStateAction, useMemo } from 'react';
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useCallback,
+  useMemo,
+} from 'react';
 
 import {
   addChild,
@@ -14,6 +20,11 @@ import LoadingSpinner from '../shared/loading-spinner';
 import ChatList from './list';
 import ChatInputForm from './input-form';
 import { chatMsgDeleted, noop } from '../../constants';
+import {
+  validateChatCreate,
+  validateChatUpdate,
+} from '../../types/chat.validation';
+import { toast } from 'react-toastify';
 
 interface Props {
   roomId: number;
@@ -70,6 +81,10 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
         },
       };
     }, []),
+    useCallback((error: string, failures: string[]) => {
+      console.error(error, failures);
+      toast.error(error);
+    }, []),
   );
 
   if (!chats) {
@@ -80,7 +95,11 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     chat: Chat,
     callback: Dispatch<SetStateAction<string>> = noop,
   ): void => {
-    socket.emit(Events.update, { id: chat.id, msg: chat.msg }, callback);
+    const chatUpdate = { id: chat.id, msg: chat.msg };
+    const [, validatedChatUpdate] = validateChatUpdate(chatUpdate);
+    if (validatedChatUpdate) {
+      socket.emit(Events.update, chatUpdate, callback);
+    }
   };
 
   const onRemove = (chat: Chat): void => {
@@ -92,7 +111,11 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     callback: Dispatch<SetStateAction<string>> = noop,
     parentId: number = chatId,
   ) => {
-    socket.emit(Events.create, { msg, userId: user.id, parentId }, callback);
+    const chatCreate = { msg, userId: user.id, parentId };
+    const [, validatedChatCreate] = validateChatCreate(chatCreate);
+    if (validatedChatCreate) {
+      socket.emit(Events.create, chatCreate, callback);
+    }
   };
 
   const onCancel = () => {
