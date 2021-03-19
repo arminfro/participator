@@ -28,6 +28,8 @@ export default function RoomMemberManage({
 
   const onSearchUsers = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
+    if (!searchTerm) return resetInputState();
+
     const regex = new RegExp(searchTerm, 'i');
     setInput(searchTerm);
     setSearchResults(

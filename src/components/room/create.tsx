@@ -3,7 +3,7 @@ import { useRoomCreate } from '../utils/hooks/use-room';
 import RoomForm from './form';
 
 export default function RoomCreate(): ReactElement {
-  const room = useRoomCreate(true, true);
+  const room = useRoomCreate();
   return (
     <div className="ui segment">
       <h4 className="ui top attached block header">New Room</h4>

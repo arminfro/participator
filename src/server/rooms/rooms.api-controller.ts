@@ -53,13 +53,13 @@ export class RoomsApiController {
   }
 
   @Patch(':id')
-  @HttpCode(204)
   @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.room))
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(new RoomUpdatePipe()) roomUpdate: RoomUpdate,
-  ): Promise<UpdateResult | void> {
-    return this.roomsService.update(id, roomUpdate);
+  ): Promise<Room> {
+    this.roomsService.update(id, roomUpdate);
+    return await this.roomsService.findOne(id);
   }
 
   @Patch(':id/removeMember')
