@@ -13,7 +13,7 @@ import {
 import { UpdateResult } from 'typeorm';
 import { ability, AppAbility } from '../../casl/ability';
 import { Action } from '../../casl/action';
-import { Room, RoomUpdate } from '../../types/room';
+import { Room, RoomCreate, RoomUpdate } from '../../types/room';
 import { User } from '../../types/user';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { IPolicyHandler } from '../casl/policies.guard';
@@ -36,7 +36,7 @@ export class RoomsApiController {
   @Post()
   async create(
     @UserDecorator() user: User,
-    @Body(new RoomCreatePipe()) roomCreate: any,
+    @Body(new RoomCreatePipe()) roomCreate: RoomCreate,
   ): Promise<Room> {
     return await this.roomsService.create({ ...roomCreate, admin: user });
   }

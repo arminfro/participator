@@ -8,7 +8,7 @@ import {
 
 @Injectable()
 export class ChatUpdatePipe implements PipeTransform<ChatUpdate, ChatUpdate> {
-  transform(chat: ChatUpdate): ChatUpdate {
+  transform(chat: ChatUpdate): ChatUpdate | never {
     const [failures, validatedChatUpdate] = validateChatUpdate(chat);
     if (!validatedChatUpdate) {
       throw new WsException(
@@ -23,7 +23,7 @@ export class ChatUpdatePipe implements PipeTransform<ChatUpdate, ChatUpdate> {
 
 @Injectable()
 export class ChatCreatePipe implements PipeTransform<ChatCreate, ChatCreate> {
-  transform(chat: ChatCreate): ChatCreate {
+  transform(chat: ChatCreate): ChatCreate | never {
     const [failures, validatedChatCreate] = validateChatCreate(chat);
     if (!validatedChatCreate) {
       throw new WsException(
