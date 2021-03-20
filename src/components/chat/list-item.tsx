@@ -9,6 +9,7 @@ import ChatInputForm from './input-form';
 import ChatItemHeader from './item-header';
 import ChatLinkList from './link-list';
 import ChatList from './list';
+import { prismLanguageMap } from '../../constants';
 
 interface Props {
   chat: Chat;
@@ -36,8 +37,13 @@ export default function ChatListItem({
     breaks: true,
     gfm: true,
     langPrefix: 'language-',
-    highlight: (code, lang) =>
-      Prism.highlight(code, Prism.languages.javascript, lang),
+    highlight: (code, lang) => {
+      if (prismLanguageMap[lang]) {
+        return Prism.highlight(code, prismLanguageMap[lang], lang);
+      } else {
+        return code;
+      }
+    },
   });
 
   const onClickEdit = (): void => {
