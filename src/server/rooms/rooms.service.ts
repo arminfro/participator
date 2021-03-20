@@ -4,7 +4,10 @@ import { validate } from 'class-validator';
 import { Failure } from 'superstruct';
 import { Repository, UpdateResult } from 'typeorm';
 import { RoomCreate, RoomUpdate } from '../../types/room';
-import { validateRoomCreate } from '../../types/room.validation';
+import {
+  validateRoomCreate,
+  validateRoomUpdate,
+} from '../../types/room.validation';
 import { ChatsService } from '../chats/chats.service';
 import { User } from '../users/user.entity';
 import { Room } from './room.entity';
@@ -46,25 +49,25 @@ export class RoomsService {
     roomUpdate: RoomUpdate,
   ): Promise<UpdateResult | void> {
     const room = await this.findOne(id);
-    if (room) {
+    if (validateRoomUpdate(roomUpdate) && room) {
       if (roomUpdate.addMember) {
         if (roomUpdate.addMember.id === room.admin.id) {
           return;
         }
         room.members = [
-          // filter makes sure user is unique
           ...room.members.filter((user) => user.id !== roomUpdate.addMember.id),
           roomUpdate.addMember as User,
         ];
-        await this.roomsRepository.save(room);
-        // todo, use this case
+        await room.save();
       } else if (roomUpdate.removeMember) {
         room.members = room.members.filter(
           (user) => user.id !== roomUpdate.removeMember.id,
         );
-        return await this.roomsRepository.update(id, room);
-      } else if (roomUpdate.updateAttrs) {
-        return await this.roomsRepository.update(id, roomUpdate.updateAttrs);
+        await room.save();
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { addMember, removeMember, ...roomUpdateAttrs } = roomUpdate;
+        return await this.roomsRepository.update(id, roomUpdateAttrs);
       }
     }
   }
@@ -82,7 +85,10 @@ export class RoomsService {
     return room;
   }
 
-  private async validateRoom(room: Room, failures: Failure[]) {
+  private async validateRoom(
+    room: Room,
+    failures: Failure[],
+  ): Promise<void | never> {
     const validationErrors = room ? await validate(room) : [];
 
     const errors = [

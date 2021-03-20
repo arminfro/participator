@@ -10,15 +10,11 @@ import {
 import { IncomingMessage, ServerResponse } from 'http';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { NextService } from '../nextjs/next.service';
-import { AnswersService } from './answers.service';
 
 @Controller('rooms/:roomId/questions/:questionId/answers')
 @UseGuards(JwtAuthGuard)
 export class AnswersController {
-  constructor(
-    private readonly next: NextService,
-    private readonly answersService: AnswersService,
-  ) {}
+  constructor(private readonly next: NextService) {}
 
   @Get()
   public async index(
@@ -27,10 +23,8 @@ export class AnswersController {
     @Param('roomId', ParseIntPipe) roomId: number,
     @Param('questionId', ParseIntPipe) questionId: number,
   ): Promise<void> {
-    const answers = await this.answersService.findAll(questionId);
     this.next.render(
       `/rooms/${roomId}/questions/${questionId}/answers`,
-      { answers },
       req,
       res,
     );
@@ -58,10 +52,8 @@ export class AnswersController {
     @Param('questionId', ParseIntPipe) questionId: number,
     @Param('id', ParseIntPipe) answerId: number,
   ): Promise<void> {
-    const answer = await this.answersService.findOne(answerId);
     this.next.render(
       `/rooms/${roomId}/questions/${questionId}/answers/${answerId}/edit`,
-      { answer },
       req,
       res,
     );
@@ -75,10 +67,8 @@ export class AnswersController {
     @Param('questionId', ParseIntPipe) questionId: number,
     @Param('id', ParseIntPipe) answerId: number,
   ): Promise<void> {
-    const answer = await this.answersService.findOne(answerId);
     this.next.render(
       `/rooms/${roomId}/questions/${questionId}/answers/${answerId}`,
-      { answer },
       req,
       res,
     );

@@ -58,6 +58,7 @@ describe('UsersService', () => {
       spyOnBuild(user);
       const builtUser = await service.create({
         name: user.name,
+        email: user.email,
         pws: {
           pw1: 'pw',
           pw2: 'pw',

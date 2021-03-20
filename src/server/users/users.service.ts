@@ -7,18 +7,18 @@ import {
   FindManyOptions,
   FindOneOptions,
   Repository,
-  UpdateResult,
 } from 'typeorm';
-
 import { UserCreate, UserUpdate } from '../../types/user';
 import { validateUserCreate } from '../../types/user.validation';
 import { AuthService } from '../auth/auth.service';
+import { MailerService } from '../mailer/mailer.service';
 import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    private readonly mailerService: MailerService,
   ) {}
 
   async findAll(opts?: FindManyOptions<User>): Promise<User[]> {
@@ -33,9 +33,13 @@ export class UsersService {
   }
 
   async create(userCreate: UserCreate): Promise<User | never> {
-    const user = await this.build(userCreate);
-    this.validateUser(user, validateUserCreate(userCreate)[0] || []);
-    return await this.usersRepository.save(user);
+    const builtUser = await this.build(userCreate);
+    this.validateUser(builtUser, validateUserCreate(userCreate)[0] || []);
+    const user = await this.usersRepository.save(builtUser);
+    if (user) {
+      this.mailerService.sendWelcome({ name: user.name, email: user.email });
+    }
+    return user;
   }
 
   async update(id: number, userUpdate: UserUpdate): Promise<User> {
@@ -58,8 +62,11 @@ export class UsersService {
     await this.usersRepository.delete(id);
   }
 
-  async findByName(name: string): Promise<User> {
-    return await this.usersRepository.findOne({ name });
+  async findByEMail(
+    email: string,
+    opts: FindOneOptions<User> = null,
+  ): Promise<User> {
+    return await this.usersRepository.findOne({ email }, opts);
   }
 
   private async validateUser(
@@ -83,6 +90,7 @@ export class UsersService {
     const user = new User();
     if (user) {
       user.name = userCreate.name;
+      user.email = userCreate.email;
       user.password = AuthService.hashPassword(userCreate.pws.pw1);
       return user;
     } else {

@@ -1,13 +1,14 @@
 import {
   any,
   array,
-  date,
   Describe,
   Infer,
+  is,
   number,
   object,
   optional,
   string,
+  validate,
 } from 'superstruct';
 import Link from './link';
 import { Room } from './room';
@@ -16,7 +17,7 @@ import { PartialBy } from './utils';
 
 export type ChatCreate = PartialBy<Infer<typeof ChatCreate>, 'parentId'>;
 export const ChatCreate = object({
-  parentId: optional(number()),
+  parentId: number(),
   userId: number(),
   msg: string(),
 });
@@ -35,8 +36,9 @@ export type Chat = {
   readonly links?: Link[];
   readonly children?: Chat[];
   readonly parent?: Chat;
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
+  readonly createdAt?: Date;
+  readonly updatedAt?: Date;
+  readonly deletedAt?: Date;
 };
 export const Chat: Describe<Chat> = object({
   id: number(),
@@ -46,8 +48,9 @@ export const Chat: Describe<Chat> = object({
   links: optional(array(any())),
   children: optional(array(any())),
   parent: optional(any()),
-  createdAt: optional(date()),
-  updatedAt: optional(date()),
+  createdAt: any(),
+  updatedAt: any(),
+  deletedAt: any(),
 });
 
 export enum Events {
@@ -55,4 +58,14 @@ export enum Events {
   findAll = 'findAllChats',
   update = 'updateChat',
   remove = 'removeChat',
+  exception = 'exception',
+}
+
+export function isChat(chat: any): chat is Chat {
+  if (is(chat, Chat)) {
+    return true;
+  } else {
+    console.debug("isn't a Chat:", validate(chat, Chat));
+    return false;
+  }
 }

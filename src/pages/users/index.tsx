@@ -1,53 +1,12 @@
-import React, { useState, ReactElement } from 'react';
-
-import UserCard from './card';
-import UserFilterCtrl from './filter-ctrl';
+import React, { ReactElement } from 'react';
 import { User } from '../../types/user';
-import { NextPageContext } from 'next';
-import api from '../utils/api';
-import getInitialProps from '../utils/get-initial-props';
+import UserList from '../../components/user/list';
+import Fetch from '../../components/utils/fetch';
 
-export type UserFilter = (a: User) => boolean;
-
-interface Props {
-  users: User[];
-  group?: boolean;
-  filter?: UserFilter;
-}
-
-export default function Users({
-  filter = () => true,
-  group = false,
-  users,
-}: Props): ReactElement {
-  const [filterCtl, setFilterCtl] = useState([filter]);
-
+export default function UserIndex(): ReactElement {
   return (
-    <>
-      {!group && (
-        <>
-          <h2>Users</h2>
-
-          <UserFilterCtrl
-            setFilter={(filterFunc: UserFilter) => setFilterCtl([filterFunc])}
-          />
-        </>
-      )}
-      <div className="ui container cards">
-        {users.filter(filterCtl[filterCtl.length - 1]).map((user: User) => (
-          <UserCard user={user} key={user.id} />
-        ))}
-      </div>
-    </>
+    <Fetch<User[]> url="api/users">
+      {(users) => <UserList users={users} />}
+    </Fetch>
   );
 }
-
-Users.getInitialProps = async ({ req, query }: NextPageContext) => {
-  const users = await getInitialProps<User[]>(req, query, {
-    server: () => query.users,
-    client: async () => await api('get', 'api/users'),
-  });
-  return {
-    users,
-  };
-};

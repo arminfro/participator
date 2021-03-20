@@ -1,6 +1,7 @@
 import {
   ConnectedSocket,
   MessageBody,
+  OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
@@ -9,10 +10,11 @@ import { Socket } from 'socket.io';
 import { Chat, ChatCreate, ChatUpdate, Events } from '../../types/chat';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
+import { ChatCreatePipe, ChatUpdatePipe } from './chat.pipes';
 import { ChatsService } from './chats.service';
 
 @WebSocketGateway({ namespace: /^\/rooms\/\d\/chat$/ })
-export class ChatsGateway implements NestGateway {
+export class ChatsGateway implements NestGateway, OnGatewayConnection {
   constructor(
     private readonly chatsService: ChatsService,
     private readonly usersService: UsersService,
@@ -35,7 +37,7 @@ export class ChatsGateway implements NestGateway {
 
   @SubscribeMessage(Events.create)
   async create(
-    @MessageBody() chatCreate: ChatCreate,
+    @MessageBody(new ChatCreatePipe()) chatCreate: ChatCreate,
     @ConnectedSocket() client: Socket,
   ): Promise<Chat> {
     const roomId = this.roomIdByNsp(client.nsp.name);
@@ -58,7 +60,7 @@ export class ChatsGateway implements NestGateway {
   @SubscribeMessage(Events.update)
   async update(
     @ConnectedSocket() client: Socket,
-    @MessageBody() chatUpdate: ChatUpdate,
+    @MessageBody(new ChatUpdatePipe()) chatUpdate: ChatUpdate,
   ): Promise<Chat> {
     await this.chatsService.update(chatUpdate);
     const chat = await this.chatsService.findOne(chatUpdate.id);
@@ -68,14 +70,14 @@ export class ChatsGateway implements NestGateway {
   }
 
   @SubscribeMessage(Events.remove)
-  remove(
+  async remove(
     @MessageBody() idObj: { id: number },
     @ConnectedSocket() client: Socket,
-  ): { id: number } {
-    this.chatsService.remove(idObj.id);
-    client.broadcast.emit(Events.remove, idObj);
-    client.emit(Events.remove, idObj);
-    return idObj;
+  ): Promise<{ id: number } | Chat> {
+    const removeResult = await this.chatsService.remove(idObj.id);
+    client.broadcast.emit(Events.remove, removeResult);
+    client.emit(Events.remove, removeResult);
+    return removeResult;
   }
 
   // todo, un-DRY

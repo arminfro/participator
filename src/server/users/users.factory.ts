@@ -7,6 +7,7 @@ define(User, (faker: typeof Faker) => {
   const user = new User();
   user.id = faker.random.number();
   user.name = faker.random.word();
+  user.email = faker.internet.email();
   user.joinedRooms = [];
   user.password = AuthService.hashPassword('pw');
   user.ownedRooms = [];
