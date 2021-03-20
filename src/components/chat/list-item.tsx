@@ -1,4 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
+import Prism from 'prismjs';
 import marked from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import emoji from 'node-emoji';
@@ -34,6 +35,9 @@ export default function ChatListItem({
   marked.setOptions({
     breaks: true,
     gfm: true,
+    langPrefix: 'language-',
+    highlight: (code, lang) =>
+      Prism.highlight(code, Prism.languages.javascript, lang),
   });
 
   const onClickEdit = (): void => {
@@ -85,7 +89,13 @@ export default function ChatListItem({
             <div
               className="text-with-markdown"
               dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(emoji.emojify(marked(chat.msg))),
+                __html: sanitizeHtml(emoji.emojify(marked(chat.msg)), {
+                  // allow any css class for `code` and `span`
+                  allowedClasses: {
+                    code: false,
+                    span: false,
+                  },
+                }),
               }}
             />
           </div>
