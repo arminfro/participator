@@ -7,8 +7,7 @@ interface Props {
 }
 
 export default function RangeAnswersResults(props: Props) {
-  const votes = [];
-  const reduceAnswers = props.answers.reduce(function (acc, answer) {
+  const reducedAnswers = props.answers.reduce(function (acc, answer) {
     const value = answer.rangeAnswer;
     if (acc[value]) {
       acc[value] = acc[value] + 1;
@@ -18,13 +17,11 @@ export default function RangeAnswersResults(props: Props) {
     return acc;
   }, {});
 
-  const allVotes = votes.reduce(
-    (accumulator: number, currentValue: number) => accumulator + currentValue,
-  );
+  const voteCount = props.answers.length;
 
   return (
     <div>
-      <div>Total amount of answers: {allVotes} </div>
+      <div>Total amount of answers: {voteCount} </div>
       <table className="ui table">
         <tbody>
           <tr>
@@ -32,20 +29,19 @@ export default function RangeAnswersResults(props: Props) {
             <th>Total votes</th>
             <th>Relative votes</th>
           </tr>
-          {Object.keys(reduceAnswers).map((choice) => {
+          {Object.keys(reducedAnswers).map((choice) => {
             return (
               <tr key={choice}>
                 <td>{choice}</td>
-                <td>{reduceAnswers[choice]}</td>
+                <td>{reducedAnswers[choice]}</td>
                 <td>
-                  {((reduceAnswers[choice] / allVotes) * 100).toFixed(2)} %
+                  {((reducedAnswers[choice] / voteCount) * 100).toFixed(2)} %
                 </td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <div></div>
     </div>
   );
 }
