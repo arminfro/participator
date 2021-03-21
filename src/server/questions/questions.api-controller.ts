@@ -9,13 +9,13 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from '../users/user.entity';
 import { User as UserDecorator } from '../users/user.decorator';
 import { QuestionsService } from './questions.service';
 import { Question } from './question.entity';
-import { UpdateResult } from 'typeorm';
 
 @Controller('api/rooms/:roomId/questions')
 @UseGuards(JwtAuthGuard)
@@ -45,7 +45,7 @@ export class QuestionsApiController {
   async update(
     @Param('id') id: string,
     @Body() questionUpdate: QuestionUpdate,
-  ): Promise<UpdateResult> {
+  ): Promise<Question> {
     return await this.questionsService.update(+id, questionUpdate);
   }
 

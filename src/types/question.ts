@@ -25,7 +25,6 @@ export interface QuestionCreate {
   text: string;
   answersFormat?: AnswersFormat;
   fixAnswers?: FixAnswer[];
-  rangeOrFix: boolean;
 }
 
 export interface QuestionUpdate {

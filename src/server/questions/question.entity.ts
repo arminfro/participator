@@ -8,13 +8,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { Answer } from '../answers/answer.entity';
-import IQuestion, {
-  FixAnswer as IFixAnswer,
-  AnswersFormat,
-} from '../../types/question';
+import IQuestion, { AnswersFormat } from '../../types/question';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
+import { FixAnswer } from './fix-answer.entity';
 
 @Entity()
 export class Question extends BaseEntity implements IQuestion {
@@ -28,7 +27,7 @@ export class Question extends BaseEntity implements IQuestion {
   answersFormat!: AnswersFormat;
 
   @OneToMany(() => FixAnswer, (fixAnswer) => fixAnswer.question)
-  fixAnswers!: IFixAnswer[];
+  fixAnswers!: FixAnswer[];
 
   @ManyToOne(() => Room, (room) => room.questions)
   room: Room;
@@ -44,16 +43,4 @@ export class Question extends BaseEntity implements IQuestion {
 
   @UpdateDateColumn()
   updatedAt!: Date;
-}
-
-@Entity()
-export class FixAnswer extends BaseEntity implements IFixAnswer {
-  @PrimaryGeneratedColumn()
-  id!: number;
-
-  @Column()
-  answer: string;
-
-  @ManyToOne(() => Question, (question) => question.fixAnswers)
-  question: Question;
 }

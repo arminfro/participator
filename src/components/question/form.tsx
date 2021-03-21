@@ -1,15 +1,15 @@
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+
 import Question, {
   AnswersFormat,
   FixAnswer,
   QuestionCreate,
 } from '../../types/question';
 import api from '../utils/api';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
 
 interface Props extends Partial<QuestionCreate> {
-  // qtodo, we don't use this prop here, but we should ;)
   isEdit: boolean;
 }
 
@@ -22,6 +22,7 @@ export default function QuestionForm(props: Props): ReactElement {
   const [fixAnswers, setFixAnswers] = useState<FixAnswer[]>(props.fixAnswers);
   const router = useRouter();
   const roomId = router.query.id;
+  const questionId = router.query.questionId;
 
   const answersFormatSelect = (e: any) => {
     setAnswersFormat(e.target.value);
@@ -48,28 +49,28 @@ export default function QuestionForm(props: Props): ReactElement {
     setFixAnswers((currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
       if (copyFixAnswers.length > 1) {
-        currentFixAnswers.pop();
+        copyFixAnswers.pop();
       }
       return copyFixAnswers;
     });
   };
 
   const question = (): QuestionCreate => {
-    return {
+    const question: QuestionCreate = {
       text,
       answersFormat,
-      fixAnswers: answersFormat === 'fix' && fixAnswers,
-      // qtodo, `something && true` has no effect, just `answersFormat === 'range'`
-      rangeOrFix: answersFormat === 'range' && true,
     };
+    if (answersFormat === 'fix') {
+      question.fixAnswers = fixAnswers;
+    }
+    return question;
   };
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    // qtodo, use props.isEdit for different http method and different url
     api<Question>(
-      'post',
-      `api/rooms/${roomId}/questions`,
+      props.isEdit ? 'put' : 'post',
+      `api/rooms/${roomId}/questions/${props.isEdit ? questionId : ''}`,
       (question) => {
         router.push(`/rooms/${roomId}/questions/${question.id}`);
       },

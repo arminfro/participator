@@ -1,20 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { getManager, Repository, UpdateResult } from 'typeorm';
+
 import {
-  FixAnswer,
+  FixAnswer as IFixAnswer,
   QuestionCreate,
   QuestionUpdate,
 } from '../../types/question';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
-import { FixAnswer as FixAnswerEntity, Question } from './question.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Question } from './question.entity';
+
+import { FixAnswer } from './fix-answer.entity';
 
 @Injectable()
 export class QuestionsService {
   constructor(
     @InjectRepository(Question)
-    private questionRepository: Repository<Question>,
+    private questionRepository: Repository<Question>, //todo, dependency issue, needed for update @InjectRepository(FixAnswer) private fixAnswerRepositroy: Repository<FixAnswer>,
   ) {}
 
   async create(
@@ -42,11 +45,23 @@ export class QuestionsService {
   }
 
   async update(id: number, questionUpdate: QuestionUpdate) {
-    // const fixAnswers = this.createFixAnswers(questionUpdate.fixAnswers);
-    return this.questionRepository.update(id, {
-      ...questionUpdate,
-      // fixAnswers, // todo
+    const question = await this.questionRepository.findOne(id, {
+      relations: ['fixAnswers'],
     });
+    const { fixAnswers, ...questionUpdateStripped } = questionUpdate;
+    if (questionUpdate.fixAnswers) {
+      const newFixAnswers = fixAnswers.filter((fixAnswer) => !fixAnswer.id);
+      // fixAnswers
+      //   .filter((fixAnswer) => fixAnswer.id)
+      //   .forEach((fixAnswer) =>
+      //     this.fixAnswerRepository.update(fixAnswer.id, fixAnswer),
+      //   );
+      if (newFixAnswers.length) {
+        this.createFixAnswers(newFixAnswers, question);
+      }
+    }
+    await this.questionRepository.update(id, questionUpdateStripped);
+    return question;
   }
 
   async remove(id: number): Promise<UpdateResult> {
@@ -76,11 +91,11 @@ export class QuestionsService {
   }
 
   private createFixAnswers(
-    fixAnswers: FixAnswer[],
+    fixAnswers: IFixAnswer[],
     question?: Question,
   ): FixAnswer[] {
     return fixAnswers.map((answer) => {
-      const fixAnswer = new FixAnswerEntity();
+      const fixAnswer = new FixAnswer();
       fixAnswer.answer = answer.answer;
       if (question) {
         fixAnswer.question = question;

@@ -1,6 +1,7 @@
+import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { ReactElement, SyntheticEvent, useState } from 'react';
+
 import Answer, { AnswerCreate } from '../../types/answer';
 import Question from '../../types/question';
 import FixAnswer from '../answer/FixAnswer';
@@ -50,7 +51,7 @@ export default function QuestionDetails({ question }: Props): ReactElement {
     <>
       <h4>Poll No.{question.id}</h4>
       <p>
-        Created at: <b>{question.createdAt.toLocaleDateString()}</b>
+        Created at: <b>{new Date(question.createdAt).toLocaleDateString()}</b>
       </p>
       <h4>Poll question</h4>
       <p>{question.text}</p>
@@ -64,17 +65,12 @@ export default function QuestionDetails({ question }: Props): ReactElement {
           />
         )}
         {format === 'free' && <FreeAnswer setFreeAnswer={setFreeAnswer} />}
-        <p></p>
         <button className="ui button green">Submit</button>
       </form>
-      <p></p>
       <div>
         <Link href="/rooms/[id]/questions/" as={`/rooms/${roomId}/questions/`}>
           <button className="ui button blue">List of all polls</button>
         </Link>
-      </div>
-      <p></p>
-      <div>
         <Link
           href="/rooms/[id]/questions/[id]/edit"
           as={`/rooms/${roomId}/questions/${questionId}/edit`}
