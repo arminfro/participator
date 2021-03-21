@@ -17,7 +17,7 @@ import { PartialBy } from './utils';
 
 export type ChatCreate = PartialBy<Infer<typeof ChatCreate>, 'parentId'>;
 export const ChatCreate = object({
-  parentId: optional(number()),
+  parentId: number(),
   userId: number(),
   msg: string(),
 });
@@ -58,6 +58,7 @@ export enum Events {
   findAll = 'findAllChats',
   update = 'updateChat',
   remove = 'removeChat',
+  exception = 'exception',
 }
 
 export function isChat(chat: any): chat is Chat {

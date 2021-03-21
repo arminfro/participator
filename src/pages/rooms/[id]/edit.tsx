@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
-import { Room } from '../../../types/room';
 import RoomUpdate from '../../../components/room/update';
 import Fetch from '../../../components/utils/fetch';
+import { Room } from '../../../types/room';
 
 export default function RoomEdit(): ReactElement {
   const router = useRouter();

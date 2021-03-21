@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
+
+type SetterFunc = <T>(prevState: T) => T;
+type Setter<T> = SetStateAction<T>;
+export type LocalStorageSetter<T> = Setter<T>;
 
 export default function useLocalStorage<T>(
   key: string,
-): [T, (newState: T) => void] {
+): [T, (setter: SetterFunc) => void] {
   const [state, setState] = useState<T>(() => {
     try {
       const item = window.localStorage.getItem(key);
@@ -12,14 +16,20 @@ export default function useLocalStorage<T>(
     }
   });
 
-  const setLocalStorageState = (newState: T) => {
+  function setLocalStorageState(setter: T): void {
     try {
-      setState(newState);
-      window.localStorage.setItem(key, JSON.stringify(newState));
+      let newStateValue: T;
+      if (typeof setter === 'function') {
+        newStateValue = (<unknown>(<SetterFunc>setter(state))) as T;
+      } else {
+        newStateValue = setter;
+      }
+      setState(newStateValue);
+      window.localStorage.setItem(key, JSON.stringify(newStateValue));
     } catch (error) {
       console.error(`Unable to store ${key} in localStorage.`);
     }
-  };
+  }
 
-  return [state, setLocalStorageState];
+  return [state, setLocalStorageState as SetterFunc];
 }

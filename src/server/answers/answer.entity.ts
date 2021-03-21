@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import AnswerModel from '../../types/answer';
+import IQuestion from '../../types/question';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
 
@@ -18,13 +19,16 @@ export class Answer extends BaseEntity implements AnswerModel {
   id!: number;
 
   @Column({ nullable: true })
-  textAnswer?: string;
+  freeAnswer?: string;
+
+  @Column({ nullable: true })
+  rangeAnswer?: number;
 
   @Column({ nullable: true })
   fixAnswer?: string;
 
   @ManyToOne(() => Question, (question) => question.answers)
-  question: Question;
+  question: IQuestion;
 
   @ManyToOne(() => User, (user) => user.answers)
   user: User;

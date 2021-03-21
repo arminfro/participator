@@ -29,15 +29,16 @@ export const RoomCreate: Describe<RoomCreate> = object({
   admin: optional(User),
 });
 
-export type RoomUpdate = {
+export type RoomUpdate = Partial<Exclude<RoomCreate, 'admin'>> & {
   addMember?: User;
   removeMember?: User;
-  updateAttrs?: RoomCreate;
 };
 export const RoomUpdate: Describe<RoomUpdate> = object({
   addMember: optional(User),
   removeMember: optional(User),
-  updateAttrs: optional(RoomCreate),
+  name: optional(stringMinLength(3, 'name')),
+  description: optional(string()),
+  openToJoin: optional(boolean()),
 });
 
 export type Room = {

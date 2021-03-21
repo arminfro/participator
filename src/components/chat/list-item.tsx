@@ -1,4 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import Prism from 'prismjs';
 import marked from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import emoji from 'node-emoji';
@@ -9,6 +10,7 @@ import ChatItemHeader from './item-header';
 import ChatLinkList from './link-list';
 import ChatList from './list';
 import { useStore } from '../utils/store/context';
+import { prismLanguageMap } from '../../constants';
 
 interface Props {
   chat: Chat;
@@ -48,6 +50,14 @@ export default function ChatListItem({
   marked.setOptions({
     breaks: true,
     gfm: true,
+    langPrefix: 'language-',
+    highlight: (code, lang) => {
+      if (prismLanguageMap[lang]) {
+        return Prism.highlight(code, prismLanguageMap[lang], lang);
+      } else {
+        return code;
+      }
+    },
   });
 
   const onClickEdit = (): void => {
@@ -104,20 +114,25 @@ export default function ChatListItem({
             <div
               className="text-with-markdown"
               dangerouslySetInnerHTML={{
-                __html: emoji.emojify(
-                  sanitizeHtml(
+                __html: sanitizeHtml(
+                  emoji.emojify(
                     marked(
                       chat.msg.replace(
                         '**@' + user.name + '**',
                         `<mention>**@${user.name}**</mention>`,
                       ),
                     ),
-                    {
-                      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-                        'mention',
-                      ]),
-                    },
                   ),
+                  {
+                    // allow any css class for `code` and `span`
+                    allowedClasses: {
+                      code: false,
+                      span: false,
+                    },
+                    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+                      'mention',
+                    ]),
+                  },
                 ),
               }}
             />

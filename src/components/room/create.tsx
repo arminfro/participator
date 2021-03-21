@@ -1,18 +1,14 @@
 import React, { ReactElement } from 'react';
-import { JoinConditions } from '../../types/room';
+import { useRoomCreate } from '../utils/hooks/use-room';
 import RoomForm from './form';
 
 export default function RoomCreate(): ReactElement {
+  const room = useRoomCreate();
   return (
     <div className="ui segment">
       <h4 className="ui top attached block header">New Room</h4>
       <div className="ui section divider" />
-      <RoomForm
-        name=""
-        description=""
-        openToJoin={JoinConditions.Open}
-        isEdit={false}
-      />
+      <RoomForm room={room} />
     </div>
   );
 }
