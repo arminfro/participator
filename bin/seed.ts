@@ -73,7 +73,7 @@ const addAnswer = async (answerCreate) => {
   await addQuestion({
     text: 'Alright?',
     answersFormat: 'fix',
-    fixAnswers: ['yes', 'no'],
+    fixAnswers: [{ answer: 'yes' }, { answer: 'no' }],
   });
   await addAnswer({ fixAnswer: 'yes' });
 })();
