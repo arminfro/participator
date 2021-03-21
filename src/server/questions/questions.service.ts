@@ -1,16 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { getManager, Repository, UpdateResult } from 'typeorm';
-import { QuestionCreate, QuestionUpdate } from '../../types/question';
+
+import {
+  FixAnswer as IFixAnswer,
+  QuestionCreate,
+  QuestionUpdate,
+} from '../../types/question';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
-import { FixAnswer, Question } from './question.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Question } from './question.entity';
+
+import { FixAnswer } from './fix-answer.entity';
 
 @Injectable()
 export class QuestionsService {
   constructor(
     @InjectRepository(Question)
-    private questionRepository: Repository<Question>,
+    private questionRepository: Repository<Question>, //todo, dependency issue, needed for update @InjectRepository(FixAnswer) private fixAnswerRepositroy: Repository<FixAnswer>,
   ) {}
 
   async create(
@@ -18,8 +25,7 @@ export class QuestionsService {
     questionCreate: QuestionCreate,
     user: User,
   ): Promise<Question> {
-    const question = await this.build(roomId, questionCreate, user);
-    await getManager().save(question);
+    const question = await this.buildAndCreate(roomId, questionCreate, user);
     return question;
   }
 
@@ -27,40 +33,55 @@ export class QuestionsService {
     const room = await this.findRoom(roomId);
     return await getManager().find(Question, {
       where: { room },
-      relations: ['user', 'answers'],
+      relations: ['user', 'answers', 'fixAnswers'],
     });
   }
 
   async findOne(id: number): Promise<Question> {
     const question = await this.questionRepository.findOne(id, {
-      relations: ['answers'],
+      relations: ['answers', 'fixAnswers'],
     });
     return question;
   }
 
   async update(id: number, questionUpdate: QuestionUpdate) {
-    const fixAnswers = this.mapToFixAnswers(questionUpdate.fixAnswers);
-    return this.questionRepository.update(id, {
-      ...questionUpdate,
-      fixAnswers,
+    const question = await this.questionRepository.findOne(id, {
+      relations: ['fixAnswers'],
     });
+    const { fixAnswers, ...questionUpdateStripped } = questionUpdate;
+    if (questionUpdate.fixAnswers) {
+      const newFixAnswers = fixAnswers.filter((fixAnswer) => !fixAnswer.id);
+      // fixAnswers
+      //   .filter((fixAnswer) => fixAnswer.id)
+      //   .forEach((fixAnswer) =>
+      //     this.fixAnswerRepository.update(fixAnswer.id, fixAnswer),
+      //   );
+      if (newFixAnswers.length) {
+        this.createFixAnswers(newFixAnswers, question);
+      }
+    }
+    await this.questionRepository.update(id, questionUpdateStripped);
+    return question;
   }
 
   async remove(id: number): Promise<UpdateResult> {
     return await this.questionRepository.softDelete(id);
   }
 
-  private async build(
+  private async buildAndCreate(
     roomId: number,
     questionCreate: QuestionCreate,
     user: User,
   ): Promise<Question> {
     const question = new Question();
     question.text = questionCreate.text;
-    question.answersFormat = questionCreate.answersFormat;
-    question.fixAnswers = this.mapToFixAnswers(questionCreate.fixAnswers);
+    if (questionCreate.answersFormat)
+      question.answersFormat = questionCreate.answersFormat;
     question.room = await this.findRoom(roomId);
     question.user = user;
+    await this.questionRepository.save(question);
+    questionCreate.fixAnswers &&
+      this.createFixAnswers(questionCreate.fixAnswers, question);
     return question;
   }
 
@@ -69,10 +90,17 @@ export class QuestionsService {
     return room;
   }
 
-  private mapToFixAnswers(answers: string[]): FixAnswer[] {
-    return answers.map((answer) => {
+  private createFixAnswers(
+    fixAnswers: IFixAnswer[],
+    question?: Question,
+  ): FixAnswer[] {
+    return fixAnswers.map((answer) => {
       const fixAnswer = new FixAnswer();
-      fixAnswer.answer = answer;
+      fixAnswer.answer = answer.answer;
+      if (question) {
+        fixAnswer.question = question;
+      }
+      fixAnswer.save();
       return fixAnswer;
     });
   }

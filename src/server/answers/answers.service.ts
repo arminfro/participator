@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getManager, Repository, UpdateResult } from 'typeorm';
-import { AnswerCreate, AnswerUpdate } from '../../types/answer';
+
+import { AnswerCreate } from '../../types/answer';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
 import { Answer } from './answer.entity';
@@ -23,18 +24,18 @@ export class AnswersService {
     const question = await this.findQuestion(questionId);
     return await getManager().find(Answer, {
       where: { question },
-      relations: ['user'],
+      relations: ['user', 'question', 'question.fixAnswers'],
     });
   }
 
-  async findOne(id: number): Promise<Answer> {
-    const answer = await this.answerRepository.findOne(id);
-    return answer;
-  }
+  // async findOne(id: number): Promise<Answer> {
+  //   const answer = await this.answerRepository.findOne(id);
+  //   return answer;
+  // }
 
-  async update(id: number, answerUpdate: AnswerUpdate): Promise<UpdateResult> {
-    return await this.answerRepository.update(id, answerUpdate);
-  }
+  // async update(id: number, answerUpdate: AnswerUpdate): Promise<UpdateResult> {
+  //   return await this.answerRepository.update(id, answerUpdate);
+  // }
 
   async remove(id: number): Promise<UpdateResult> {
     return await this.answerRepository.softDelete(id);
@@ -46,7 +47,8 @@ export class AnswersService {
     user: User,
   ): Promise<Answer> {
     const answer = new Answer();
-    answer.textAnswer = answerCreate.textAnswer;
+    answer.freeAnswer = answerCreate.freeAnswer;
+    answer.rangeAnswer = answerCreate.rangeAnswer;
     answer.fixAnswer = answerCreate.fixAnswer;
     answer.question = await this.findQuestion(questionId);
     answer.user = user;

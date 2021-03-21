@@ -1,20 +1,17 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   ParseIntPipe,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
-import { UpdateResult } from 'typeorm';
-import { AnswerCreate, AnswerUpdate } from '../../types/answer';
+
+import { AnswerCreate } from '../../types/answer';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User as UserDecorator } from '../users/user.decorator';
 import { User } from '../users/user.entity';
-import { Answer } from './answer.entity';
 import { AnswersService } from './answers.service';
 
 @Controller('api/rooms/:roomId/questions/:questionId/answers')
@@ -36,21 +33,21 @@ export class AnswersApiController {
     return this.answersService.findAll(questionId);
   }
 
-  @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Answer> {
-    return await this.answersService.findOne(id);
-  }
+  // @Get(':id')
+  // async findOne(@Param('id', ParseIntPipe) id: number): Promise<Answer> {
+  //   return await this.answersService.findOne(id);
+  // }
 
-  @Put(':id')
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() answerUpdate: AnswerUpdate,
-  ): Promise<UpdateResult> {
-    return await this.answersService.update(id, answerUpdate);
-  }
+  // @Put(':id')
+  // async update(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Body() answerUpdate: AnswerUpdate,
+  // ): Promise<UpdateResult> {
+  //   return await this.answersService.update(id, answerUpdate);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.answersService.remove(id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id', ParseIntPipe) id: number) {
+  //   return this.answersService.remove(id);
+  // }
 }

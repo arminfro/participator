@@ -38,6 +38,9 @@ export default function RoomDetails({ room }: Props): ReactElement {
           <button className="ui button yellow">Edit</button>
         </Link>
       </Can>
+      <Link href="/rooms/[id]/questions/" as={`/rooms/${room.id}/questions/`}>
+        <button className="ui button blue">List of all questions</button>
+      </Link>
       <UserList users={joinedUsers} />
       <Chats users={joinedUsers} roomId={room.id} chatId={room.chat.id} />
     </>
