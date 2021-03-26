@@ -17,7 +17,9 @@ import { FixAnswer } from './fix-answer.entity';
 export class QuestionsService {
   constructor(
     @InjectRepository(Question)
-    private questionRepository: Repository<Question>, //todo, dependency issue, needed for update @InjectRepository(FixAnswer) private fixAnswerRepositroy: Repository<FixAnswer>,
+    private questionRepository: Repository<Question>,
+    @InjectRepository(FixAnswer)
+    private fixAnswerRepository: Repository<FixAnswer>,
   ) {}
 
   async create(
@@ -50,12 +52,13 @@ export class QuestionsService {
     });
     const { fixAnswers, ...questionUpdateStripped } = questionUpdate;
     if (questionUpdate.fixAnswers) {
+      fixAnswers
+        .filter((fixAnswer) => fixAnswer.id)
+        .forEach((fixAnswer) => {
+          return this.fixAnswerRepository.update(fixAnswer.id, fixAnswer);
+        });
+
       const newFixAnswers = fixAnswers.filter((fixAnswer) => !fixAnswer.id);
-      // fixAnswers
-      //   .filter((fixAnswer) => fixAnswer.id)
-      //   .forEach((fixAnswer) =>
-      //     this.fixAnswerRepository.update(fixAnswer.id, fixAnswer),
-      //   );
       if (newFixAnswers.length) {
         this.createFixAnswers(newFixAnswers, question);
       }
@@ -81,7 +84,10 @@ export class QuestionsService {
     question.user = user;
     await this.questionRepository.save(question);
     questionCreate.fixAnswers &&
-      this.createFixAnswers(questionCreate.fixAnswers, question);
+      this.createFixAnswers(questionCreate.fixAnswers, {
+        ...question,
+        fixAnswers: [],
+      } as Question);
     return question;
   }
 
@@ -90,18 +96,25 @@ export class QuestionsService {
     return room;
   }
 
-  private createFixAnswers(
-    fixAnswers: IFixAnswer[],
-    question?: Question,
-  ): FixAnswer[] {
-    return fixAnswers.map((answer) => {
-      const fixAnswer = new FixAnswer();
-      fixAnswer.answer = answer.answer;
-      if (question) {
+  private createFixAnswers(fixAnswers: IFixAnswer[], question: Question): void {
+    const uniqueFixAnswers = fixAnswers.reduce((acc, fixAnswer) => {
+      acc.find((fixA) => fixA.answer === fixAnswer.answer) ||
+        acc.push(fixAnswer);
+      return acc;
+    }, [] as IFixAnswer[]);
+
+    uniqueFixAnswers.forEach((answer) => {
+      if (
+        !question.fixAnswers.some(
+          (fixAnswer) => fixAnswer.answer === answer.answer,
+        )
+      ) {
+        const fixAnswer = new FixAnswer();
+        fixAnswer.answer = answer.answer;
         fixAnswer.question = question;
+        fixAnswer.save();
+        return fixAnswer;
       }
-      fixAnswer.save();
-      return fixAnswer;
     });
   }
 }

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Answer from '../../types/answer';
 import FreeAnswersResults from './FreeAnswersResults';
 import FixAnswersResults from './FixAnswersResults';
-import RangeAnswersResults from './RangeAnswersResults';
 
 interface Props {
   answers: Answer[];
@@ -25,11 +24,12 @@ export default function AnswerList({ answers }: Props): ReactElement {
   return (
     <>
       <h2>{question.text}</h2>
-      <div className="ui container">
-        {answersFormat === 'free' && <FreeAnswersResults answers={answers} />}
-        {answersFormat === 'fix' && <FixAnswersResults answers={answers} />}
-        {answersFormat === 'range' && <RangeAnswersResults answers={answers} />}
-      </div>
+      {answersFormat === 'free' && <FreeAnswersResults answers={answers} />}
+      {answersFormat === 'fix' && (
+        <FixAnswersResults question={question} answers={answers} />
+      )}
+
+      <div className="ui divider" />
       <Link href="/rooms/[id]/questions/" as={`/rooms/${roomId}/questions/`}>
         <button className="ui button blue">List of all polls</button>
       </Link>

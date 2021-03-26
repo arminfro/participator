@@ -2,7 +2,7 @@ import Answer from './answer';
 import { Room } from './room';
 import { User } from './user';
 
-export type AnswersFormat = 'free' | 'fix' | 'range';
+export type AnswersFormat = 'free' | 'fix';
 
 export default interface Question {
   readonly id: number;

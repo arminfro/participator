@@ -48,7 +48,6 @@ export class AnswersService {
   ): Promise<Answer> {
     const answer = new Answer();
     answer.freeAnswer = answerCreate.freeAnswer;
-    answer.rangeAnswer = answerCreate.rangeAnswer;
     answer.fixAnswer = answerCreate.fixAnswer;
     answer.question = await this.findQuestion(questionId);
     answer.user = user;

@@ -22,9 +22,6 @@ export class Answer extends BaseEntity implements AnswerModel {
   freeAnswer?: string;
 
   @Column({ nullable: true })
-  rangeAnswer?: number;
-
-  @Column({ nullable: true })
   fixAnswer?: string;
 
   @ManyToOne(() => Question, (question) => question.answers)

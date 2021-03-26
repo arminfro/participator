@@ -13,13 +13,31 @@ interface Props extends Partial<QuestionCreate> {
   isEdit: boolean;
 }
 
+const presets = [
+  {
+    label: 'From 1 to 10',
+    fixAnswers: [
+      { answer: '1' },
+      { answer: '2' },
+      { answer: '3' },
+      { answer: '4' },
+      { answer: '5' },
+      { answer: '6' },
+      { answer: '7' },
+      { answer: '8' },
+      { answer: '9' },
+      { answer: '10' },
+    ],
+  },
+];
+
 export default function QuestionForm(props: Props): ReactElement {
   const [text, setText] = useState(props.text);
+  const [fixAnswers, setFixAnswers] = useState<FixAnswer[]>(props.fixAnswers);
   const [answersFormat, setAnswersFormat] = useState<AnswersFormat>(
     props.answersFormat,
   );
 
-  const [fixAnswers, setFixAnswers] = useState<FixAnswer[]>(props.fixAnswers);
   const router = useRouter();
   const roomId = router.query.id;
   const questionId = router.query.questionId;
@@ -83,19 +101,6 @@ export default function QuestionForm(props: Props): ReactElement {
       <form className="ui form" onSubmit={onSubmit}>
         <div className="field">
           <label>
-            <h3>Your polling question</h3>
-          </label>
-          <input
-            type="text"
-            value={text}
-            placeholder="Type your question"
-            onChange={(e) => {
-              setText(e.target.value);
-            }}
-          />
-        </div>
-        <div className="field">
-          <label>
             <h3>Your answer type</h3>
           </label>
           <input
@@ -114,42 +119,68 @@ export default function QuestionForm(props: Props): ReactElement {
             name="typeOfAnswer"
           />
           {' free answers '}
-          <input
-            type="radio"
-            value="range"
-            checked={answersFormat === 'range'}
-            onChange={answersFormatSelect}
-            name="typeOfAnswer"
-          />
-          {' temperature check '}
         </div>
         <div className="field">
           {answersFormat === 'fix' && (
             <>
               <label>
+                <h3>Choose a Preset</h3>
+              </label>
+              {presets.map((preset) => (
+                <button
+                  className="ui button"
+                  key={preset.label}
+                  type="button"
+                  onClick={() => setFixAnswers(preset.fixAnswers)}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </>
+          )}
+          <div className="ui divider" />
+          <label>
+            <h3>Your polling question</h3>
+          </label>
+          <input
+            type="text"
+            value={text}
+            placeholder="Type your question"
+            onChange={(e) => {
+              setText(e.target.value);
+            }}
+          />
+        </div>
+        <div className="ui divider" />
+        <div className="field">
+          {answersFormat === 'fix' && (
+            <>
+              <label>
                 <h3>Answers</h3>
+                <button
+                  onClick={onAddFixAnswer}
+                  className="ui mini button blue"
+                >
+                  +
+                </button>
+                <button
+                  onClick={onRemoveFixAnswer}
+                  className="ui mini button red"
+                >
+                  -
+                </button>
               </label>
               {fixAnswers.map((fixAnswer, index) => (
-                <div key={index}>
-                  <input
-                    placeholder={`Answer No.${index + 1}`}
-                    value={fixAnswer.answer}
-                    onChange={(e) => {
-                      onChangeFixAnswer(e.target.value, index);
-                    }}
-                  />
-                </div>
+                <input
+                  key={index}
+                  className="eight wide field"
+                  placeholder={`Answer No.${index + 1}`}
+                  value={fixAnswer.answer}
+                  onChange={(e) => {
+                    onChangeFixAnswer(e.target.value, index);
+                  }}
+                />
               ))}
-
-              <button onClick={onAddFixAnswer} className="ui mini button blue">
-                +
-              </button>
-              <button
-                onClick={onRemoveFixAnswer}
-                className="ui mini button red"
-              >
-                -
-              </button>
             </>
           )}
         </div>

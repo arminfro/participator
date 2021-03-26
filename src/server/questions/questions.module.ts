@@ -10,7 +10,11 @@ import { FixAnswer } from './fix-answer.entity';
 
 @Module({
   controllers: [QuestionsController, QuestionsApiController],
-  imports: [NextModule, TypeOrmModule.forFeature([Question])],
+  imports: [
+    NextModule,
+    TypeOrmModule.forFeature([Question]),
+    TypeOrmModule.forFeature([FixAnswer]),
+  ],
   providers: [QuestionsService],
 })
 export class QuestionsModule {}

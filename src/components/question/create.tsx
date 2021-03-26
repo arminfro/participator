@@ -6,8 +6,8 @@ export default function QuestionCreate(): ReactElement {
     <>
       <h2>Create poll</h2>
       <p>
-        Please select a response type for your poll: <b>fix answers</b>,{' '}
-        <b>free answers</b> or <b>temperature check</b>.
+        Please select a response type for your poll: <b>fix answers</b> or{' '}
+        <b>free answers</b>.
       </p>
       <ul>
         <li>
@@ -19,11 +19,6 @@ export default function QuestionCreate(): ReactElement {
           <b>Free answers:</b> Users insert their answers in an empty text
           field. Each answer is displayed in a text block. Maximum number of
           characters: 500.
-        </li>
-        <li>
-          Temperature check: You create a question to which the answer can be
-          given on a scale from 1 to 10. Users can only select one number. Every
-          response is visualised in a histogram.
         </li>
       </ul>
       <QuestionForm
