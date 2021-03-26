@@ -1,3 +1,4 @@
+import { array, is } from 'superstruct';
 import TreeModel from 'tree-model';
 
 interface Tree<T> {
@@ -8,19 +9,30 @@ interface Tree<T> {
 
 export function transformDateString<T>(treeModel: T): T {
   let tree: TreeModel.Node<T>;
-  try {
-    tree = newTree<T>(treeModel);
-  } catch (e) {
-    console.debug('catched, invalid data in transformDateString', treeModel);
-    return treeModel;
-  }
-  tree.walk(null, (node) => {
-    if (node.model.createdAt && node.model.updatedAt) {
-      node.model.createdAt = new Date(node.model.createdAt);
-      node.model.updatedAt = new Date(node.model.updatedAt);
+
+  const transform = (treeModel: T) => {
+    try {
+      tree = newTree<T>(treeModel);
+    } catch (e) {
+      console.debug('catched, invalid data in transformDateString', treeModel);
+      return treeModel;
     }
-  });
-  return tree.model;
+    tree.walk(null, (node) => {
+      Object.keys(node.model).forEach((key) => {
+        if (is(node.model[key], array())) {
+          node.model[key] = transformDateString(node.model[key]);
+        }
+      });
+      if (node.model.createdAt && node.model.updatedAt) {
+        node.model.createdAt = new Date(node.model.createdAt);
+        node.model.updatedAt = new Date(node.model.updatedAt);
+      }
+    });
+    return tree.model;
+  };
+  return is(treeModel, array())
+    ? treeModel.map((tModel) => transform(tModel as T))
+    : transform(treeModel);
 }
 
 export function replaceChild<T extends Tree<T>>(

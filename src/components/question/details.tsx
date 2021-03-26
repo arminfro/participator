@@ -46,7 +46,7 @@ export default function QuestionDetails({ question }: Props): ReactElement {
     <>
       <h4>Poll No.{question.id}</h4>
       <p>
-        Created at: <b>{new Date(question.createdAt).toLocaleDateString()}</b>
+        Created at: <b>{question.createdAt.toLocaleDateString()}</b>
       </p>
       <h4>Poll question</h4>
       <p>{question.text}</p>
