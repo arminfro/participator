@@ -56,7 +56,11 @@ export function useStruct<T>({
     const struct = Object.keys(states).reduce(
       (acc: UseStruct<T>, key: StringKeys<T>) => {
         acc.get[key] = states[key][0];
-        acc.set[key] = (newValue, sync = !!update, callback = noop) => {
+        acc.set[key] = (
+          newValue,
+          sync = !!update && autoSync,
+          callback = noop,
+        ) => {
           return genericSetter(key, newValue, sync, states[key][1], callback);
         };
         return acc;

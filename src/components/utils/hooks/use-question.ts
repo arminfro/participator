@@ -14,6 +14,7 @@ import api from '../api';
 import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
 
 export function useQuestionUpdate(
+  roomId: number,
   questionId: number,
   question: Question,
   autoValidate = false,
@@ -29,13 +30,19 @@ export function useQuestionUpdate(
     states,
     validator: (question: Question) => validateQuestionUpdate(question),
     update: (callback: SetCallback<QuestionUpdate>, newQuestion: Question) =>
-      api('patch', `api/questions/${questionId}`, callback, newQuestion),
+      api(
+        'patch',
+        `api/rooms/${roomId}/questions/${questionId}`,
+        callback,
+        newQuestion,
+      ),
     autoSync,
     autoValidate,
   });
 }
 
 export function useQuestionCreate(
+  roomId: number,
   autoValidate = false,
   autoSync = false,
 ): UseStructWithValidation<QuestionCreate> {
@@ -51,6 +58,11 @@ export function useQuestionCreate(
     validator: (question) => validateQuestionCreate(question),
     autoSync,
     update: (callback: SetCallback<QuestionCreate>, newQuestion: Question) =>
-      api<QuestionCreate>('post', `api/questions`, callback, newQuestion),
+      api<QuestionCreate>(
+        'post',
+        `api/rooms/${roomId}/questions`,
+        callback,
+        newQuestion,
+      ),
   });
 }

@@ -1,4 +1,4 @@
-import { BadGatewayException, Injectable, PipeTransform } from '@nestjs/common';
+import { Injectable, PipeTransform } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { ChatCreate, ChatUpdate } from '../../types/chat';
 import {

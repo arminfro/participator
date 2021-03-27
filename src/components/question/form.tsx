@@ -1,17 +1,13 @@
-import React, { ReactElement, SyntheticEvent, useState } from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { ReactElement, SyntheticEvent } from 'react';
+import { QuestionCreate, QuestionUpdate } from '../../types/question';
+import { UseStructWithValidation } from '../utils/hooks/use-struct';
 
-import {
-  Question,
-  AnswersFormat,
-  FixAnswer,
-  QuestionCreate,
-} from '../../types/question';
-import api from '../utils/api';
-
-interface Props extends Partial<QuestionCreate> {
-  isEdit: boolean;
+interface Props {
+  question: UseStructWithValidation<QuestionCreate | QuestionUpdate>;
+  roomId: number;
+  questionId?: number;
 }
 
 const presets = [
@@ -32,69 +28,54 @@ const presets = [
   },
 ];
 
-export default function QuestionForm(props: Props): ReactElement {
-  const [text, setText] = useState(props.text);
-  const [fixAnswers, setFixAnswers] = useState<FixAnswer[]>(props.fixAnswers);
-  const [answersFormat, setAnswersFormat] = useState<AnswersFormat>(
-    props.answersFormat,
-  );
-
+export default function QuestionForm({
+  question,
+  roomId,
+  questionId,
+}: Props): ReactElement {
   const router = useRouter();
-  const roomId = router.query.id;
-  const questionId = router.query.questionId;
 
   const answersFormatSelect = (e: any) => {
-    setAnswersFormat(e.target.value);
+    question.set.answersFormat(e.target.value);
   };
 
   const onChangeFixAnswer = (newValue: string, index: number) => {
-    setFixAnswers((currentFixAnswers) => {
+    const newFixAnswers = (currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
       copyFixAnswers[index] = { ...copyFixAnswers[index], answer: newValue };
       return copyFixAnswers;
-    });
+    };
+    question.set.fixAnswers(newFixAnswers(question.get.fixAnswers));
   };
 
   const onAddFixAnswer = (e: SyntheticEvent) => {
     e.preventDefault();
-    setFixAnswers((currentFixAnswers) => [
+    const newCurrentAnswers = (currentFixAnswers) => [
       ...currentFixAnswers,
       { answer: '' },
-    ]);
+    ];
+    question.set.fixAnswers(newCurrentAnswers(question.get.fixAnswers));
   };
 
   const onRemoveFixAnswer = (e: SyntheticEvent) => {
     e.preventDefault();
-    setFixAnswers((currentFixAnswers) => {
+    const newFixAnswers = (currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
       if (copyFixAnswers.length > 1) {
         copyFixAnswers.pop();
       }
       return copyFixAnswers;
-    });
-  };
-
-  const question = (): QuestionCreate => {
-    const question: QuestionCreate = {
-      text,
-      answersFormat,
     };
-    if (answersFormat === 'fix') {
-      question.fixAnswers = fixAnswers;
-    }
-    return question;
+    question.set.fixAnswers(newFixAnswers(question.get.fixAnswers));
   };
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    api<Question>(
-      props.isEdit ? 'put' : 'post',
-      `api/rooms/${roomId}/questions/${props.isEdit ? questionId : ''}`,
-      (question) => {
-        router.push(`/rooms/${roomId}/questions/${question.id}`);
-      },
-      question(),
-    );
+    question.sync(() => {
+      router.push(
+        `/rooms/${roomId}/questions${questionId ? `/${questionId}` : ''}`,
+      );
+    });
   };
 
   return (
@@ -107,7 +88,7 @@ export default function QuestionForm(props: Props): ReactElement {
           <input
             type="radio"
             value="fix"
-            checked={answersFormat === 'fix'}
+            checked={question.get.answersFormat === 'fix'}
             onChange={answersFormatSelect}
             name="typeOfAnswer"
           />
@@ -115,14 +96,14 @@ export default function QuestionForm(props: Props): ReactElement {
           <input
             type="radio"
             value="free"
-            checked={answersFormat === 'free'}
+            checked={question.get.answersFormat === 'free'}
             onChange={answersFormatSelect}
             name="typeOfAnswer"
           />
           {' free answers '}
         </div>
         <div className="field">
-          {answersFormat === 'fix' && (
+          {question.get.answersFormat === 'fix' && (
             <>
               <label>
                 <h3>Choose a Preset</h3>
@@ -132,7 +113,7 @@ export default function QuestionForm(props: Props): ReactElement {
                   className="ui button"
                   key={preset.label}
                   type="button"
-                  onClick={() => setFixAnswers(preset.fixAnswers)}
+                  onClick={() => question.set.fixAnswers(preset.fixAnswers)}
                 >
                   {preset.label}
                 </button>
@@ -145,16 +126,16 @@ export default function QuestionForm(props: Props): ReactElement {
           </label>
           <input
             type="text"
-            value={text}
+            value={question.get.text}
             placeholder="Type your question"
             onChange={(e) => {
-              setText(e.target.value);
+              question.set.text(e.target.value);
             }}
           />
         </div>
         <div className="ui divider" />
         <div className="field">
-          {answersFormat === 'fix' && (
+          {question.get.answersFormat === 'fix' && (
             <>
               <label>
                 <h3>Answers</h3>
@@ -171,7 +152,7 @@ export default function QuestionForm(props: Props): ReactElement {
                   -
                 </button>
               </label>
-              {fixAnswers.map((fixAnswer, index) => (
+              {question.get.fixAnswers.map((fixAnswer, index) => (
                 <input
                   key={index}
                   className="eight wide field"

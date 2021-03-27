@@ -8,7 +8,7 @@ export default function QuestionEdit(): ReactElement {
   const { id, questionId } = useRouter().query;
   return (
     <Fetch<Question> url={`api/rooms/${id}/questions/${questionId}`}>
-      {(question) => <QuestionUpdate question={question} />}
+      {(question) => <QuestionUpdate question={question} roomId={Number(id)} />}
     </Fetch>
   );
 }

@@ -1,7 +1,12 @@
 import React, { ReactElement } from 'react';
+import { useQuestionCreate } from '../utils/hooks/use-question';
 import QuestionForm from './form';
 
-export default function QuestionCreate(): ReactElement {
+interface Props {
+  roomId: number;
+}
+
+export default function QuestionCreate({ roomId }: Props): ReactElement {
   return (
     <>
       <h2>Create poll</h2>
@@ -21,12 +26,7 @@ export default function QuestionCreate(): ReactElement {
           characters: 500.
         </li>
       </ul>
-      <QuestionForm
-        text=""
-        answersFormat="fix"
-        fixAnswers={[{ answer: '' }]}
-        isEdit={false}
-      />
+      <QuestionForm question={useQuestionCreate(roomId)} roomId={roomId} />
     </>
   );
 }

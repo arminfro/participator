@@ -5,17 +5,16 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
-
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { User } from '../users/user.entity';
 import { User as UserDecorator } from '../users/user.decorator';
-import { QuestionsService } from './questions.service';
+import { User } from '../users/user.entity';
 import { Question } from './question.entity';
+import { QuestionsService } from './questions.service';
 
 @Controller('api/rooms/:roomId/questions')
 @UseGuards(JwtAuthGuard)
@@ -41,7 +40,7 @@ export class QuestionsApiController {
     return await this.questionsService.findOne(+id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() questionUpdate: QuestionUpdate,
