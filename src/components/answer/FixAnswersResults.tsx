@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Answer from '../../types/answer';
-import Question from '../../types/question';
+import { Question } from '../../types/question';
 
 interface Props {
   question: Question;

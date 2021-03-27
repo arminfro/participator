@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 import { Answer } from '../answers/answer.entity';
-import IQuestion, { AnswersFormat } from '../../types/question';
+import { Question as IQuestion, AnswersFormat } from '../../types/question';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 import { FixAnswer } from './fix-answer.entity';

@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import AnswerModel from '../../types/answer';
-import IQuestion from '../../types/question';
+import { Question as IQuestion } from '../../types/question';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
 

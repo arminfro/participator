@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
-import Question from '../../types/question';
+import { Question } from '../../types/question';
 
 interface Props {
   questions: Question[];

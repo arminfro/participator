@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import Answer, { AnswerCreate } from '../../types/answer';
-import Question from '../../types/question';
+import { Question } from '../../types/question';
 import FixAnswer from '../answer/FixAnswer';
 import FreeAnswer from '../answer/FreeAnswer';
 import api from '../utils/api';

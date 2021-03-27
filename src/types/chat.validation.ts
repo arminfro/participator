@@ -18,7 +18,5 @@ export function validateChat<T>(
   chat: T,
   struct: Struct<T>,
 ): ValidationResult<T> {
-  return customValidate<T>(chat, struct, (failure) => {
-    return failure;
-  });
+  return customValidate<T>(chat, struct, (failure) => failure);
 }

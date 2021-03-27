@@ -12,7 +12,7 @@ import {
   validate,
 } from 'superstruct';
 import { Chat } from './chat';
-import Question from './question';
+import { Question } from './question';
 import { User } from './user';
 import { stringMinLength } from './utils';
 

@@ -2,7 +2,8 @@ import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-import Question, {
+import {
+  Question,
   AnswersFormat,
   FixAnswer,
   QuestionCreate,

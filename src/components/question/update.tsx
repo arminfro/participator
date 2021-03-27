@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import Question from '../../types/question';
+import { Question } from '../../types/question';
 import QuestionForm from './form';
 
 interface Props {

@@ -15,7 +15,7 @@ import {
 } from 'superstruct';
 import Answer from './answer';
 import { Chat } from './chat';
-import Question from './question';
+import { Question } from './question';
 import { Room } from './room';
 import { isEmail, stringMinLength } from './utils';
 

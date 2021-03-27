@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
-import Question from '../../../../../types/question';
+import { Question } from '../../../../../types/question';
 import QuestionUpdate from '../../../../../components/question/update';
 import Fetch from '../../../../../components/utils/fetch';
 
