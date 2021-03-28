@@ -1,12 +1,12 @@
 import React from 'react';
 
-import Answer from '../../types/answer';
+import { Answer } from '../../types/answer';
 
 interface Props {
   answers: Answer[];
 }
 
-export default function FreeAnswersResults(props: Props) {
+export default function ListFreeAnswers(props: Props) {
   return (
     <div>
       {props.answers.map((answerObject) => {

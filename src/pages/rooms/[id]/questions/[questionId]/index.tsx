@@ -8,7 +8,9 @@ export default function QuestionIndex(): ReactElement {
   const { id, questionId } = useRouter().query;
   return (
     <Fetch<Question> url={`api/rooms/${id}/questions/${questionId}`}>
-      {(question) => <QuestionDetails question={question} />}
+      {(question) => (
+        <QuestionDetails question={question} roomId={Number(id)} />
+      )}
     </Fetch>
   );
 }

@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import AnswerModel from '../../types/answer';
+import { Answer as AnswerModel } from '../../types/answer';
 import {
   FixAnswer as IFixAnswer,
   Question as IQuestion,

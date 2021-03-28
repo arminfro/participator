@@ -1,11 +1,12 @@
 import React, { ReactElement, ChangeEvent } from 'react';
 import { FixAnswer as IFixAnswer } from '../../types/question';
+
 interface Props {
   fixAnswers: IFixAnswer[];
   setFixAnswerId: (id: number) => void;
 }
 
-export default function FixAnswer({
+export default function CreateFixAnswer({
   fixAnswers,
   setFixAnswerId,
 }: Props): ReactElement {

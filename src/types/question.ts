@@ -9,7 +9,7 @@ import {
   optional,
   string,
 } from 'superstruct';
-import Answer from './answer';
+import { Answer } from './answer';
 import { Room } from './room';
 import { User } from './user';
 

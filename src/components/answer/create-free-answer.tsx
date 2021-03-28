@@ -1,9 +1,9 @@
 import React from 'react';
 
 interface Props {
-  setFreeAnswer: (s: string) => void;
+  setFreeAnswer: (answer: string) => void;
 }
-export default function FreeAnswer({ setFreeAnswer }: Props) {
+export default function CreateFreeAnswer({ setFreeAnswer }: Props) {
   return (
     <textarea
       maxLength={500}

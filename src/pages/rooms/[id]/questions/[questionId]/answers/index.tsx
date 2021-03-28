@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { useRouter } from 'next/router';
-import Answer from '../../../../../../types/answer';
+import { Answer } from '../../../../../../types/answer';
 import Fetch from '../../../../../../components/utils/fetch';
 import AnswerList from '../../../../../../components/answer/list';
 

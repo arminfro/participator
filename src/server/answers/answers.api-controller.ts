@@ -12,6 +12,7 @@ import { AnswerCreate } from '../../types/answer';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User as UserDecorator } from '../users/user.decorator';
 import { User } from '../users/user.entity';
+import { AnswerCreatePipe } from './answer.pipe';
 import { AnswersService } from './answers.service';
 
 @Controller('api/rooms/:roomId/questions/:questionId/answers')
@@ -21,7 +22,7 @@ export class AnswersApiController {
 
   @Post()
   create(
-    @Body() answerCreate: AnswerCreate,
+    @Body(new AnswerCreatePipe()) answerCreate: AnswerCreate,
     @Param('questionId', ParseIntPipe) questionId: number,
     @UserDecorator() user: User,
   ) {

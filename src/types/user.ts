@@ -13,7 +13,7 @@ import {
   string,
   validate,
 } from 'superstruct';
-import Answer from './answer';
+import { Answer } from './answer';
 import { Chat } from './chat';
 import { Question } from './question';
 import { Room } from './room';

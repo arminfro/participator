@@ -2,9 +2,9 @@ import React, { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-import Answer from '../../types/answer';
-import FreeAnswersResults from './FreeAnswersResults';
-import FixAnswersResults from './FixAnswersResults';
+import { Answer } from '../../types/answer';
+import ListFreeAnswers from './list-free-answers';
+import ListFixAnswers from './list-fix-answers';
 
 interface Props {
   answers: Answer[];
@@ -24,9 +24,9 @@ export default function AnswerList({ answers }: Props): ReactElement {
   return (
     <>
       <h2>{question.text}</h2>
-      {answersFormat === 'free' && <FreeAnswersResults answers={answers} />}
+      {answersFormat === 'free' && <ListFreeAnswers answers={answers} />}
       {answersFormat === 'fix' && (
-        <FixAnswersResults question={question} answers={answers} />
+        <ListFixAnswers question={question} answers={answers} />
       )}
 
       <div className="ui divider" />

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Answer from '../../types/answer';
+import { Answer } from '../../types/answer';
 import { Question } from '../../types/question';
 
 interface Props {
@@ -8,10 +8,11 @@ interface Props {
   answers: Answer[];
 }
 
-export default function FixAnswersResults({ question, answers }: Props) {
+export default function ListFixAnswers({ question, answers }: Props) {
   const givenAnswers = question.fixAnswers.map((fixAnswer) => fixAnswer.text);
 
   const givenAnswersCountMap = answers.reduce(function (acc, answer) {
+    console.log('question', question, 'answer', answer);
     const value = answer.fixAnswer.text;
     acc[value] = acc[value] ? acc[value] + 1 : 1;
     return acc;

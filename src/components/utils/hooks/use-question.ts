@@ -49,7 +49,7 @@ export function useQuestionCreate(
   const states = {
     text: useState(''),
     answersFormat: useState<AnswersFormat>('free'),
-    fixAnswers: useState<FixAnswer[]>([{ text: '' }]),
+    fixAnswers: useState<FixAnswer[]>([{ text: '' }, { text: '' }]),
   };
 
   return useStruct<QuestionCreate>({
