@@ -14,16 +14,16 @@ const presets = [
   {
     label: 'From 1 to 10',
     fixAnswers: [
-      { answer: '1' },
-      { answer: '2' },
-      { answer: '3' },
-      { answer: '4' },
-      { answer: '5' },
-      { answer: '6' },
-      { answer: '7' },
-      { answer: '8' },
-      { answer: '9' },
-      { answer: '10' },
+      { text: '1' },
+      { text: '2' },
+      { text: '3' },
+      { text: '4' },
+      { text: '5' },
+      { text: '6' },
+      { text: '7' },
+      { text: '8' },
+      { text: '9' },
+      { text: '10' },
     ],
   },
 ];
@@ -42,7 +42,7 @@ export default function QuestionForm({
   const onChangeFixAnswer = (newValue: string, index: number) => {
     const newFixAnswers = (currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
-      copyFixAnswers[index] = { ...copyFixAnswers[index], answer: newValue };
+      copyFixAnswers[index] = { ...copyFixAnswers[index], text: newValue };
       return copyFixAnswers;
     };
     question.set.fixAnswers(newFixAnswers(question.get.fixAnswers));
@@ -52,7 +52,7 @@ export default function QuestionForm({
     e.preventDefault();
     const newCurrentAnswers = (currentFixAnswers) => [
       ...currentFixAnswers,
-      { answer: '' },
+      { text: '' },
     ];
     question.set.fixAnswers(newCurrentAnswers(question.get.fixAnswers));
   };
@@ -71,6 +71,7 @@ export default function QuestionForm({
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    console.log('question', question.get);
     question.sync(() => {
       router.push(
         `/rooms/${roomId}/questions${questionId ? `/${questionId}` : ''}`,
@@ -157,7 +158,7 @@ export default function QuestionForm({
                   key={index}
                   className="eight wide field"
                   placeholder={`Answer No.${index + 1}`}
-                  value={fixAnswer.answer}
+                  value={fixAnswer.text}
                   onChange={(e) => {
                     onChangeFixAnswer(e.target.value, index);
                   }}

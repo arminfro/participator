@@ -2,15 +2,15 @@ import React, { ReactElement, ChangeEvent } from 'react';
 import { FixAnswer as IFixAnswer } from '../../types/question';
 interface Props {
   fixAnswers: IFixAnswer[];
-  setFixAnswer: (s: string) => void;
+  setFixAnswerId: (id: number) => void;
 }
 
 export default function FixAnswer({
   fixAnswers,
-  setFixAnswer,
+  setFixAnswerId,
 }: Props): ReactElement {
   const choice = (e: ChangeEvent<HTMLInputElement>): void => {
-    setFixAnswer(e.target.value);
+    setFixAnswerId(Number(e.target.value));
   };
 
   return (
@@ -21,11 +21,11 @@ export default function FixAnswer({
           <div key={index}>
             <input
               type="radio"
-              value={fixAnswer.answer}
+              value={fixAnswer.id}
               onChange={choice}
               name="answerSelection"
             />
-            {` ${fixAnswer.answer}`}
+            {` ${fixAnswer.text}`}
           </div>
         );
       })}

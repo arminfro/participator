@@ -19,11 +19,11 @@ export const AnswersFormat = define<AnswersFormat>('AnswersFormat', (value) =>
 
 export interface FixAnswer {
   id?: number;
-  answer: string;
+  text: string;
 }
 export const FixAnswer: Describe<FixAnswer> = object({
   id: optional(number()),
-  answer: string(),
+  text: string(),
 });
 
 export type Question = {
@@ -59,7 +59,7 @@ const questionCreateProps = {
   text: string(),
   answersFormat: AnswersFormat,
   fixAnswers: optional(
-    array(object({ id: optional(number()), answer: string() })),
+    array(object({ id: optional(number()), text: string() })),
   ),
 };
 export const QuestionCreate: Describe<QuestionCreate> = object(

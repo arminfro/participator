@@ -9,7 +9,11 @@ import {
 } from 'typeorm';
 
 import AnswerModel from '../../types/answer';
-import { Question as IQuestion } from '../../types/question';
+import {
+  FixAnswer as IFixAnswer,
+  Question as IQuestion,
+} from '../../types/question';
+import { FixAnswer } from '../questions/fix-answer.entity';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
 
@@ -21,8 +25,8 @@ export class Answer extends BaseEntity implements AnswerModel {
   @Column({ nullable: true })
   freeAnswer?: string;
 
-  @Column({ nullable: true })
-  fixAnswer?: string;
+  @ManyToOne(() => FixAnswer, (fixAnswer) => fixAnswer.answers)
+  fixAnswer?: IFixAnswer;
 
   @ManyToOne(() => Question, (question) => question.answers)
   question: IQuestion;

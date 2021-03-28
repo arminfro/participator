@@ -24,7 +24,7 @@ export class AnswersService {
     const question = await this.findQuestion(questionId);
     return await getManager().find(Answer, {
       where: { question },
-      relations: ['user', 'question', 'question.fixAnswers'],
+      relations: ['user', 'question', 'question.fixAnswers', 'fixAnswer'],
     });
   }
 
@@ -48,14 +48,20 @@ export class AnswersService {
   ): Promise<Answer> {
     const answer = new Answer();
     answer.freeAnswer = answerCreate.freeAnswer;
-    answer.fixAnswer = answerCreate.fixAnswer;
     answer.question = await this.findQuestion(questionId);
+    if (answerCreate.fixAnswerId) {
+      answer.fixAnswer = answer.question.fixAnswers.find(
+        (fixAnswer) => fixAnswer.id === answerCreate.fixAnswerId,
+      );
+    }
     answer.user = user;
     return answer;
   }
 
   private async findQuestion(questionId: number): Promise<Question> {
-    const room = await getManager().findOne(Question, questionId);
+    const room = await getManager().findOne(Question, questionId, {
+      relations: ['fixAnswers'],
+    });
     return room;
   }
 }

@@ -98,19 +98,16 @@ export class QuestionsService {
 
   private createFixAnswers(fixAnswers: IFixAnswer[], question: Question): void {
     const uniqueFixAnswers = fixAnswers.reduce((acc, fixAnswer) => {
-      acc.find((fixA) => fixA.answer === fixAnswer.answer) ||
-        acc.push(fixAnswer);
+      acc.find((fixA) => fixA.text === fixAnswer.text) || acc.push(fixAnswer);
       return acc;
     }, [] as IFixAnswer[]);
 
     uniqueFixAnswers.forEach((answer) => {
       if (
-        !question.fixAnswers.some(
-          (fixAnswer) => fixAnswer.answer === answer.answer,
-        )
+        !question.fixAnswers.some((fixAnswer) => fixAnswer.id === answer.id)
       ) {
         const fixAnswer = new FixAnswer();
-        fixAnswer.answer = answer.answer;
+        fixAnswer.text = answer.text;
         fixAnswer.question = question;
         fixAnswer.save();
         return fixAnswer;

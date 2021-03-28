@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function QuestionDetails({ question }: Props): ReactElement {
-  const [fixAnswer, setFixAnswer] = useState('');
+  const [fixAnswerId, setFixAnswerId] = useState<number>();
   const [freeAnswer, setFreeAnswer] = useState('');
 
   const format = question.answersFormat;
@@ -22,7 +22,7 @@ export default function QuestionDetails({ question }: Props): ReactElement {
 
   const answerCreate = (): AnswerCreate => {
     if (question.answersFormat === 'fix') {
-      return { fixAnswer };
+      return { fixAnswerId };
     } else if (question.answersFormat === 'free') {
       return { freeAnswer };
     }
@@ -30,7 +30,7 @@ export default function QuestionDetails({ question }: Props): ReactElement {
 
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    if (fixAnswer || freeAnswer) {
+    if (fixAnswerId || freeAnswer) {
       api<Answer>(
         'post',
         `api/rooms/${roomId}/questions/${questionId}/answers`,
@@ -54,7 +54,7 @@ export default function QuestionDetails({ question }: Props): ReactElement {
       <form className="ui form" onSubmit={onSubmit}>
         {format === 'fix' && (
           <FixAnswer
-            setFixAnswer={setFixAnswer}
+            setFixAnswerId={setFixAnswerId}
             fixAnswers={question.fixAnswers}
           />
         )}
