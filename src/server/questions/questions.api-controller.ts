@@ -14,6 +14,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User as UserDecorator } from '../users/user.decorator';
 import { User } from '../users/user.entity';
 import { Question } from './question.entity';
+import { QuestionCreatePipe, QuestionUpdatePipe } from './question.pipe';
 import { QuestionsService } from './questions.service';
 
 @Controller('api/rooms/:roomId/questions')
@@ -25,7 +26,7 @@ export class QuestionsApiController {
   create(
     @Param('roomId', ParseIntPipe) roomId: number,
     @UserDecorator() user: User,
-    @Body() questionCreate: QuestionCreate,
+    @Body(new QuestionCreatePipe()) questionCreate: QuestionCreate,
   ) {
     return this.questionsService.create(roomId, questionCreate, user);
   }
@@ -43,7 +44,7 @@ export class QuestionsApiController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() questionUpdate: QuestionUpdate,
+    @Body(new QuestionUpdatePipe()) questionUpdate: QuestionUpdate,
   ): Promise<Question> {
     return await this.questionsService.update(+id, questionUpdate);
   }
