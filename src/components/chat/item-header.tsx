@@ -7,6 +7,8 @@ interface Props {
   onClickEdit: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onClickReply: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onRemove: (chat: Chat) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }
 
 export default function ChatItemHeader({
@@ -14,9 +16,24 @@ export default function ChatItemHeader({
   onClickEdit,
   onClickReply,
   onRemove,
+  collapsed,
+  setCollapsed,
 }: Props) {
   return (
     <div className="header">
+      <span
+        onClick={() => {
+          if (chat.children) {
+            if (chat.children.length > 0) setCollapsed(!collapsed);
+          }
+        }}
+      >
+        {chat.children && chat.children.length > 0
+          ? collapsed
+            ? '+'
+            : '-'
+          : ''}
+      </span>
       <img
         className="ui avatar image"
         src="https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png"
@@ -33,6 +50,12 @@ export default function ChatItemHeader({
       <i className="ui icon reply" onClick={onClickReply} />
       <i className="ui icon edit" onClick={onClickEdit} />
       <i className="ui icon remove" onClick={() => onRemove(chat)} />
+      {collapsed && (
+        <span>
+          {' '}
+          {chat.children.length} message{chat.children.length > 1 && 's'} hidden
+        </span>
+      )}
     </div>
   );
 }

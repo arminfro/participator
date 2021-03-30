@@ -1,11 +1,12 @@
 import React, {
   Dispatch,
+  FormEvent,
   ReactElement,
   SetStateAction,
-  SyntheticEvent,
   useState,
 } from 'react';
 import { User } from '../../types/user';
+import { useStore } from '../utils/store/context';
 import Dropdown from './dropdown';
 
 interface Props {
@@ -29,6 +30,10 @@ export default function ChatInputForm({
   const [input, setInput] = useState(preSetInput || '');
   const [oldMsg, setOldMsg] = useState(input);
 
+  const {
+    store: { user },
+  } = useStore();
+
   /* For @ Mention Dropdown */
   const [doAtMention, setDoAtmention] = useState(false);
   const [action, setAction] = useState('');
@@ -36,7 +41,9 @@ export default function ChatInputForm({
   const [reducedUserList, setReducedUserList] = useState(users);
   const [caretPosition, setCaretPosition] = useState(0);
 
-  const onSubmit = (e: SyntheticEvent): void => {
+  const youExtension = ' - (you)';
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     onCreate(preSetInput !== '' ? input.replace('\n', ' \n') : input, () =>
       setInput(''),
@@ -127,7 +134,7 @@ export default function ChatInputForm({
       oldMsg.slice(0, caretPosition) +
         addSpace +
         '**@' +
-        value +
+        value.replace(youExtension, '') +
         '** ' +
         oldMsg.slice(caretPosition),
     );
@@ -153,7 +160,9 @@ export default function ChatInputForm({
         />
         {doAtMention && (
           <Dropdown
-            entries={reducedUserList.map((u) => u.name)}
+            entries={reducedUserList.map((u) =>
+              u.id === user.id ? u.name + youExtension : u.name,
+            )}
             selectAtMention={selectAtMention}
             action={action}
           />

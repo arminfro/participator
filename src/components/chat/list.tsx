@@ -12,6 +12,7 @@ interface Props {
     parentId?: number,
   ) => void;
   depth: number;
+  collapseAll: boolean;
 }
 
 export default function ChatList({
@@ -20,7 +21,10 @@ export default function ChatList({
   onEdit,
   onRemove,
   depth,
+  collapseAll,
 }: Props) {
+  console.log('ChatList, collapseAll', collapseAll, 'depth: ', depth);
+
   return (
     <>
       {chats.children && (
@@ -35,7 +39,8 @@ export default function ChatList({
               onEdit={onEdit}
               onRemove={onRemove}
               chat={chat}
-              depth={0}
+              depth={depth}
+              collapseAll={collapseAll}
             />
           ))}
         </div>

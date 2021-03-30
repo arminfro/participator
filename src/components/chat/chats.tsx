@@ -4,7 +4,9 @@ import React, {
   SetStateAction,
   useCallback,
   useMemo,
+  useState,
 } from 'react';
+import { toast } from 'react-toastify';
 
 import {
   addChild,
@@ -12,19 +14,18 @@ import {
   removeChild,
   replaceChild,
 } from '../../utils/transform-tree';
-import { useStore } from '../utils/store/context';
-import { useSocket } from '../utils/hooks/use-socket';
-import { User } from '../../types/user';
-import { Chat, Events, isChat } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
-import ChatList from './list';
+import { useSocket } from '../utils/hooks/use-socket';
+import { useStore } from '../utils/store/context';
 import ChatInputForm from './input-form';
+import ChatList from './list';
 import { chatMsgDeleted, noop } from '../../constants';
 import {
   validateChatCreate,
   validateChatUpdate,
 } from '../../types/chat.validation';
-import { toast } from 'react-toastify';
+import { User } from '../../types/user';
+import { Chat, Events, isChat } from '../../types/chat';
 
 interface Props {
   roomId: number;
@@ -33,6 +34,8 @@ interface Props {
 }
 
 export default function Chats({ roomId, chatId, users }: Props): ReactElement {
+  const [doCollapseAll, setDoCollapseAll] = useState<boolean>(false);
+
   const {
     store: { user },
   } = useStore();
@@ -57,7 +60,9 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
           payload: Chat,
           setData: Dispatch<SetStateAction<Chat>>,
         ) => {
-          setData((chat) => ({ ...replaceChild<Chat>(chat, payload) }));
+          setData((chat) => ({
+            ...replaceChild<Chat>(chat, { ...chat, ...payload }),
+          }));
         },
         [Events.remove]: (
           payload: { id: number } | Chat,
@@ -122,15 +127,35 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     return;
   };
 
+  console.log('DoCollA: ', doCollapseAll);
+
   return (
     <div className="ui segment">
       <h3 className="ui dividing header">Chat</h3>
+      {doCollapseAll ? (
+        <button
+          type="button"
+          className="ui green labled submit icon button "
+          onClick={() => setDoCollapseAll(false)}
+        >
+          <i className="icon cancel"></i>expand all
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="ui blue labled submit icon button "
+          onClick={() => setDoCollapseAll(true)}
+        >
+          <i className="icon cancel"></i>collapse all
+        </button>
+      )}
       <ChatList
         chats={chats}
         onCreate={onCreate}
         onEdit={onEdit}
         onRemove={onRemove}
         depth={0}
+        collapseAll={doCollapseAll}
       />
 
       <ChatInputForm
