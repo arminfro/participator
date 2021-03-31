@@ -1,6 +1,7 @@
-import { Button, Menu } from 'antd';
+import { Button } from 'antd';
 import { useRouter } from 'next/router';
 import React from 'react';
+
 import { useStore } from '../utils/store/context';
 import { removeToken } from '../utils/token';
 
@@ -16,7 +17,10 @@ export default function Logout() {
 
   return (
     <>
-      Hi {store.user.name} <Button onClick={onLogout}>Logout</Button>
+      Hi {store.user.name}{' '}
+      <Button danger onClick={onLogout}>
+        Logout
+      </Button>
     </>
   );
 }

@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+
 import { isUser, User } from '../../types/user';
 import api from '../utils/api';
 import { useStore } from '../utils/store/context';
@@ -56,7 +57,7 @@ export default function Navigator() {
             <Menu.Item key="/users">
               <Link href="/users">Users</Link>
             </Menu.Item>
-            <Menu.Item>
+            <Menu.Item key="/rooms">
               <Link href="/rooms">Rooms</Link>
             </Menu.Item>
           </>

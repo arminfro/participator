@@ -1,7 +1,10 @@
+import { CheckOutlined, CloseOutlined, StarOutlined } from '@ant-design/icons';
 import { subject } from '@casl/ability';
+import { Button, Table } from 'antd';
 import { useRouter } from 'next/router';
 import React, { SyntheticEvent } from 'react';
 import { Action } from '../../casl/action';
+
 import { Room, RoomUpdate } from '../../types/room';
 import api from '../utils/api';
 import { useAbility } from '../utils/casl-context';
@@ -42,51 +45,55 @@ export default function RoomTable({ rooms }: Props) {
     );
   };
 
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
+      title: 'Open To Join',
+      dataIndex: 'openToJoin',
+      key: 'openToJoin',
+      render: (_value: boolean, room: Room) =>
+        room.openToJoin ? <CheckOutlined /> : <CloseOutlined />,
+    },
+    {
+      title: 'Room Joined',
+      key: 'joinColumn',
+      render: (_value: boolean, room: Room) =>
+        canReadRoom(room) ? (
+          room.admin.id === user.id ? (
+            <StarOutlined />
+          ) : (
+            <CheckOutlined />
+          )
+        ) : (
+          room.openToJoin && (
+            <Button onClick={(e) => onJoin(e, room.id)}>Join</Button>
+          )
+        ),
+    },
+  ];
+
   return (
-    <table className="ui celled striped table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Members Count</th>
-          <th>Open to join</th>
-          <th>Room Joined?</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rooms.map((room) => (
-          <tr
-            key={room.id}
-            className={(canReadRoom(room) && 'pointer') || ''}
-            onClick={() => onGoToRoom(room)}
-          >
-            <td className="wi-100">{room.name}</td>
-            <td>{room.description}</td>
-            <td className="wi-100">{room.members.length + 1}</td>
-            <td className="center aligned wi-100">
-              {room.openToJoin && <i className="large green check icon" />}
-            </td>
-            <td className="center aligned wi-100">
-              {canReadRoom(room) ? (
-                <i
-                  className={`large icon ${
-                    room.admin.id === user.id ? 'yellow star' : 'green check'
-                  }`}
-                />
-              ) : (
-                room.openToJoin && (
-                  <button
-                    onClick={(e) => onJoin(e, room.id)}
-                    className="ui button"
-                  >
-                    Join
-                  </button>
-                )
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <Table
+      columns={columns}
+      dataSource={rooms}
+      rowKey="id"
+      pagination={false}
+      bordered={true}
+      rowClassName={(room) => (canReadRoom(room) && 'pointer') || ''}
+      onRow={(room) => {
+        return {
+          onClick: () => onGoToRoom(room),
+        };
+      }}
+    />
   );
 }
