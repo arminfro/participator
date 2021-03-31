@@ -1,15 +1,20 @@
+import { Button } from 'antd';
 import Link from 'next/link';
 import React from 'react';
 
 export default function Login() {
   return (
-    <div className="menu right">
-      <Link href="/login">
-        <a className="item">Login</a>
-      </Link>
-      <Link href="/users/new">
-        <a className="item">Register</a>
-      </Link>
-    </div>
+    <>
+      <Button>
+        <Link href="/login">
+          <a>Login</a>
+        </Link>
+      </Button>
+      <Button>
+        <Link href="/users/new">
+          <a>Register</a>
+        </Link>
+      </Button>
+    </>
   );
 }

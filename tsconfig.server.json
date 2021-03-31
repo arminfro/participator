@@ -22,6 +22,7 @@
     "**/*.tsx"
   ],
   "exclude": [
+    "./src/components",
     "./src/pages",
     "./bin",
     "./dist",

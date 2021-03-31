@@ -1,3 +1,4 @@
+import { Button, Menu } from 'antd';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useStore } from '../utils/store/context';
@@ -14,11 +15,8 @@ export default function Logout() {
   };
 
   return (
-    <span className="ui button item right">
-      Hi {store.user.name}
-      <button className="ui button" onClick={onLogout}>
-        Logout
-      </button>
-    </span>
+    <>
+      Hi {store.user.name} <Button onClick={onLogout}>Logout</Button>
+    </>
   );
 }

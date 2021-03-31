@@ -1,7 +1,7 @@
+import { Breadcrumb, Layout, Menu } from 'antd';
 import React, { ReactElement } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { SWRConfig } from 'swr';
-
 import Navigator from '../components/navigation/navigator';
 import { swrApi } from '../components/utils/api';
 import { AbilityContextProvider } from '../components/utils/casl-context';
@@ -22,11 +22,22 @@ export default function App({ Component, pageProps }: Props): ReactElement {
   return (
     <StoreProvider>
       <AbilityContextProvider>
-        <Navigator />
         <SWRConfig value={swrOptions}>
-          <div className="ui container">
-            <Component {...pageProps} />
-          </div>
+          <Layout>
+            <Navigator />
+            <Layout style={{ padding: '0 24px 24px' }}>
+              <Layout.Content
+                className="site-layout-background"
+                style={{
+                  padding: 24,
+                  margin: 0,
+                  minHeight: 480,
+                }}
+              >
+                <Component {...pageProps} />
+              </Layout.Content>
+            </Layout>
+          </Layout>
         </SWRConfig>
       </AbilityContextProvider>
       <ToastContainer />
