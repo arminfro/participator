@@ -24,10 +24,12 @@ export default function App({ Component, pageProps }: Props): ReactElement {
       <AbilityContextProvider>
         <SWRConfig value={swrOptions}>
           <Layout>
-            <Navigator />
-            <Layout style={{ padding: '0 24px 24px' }}>
+            <Layout.Header>
+              <Navigator />
+            </Layout.Header>
+            <Layout style={{ padding: '0 100px 100px' }}>
               <Layout.Content
-                className="site-layout-background"
+                className="site-layout-content"
                 style={{
                   padding: 24,
                   margin: 0,

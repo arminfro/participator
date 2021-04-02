@@ -1,3 +1,5 @@
+import { Button } from 'antd';
+import Card from 'antd/lib/card';
 import Link from 'next/link';
 import Router from 'next/router';
 import React, { ReactElement } from 'react';
@@ -27,16 +29,18 @@ export default function UserDetails({ user }: Props): ReactElement {
   return (
     <>
       <h2>{user.name}</h2>
-      <UserCard user={user} />
+      <Card.Grid key={user.id} style={{ maxWidth: '30em', minWidth: '15' }}>
+        <UserCard user={user} />
+      </Card.Grid>
       <Link href="/users" as={`/users`}>
-        <button className="ui button">Back</button>
+        <Button>Back</Button>
       </Link>
       <Link href="/users/[id]/edit" as={`/users/${user.id}/edit`}>
-        <button className="ui button yellow">Edit</button>
+        <Button>Edit</Button>
       </Link>
-      <button className="ui button red" onClick={onDelete}>
+      <Button danger onClick={onDelete}>
         Delete
-      </button>
+      </Button>
     </>
   );
 }

@@ -1,133 +1,160 @@
+import { CloseOutlined, CloudOutlined, LikeOutlined } from '@ant-design/icons';
+import { Button, Form, Radio } from 'antd';
 import React, {
-  useState,
+  CSSProperties,
+  Dispatch,
   ReactElement,
-  ChangeEvent,
-  SyntheticEvent,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { User } from '../../types/user';
 import { UserFilter } from './list';
 
-function useInput(
-  initialValue: string,
-): [string, (e: ChangeEvent<HTMLInputElement>) => void] {
-  const [value, setValue] = useState(initialValue);
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    setValue(e.target.value);
-  }
-  return [value, handleChange];
-}
-
 interface Option {
   value: string;
-  icon: string;
   filterTrue: (u: User) => boolean;
   filterFalse: (u: User) => boolean;
 }
 
 interface Options {
-  online: Option;
-  reg: Option;
-  hand: Option;
+  active: Option;
+  hasHandUp: Option;
 }
 
 interface Props {
-  setFilter: (filter: UserFilter) => void;
+  setFilters: Dispatch<SetStateAction<UserFilter[]>>;
 }
 
-function UserFilterCtrl({ setFilter }: Props): ReactElement {
-  const options: Options = {
-    online: {
-      value: 'online',
-      icon: 'cloud',
-      filterTrue: (u) => u.active,
-      filterFalse: (u) => !u.active,
-    },
-    reg: {
-      value: 'reg',
-      icon: 'cloud upload',
-      filterTrue: (u) => u.randomGroup,
-      filterFalse: (u) => !u.randomGroup,
-    },
-    hand: {
-      value: 'hand',
-      icon: 'hand point up outline',
-      filterTrue: (u) => u.hasHandUp,
-      filterFalse: (u) => !u.hasHandUp,
-    },
-  };
+interface TargetValueOption {
+  target: { value: keyof Options };
+}
 
-  const [filterTrue, setFilterTrue] = useState(true);
+type FilterValue = 'all' | 'true' | 'false';
 
-  const [chosenFilter, setChosenFilter] = useInput('');
+type FilterState = {
+  [T in keyof Options]: FilterValue;
+};
 
-  const onSetFilter = (e: ChangeEvent<HTMLInputElement>) => {
-    e.persist();
-    setChosenFilter(e);
-    setFilter(
-      filterTrue
-        ? options[e.target.value as keyof Options].filterTrue
-        : options[e.target.value as keyof Options].filterFalse,
+type FormState = {
+  filter: keyof Options | 'dummy';
+};
+
+export default function UserFilterCtrl({ setFilters }: Props): ReactElement {
+  const [form] = Form.useForm<FormState>();
+  const [filterState, setFilterState] = useState<FilterState>({
+    active: 'all',
+    hasHandUp: 'all',
+  });
+
+  const options = useMemo<Options>(
+    () => ({
+      active: {
+        value: 'active',
+        filterTrue: (u) => u.active,
+        filterFalse: (u) => !u.active,
+      },
+      hasHandUp: {
+        value: 'hasHandUp',
+        filterTrue: (u) => u.hasHandUp,
+        filterFalse: (u) => !u.hasHandUp,
+      },
+    }),
+    [],
+  );
+
+  useEffect(() => {
+    setFilters(
+      Object.keys(filterState)
+        .map((filterKey) => {
+          if (filterState[filterKey] === 'true') {
+            return options[filterKey].filterTrue;
+          }
+          if (filterState[filterKey] === 'false') {
+            return options[filterKey].filterFalse;
+          }
+          return () => true; //?
+        })
+        .filter((a) => a),
     );
+  }, [filterState, options, setFilters]);
+
+  const setNextFilterState = (
+    filterKey: keyof FilterState,
+    currentFilterValue: FilterValue,
+  ): void => {
+    setFilterState((currentFilterState) => {
+      const newFilterState = {
+        [filterKey]: onFilterChange(currentFilterValue),
+      };
+      console.log('newFilterState', newFilterState);
+      return { ...currentFilterState, ...newFilterState };
+    });
   };
 
-  const onClick = (e: SyntheticEvent<EventTarget>) => {
-    if ((e.target as HTMLInputElement).value === chosenFilter) {
-      if (filterTrue) {
-        setFilter(
-          options[(e.target as HTMLInputElement).value as keyof Options]
-            .filterFalse,
-        );
-        setFilterTrue(false);
-      } else {
-        setChosenFilter({
-          target: { value: '' },
-        } as ChangeEvent<HTMLInputElement>);
-        setFilter((a: User) => !!a);
-        setFilterTrue(true);
-      }
+  const onFilterChange = (currentFilterValue: FilterValue): FilterValue => {
+    switch (currentFilterValue) {
+      case 'all':
+        return 'true';
+      case 'true':
+        return 'false';
+      case 'false':
+        return 'all';
     }
   };
 
+  const onClick = (
+    e: React.MouseEvent<HTMLElement, MouseEvent> & TargetValueOption,
+  ) => {
+    const filterKey = e.target.value;
+    const filterValue = filterState[filterKey];
+    if (onFilterChange(filterValue) === 'all') {
+      resetFields();
+    }
+    setNextFilterState(filterKey, filterValue);
+  };
+
+  const iconStyle = (attr: keyof Options): CSSProperties => {
+    let color: string;
+    if (filterState[attr] === 'true') {
+      color = 'green';
+    } else if (filterState[attr] === 'false') {
+      color = 'red';
+    }
+    if (color) {
+      return { color };
+    }
+  };
+
+  const resetFields = () => {
+    setFilterState({ active: 'all', hasHandUp: 'all' });
+    form.resetFields();
+  };
+
   return (
-    <>
-      <div className="ui form">
-        <div className="inline fields">
-          <label htmlFor="filter">Select filter:</label>
-          {(['online', 'reg', 'hand'] as Array<keyof Options>).map(
-            (filterSetting) => (
-              <div key={filterSetting} className="field">
-                <div className="ui radio checkbox">
-                  <input
-                    type="radio"
-                    id={options[filterSetting].value}
-                    value={options[filterSetting].value}
-                    checked={options[filterSetting].value === chosenFilter}
-                    onChange={onSetFilter}
-                    name="filter"
-                    tabIndex={0}
-                    className="hidden"
-                    onClick={onClick}
-                  />
-                  <label htmlFor={options[filterSetting].value}>
-                    <i
-                      className={`${options[filterSetting].icon} icon`}
-                      style={{
-                        color:
-                          filterTrue &&
-                          chosenFilter === options[filterSetting].value
-                            ? 'green'
-                            : '',
-                      }}
-                    />
-                  </label>
-                </div>
-              </div>
-            ),
-          )}
-        </div>
-      </div>
-    </>
+    <Form
+      form={form}
+      initialValues={{
+        filter: 'dummy',
+      }}
+    >
+      <Form.Item label="Select Filter" name="filter">
+        <Radio.Group>
+          <Radio.Button value="active" onClick={onClick}>
+            <CloudOutlined style={iconStyle('active')} />
+          </Radio.Button>
+          <Radio.Button value="hasHandUp" onClick={onClick}>
+            <LikeOutlined style={iconStyle('hasHandUp')} />
+          </Radio.Button>
+          <Radio style={{ display: 'none' }} value="dummy">
+            {' '}
+          </Radio>
+          <Button onClick={resetFields}>
+            <CloseOutlined />
+          </Button>
+        </Radio.Group>
+      </Form.Item>
+    </Form>
   );
 }
-
-export default UserFilterCtrl;

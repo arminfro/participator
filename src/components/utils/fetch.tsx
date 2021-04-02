@@ -1,6 +1,7 @@
 import React, { ReactElement, Suspense } from 'react';
 import { toast } from 'react-toastify';
 import useSWR, { ConfigInterface } from 'swr';
+
 import { isDev } from '../../utils/environment';
 import LoadingSpinner from '../shared/loading-spinner';
 import ErrorBoundary from './error-boundary';
@@ -16,9 +17,6 @@ function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
   const keys = [url, getToken()];
   const [localStorage] = useLocalStorage<T>(keys.join());
   const swrConfig: ConfigInterface = {
-    onSuccess: () => {
-      if (isDev()) toast.info(`Fetched ${url}`);
-    },
     onError: (err: Error) => {
       if (isDev()) toast.error(err);
     },

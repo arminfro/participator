@@ -2,6 +2,12 @@
 @import '~antd/dist/antd.css';
 @import '~react-toastify/dist/ReactToastify.min.css';
 
+.site-layout-content {
+  min-height: 280px;
+  padding: 24px;
+  background: #fff;
+}
+
 .wi-100 {
   width: 100px;
 }

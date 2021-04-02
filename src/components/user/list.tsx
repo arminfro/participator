@@ -1,3 +1,4 @@
+import { Card } from 'antd';
 import React, { ReactElement, useState } from 'react';
 import { User } from '../../types/user';
 import UserCard from './card';
@@ -10,19 +11,29 @@ interface Props {
 }
 
 export default function UserList({ users }: Props): ReactElement {
-  const [filterCtl, setFilterCtl] = useState<UserFilter[]>([() => true]);
+  const [filters, setFilters] = useState<UserFilter[]>([() => true]);
+
+  const filteredUsers = (): User[] => {
+    return filters.reduce((acc, filter) => acc.filter(filter), users);
+  };
+
   return (
     <>
-      <h2 className="ui dividing header">Users</h2>
+      <UserFilterCtrl setFilters={setFilters} />
 
-      <UserFilterCtrl
-        setFilter={(filterFunc: UserFilter) => setFilterCtl([filterFunc])}
-      />
-      <div className="ui container cards">
-        {users.filter(filterCtl[filterCtl.length - 1]).map((user: User) => (
-          <UserCard user={user} key={user.id} />
-        ))}
-      </div>
+      {filteredUsers().map((user: User) => (
+        <Card.Grid
+          key={user.id}
+          style={{
+            maxWidth: '12em',
+            minWidth: '9em',
+            padding: 3,
+            margin: 15,
+          }}
+        >
+          <UserCard user={user} />
+        </Card.Grid>
+      ))}
     </>
   );
 }
