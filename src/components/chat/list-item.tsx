@@ -1,31 +1,36 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import Prism from 'prismjs';
+import {
+  DeleteOutlined,
+  DeliveredProcedureOutlined,
+  EditOutlined,
+} from '@ant-design/icons';
+import { Avatar, Comment } from 'antd';
+import { formatDistance } from 'date-fns';
 import marked from 'marked';
-import sanitizeHtml from 'sanitize-html';
 import emoji from 'node-emoji';
-
-import { Chat } from '../../types/chat';
-import ChatInputForm from './input-form';
-import ChatItemHeader from './item-header';
-import ChatLinkList from './link-list';
-import ChatList from './list';
+import Prism from 'prismjs';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import sanitizeHtml from 'sanitize-html';
 import { prismLanguageMap } from '../../constants';
+import { Chat } from '../../types/chat';
+import { User } from '../../types/user';
+import ChatForm from './form';
+import ChatLinkList from './link-list';
 
 interface Props {
   chat: Chat;
-  depth: number;
-  onEdit: (chat: Chat, callback: Dispatch<SetStateAction<string>>) => void;
+  users: User[];
+  onEdit: (chat: Chat, callback: Dispatch<SetStateAction<Chat>>) => void;
   onRemove: (chat: Chat) => void;
   onCreate: (
     input: string,
-    callback: Dispatch<SetStateAction<string>>,
+    callback: Dispatch<SetStateAction<Chat>>,
     chatId: number,
   ) => void;
 }
 
 export default function ChatListItem({
   chat,
-  depth,
+  users,
   onCreate,
   onEdit,
   onRemove,
@@ -46,75 +51,103 @@ export default function ChatListItem({
     },
   });
 
-  const onClickEdit = (): void => {
-    setEdit(true);
-  };
-
-  const onClickReply = (): void => {
-    setReply(true);
-  };
-
-  const resetStatus = (): void => {
-    setReply(false);
-    setEdit(false);
-  };
-
-  const onCancel = () => {
-    resetStatus();
-  };
-
-  const onSend = (input: string): void => {
+  const onSubmit = (
+    input: string,
+    callback?: Dispatch<SetStateAction<Chat>>,
+  ): void => {
     if (edit) {
       const updated: Chat = { ...chat, msg: input };
-      onEdit(updated, resetStatus);
+      onEdit(updated, (chat) => {
+        callback(chat);
+        setEdit(false);
+      });
     } else if (reply) {
-      onCreate(input, resetStatus, chat.id);
+      onCreate(
+        input,
+        (chat) => {
+          callback(chat);
+          setReply(false);
+        },
+        chat.id,
+      );
     }
-    resetStatus();
+  };
+
+  const chatFormProps = { users, onSubmit };
+  const commentProps = {
+    author: chat.user.name,
+    avatar: (
+      <Avatar
+        src="https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png"
+        alt={chat.user.name}
+      />
+    ),
   };
 
   return (
-    <div className="item pa-tb-20">
-      <ChatItemHeader
-        chat={chat}
-        onClickEdit={onClickEdit}
-        onClickReply={onClickReply}
-        onRemove={onRemove}
-      />
-      <div className="description">
-        <ChatLinkList chat={chat} />
-        {edit || reply ? (
-          <ChatInputForm
-            onCreate={onSend}
-            onCancel={onCancel}
-            preSetInput={edit && chat.msg}
-            allowEscape={true}
+    <>
+      <Comment
+        actions={[
+          <EditOutlined key="onEdit" onClick={() => setEdit(true)} />,
+          <DeleteOutlined key="onDelete" onClick={() => onRemove(chat)} />,
+          <DeliveredProcedureOutlined
+            key="onReply"
+            onClick={() => setReply(true)}
+          />,
+        ]}
+        datetime={
+          <>
+            {formatDistance(chat.updatedAt, new Date(), {
+              includeSeconds: true,
+            })}
+            {' ago '}
+            {chat.updatedAt.getTime() !== chat.createdAt.getTime() &&
+              '(edited) '}
+          </>
+        }
+        {...commentProps}
+        content={
+          <>
+            <ChatLinkList chat={chat} />
+
+            {!edit && (
+              <div
+                className="text-with-markdown"
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeHtml(emoji.emojify(marked(chat.msg)), {
+                    // allow any css class for `code` and `span`
+                    allowedClasses: {
+                      code: false,
+                      span: false,
+                    },
+                  }),
+                }}
+              />
+            )}
+
+            {edit && (
+              <ChatForm
+                {...chatFormProps}
+                onFinish={() => setEdit(false)}
+                value={chat.msg}
+              />
+            )}
+          </>
+        }
+      >
+        {reply && (
+          <Comment
+            {...commentProps}
+            content={
+              <ChatForm
+                {...chatFormProps}
+                onFinish={() => setReply(false)}
+                value={''}
+              />
+            }
           />
-        ) : (
-          <div className="content">
-            <div
-              className="text-with-markdown"
-              dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(emoji.emojify(marked(chat.msg)), {
-                  // allow any css class for `code` and `span`
-                  allowedClasses: {
-                    code: false,
-                    span: false,
-                  },
-                }),
-              }}
-            />
-          </div>
         )}
-      </div>
-      <ChatList
-        key={chat.id}
-        onCreate={onCreate}
-        onEdit={onEdit}
-        onRemove={onRemove}
-        chats={chat}
-        depth={depth + 1}
-      />
-    </div>
+      </Comment>
+    </>
   );
 }

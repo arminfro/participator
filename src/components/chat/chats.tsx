@@ -1,3 +1,5 @@
+import { CarryOutOutlined } from '@ant-design/icons';
+import { Tree, Comment, Avatar } from 'antd';
 import React, {
   Dispatch,
   ReactElement,
@@ -5,26 +7,25 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-
+import { toast } from 'react-toastify';
+import { chatMsgDeleted, noop } from '../../constants';
+import { Chat, Events, isChat } from '../../types/chat';
+import {
+  validateChatCreate,
+  validateChatUpdate,
+} from '../../types/chat.validation';
+import { User } from '../../types/user';
 import {
   addChild,
   newTree,
   removeChild,
   replaceChild,
 } from '../../utils/transform-tree';
-import { useStore } from '../utils/store/context';
-import { useSocket } from '../utils/hooks/use-socket';
-import { User } from '../../types/user';
-import { Chat, Events, isChat } from '../../types/chat';
 import LoadingSpinner from '../shared/loading-spinner';
-import ChatList from './list';
-import ChatInputForm from './input-form';
-import { chatMsgDeleted, noop } from '../../constants';
-import {
-  validateChatCreate,
-  validateChatUpdate,
-} from '../../types/chat.validation';
-import { toast } from 'react-toastify';
+import { useSocket } from '../utils/hooks/use-socket';
+import { useStore } from '../utils/store/context';
+import ChatForm from './form';
+import ChatListItem from './list-item';
 
 interface Props {
   roomId: number;
@@ -37,7 +38,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     store: { user },
   } = useStore();
 
-  const [chats, socket] = useSocket<Chat>(
+  const [chat, socket] = useSocket<Chat>(
     `/rooms/${roomId}/chat`,
     useMemo(() => {
       return {
@@ -87,18 +88,20 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     }, []),
   );
 
-  if (!chats) {
+  if (!chat) {
     return <LoadingSpinner />;
   }
 
   const onEdit = (
     chat: Chat,
-    callback: Dispatch<SetStateAction<string>> = noop,
+    callback: Dispatch<SetStateAction<Chat>> = noop,
   ): void => {
     const chatUpdate = { id: chat.id, msg: chat.msg };
     const [, validatedChatUpdate] = validateChatUpdate(chatUpdate);
     if (validatedChatUpdate) {
-      socket.emit(Events.update, chatUpdate, callback);
+      socket.emit(Events.update, chatUpdate, (chat: Chat) => {
+        callback(chat);
+      });
     }
   };
 
@@ -108,37 +111,50 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
 
   const onCreate = (
     msg: string,
-    callback: Dispatch<SetStateAction<string>> = noop,
+    callback: Dispatch<SetStateAction<Chat>> = noop,
     parentId: number = chatId,
   ) => {
     const chatCreate = { msg, userId: user.id, parentId };
     const [, validatedChatCreate] = validateChatCreate(chatCreate);
     if (validatedChatCreate) {
-      socket.emit(Events.create, chatCreate, callback);
+      socket.emit(Events.create, chatCreate, (chat: Chat) => {
+        callback(chat);
+      });
     }
   };
 
-  const onCancel = () => {
-    return;
+  const mapChatToTreeData = (chat: Chat) => {
+    return {
+      key: chat.id,
+      children: chat.children ? chat.children.map(mapChatToTreeData) : [],
+      title: (
+        <ChatListItem
+          onCreate={onCreate}
+          onEdit={onEdit}
+          onRemove={onRemove}
+          users={users}
+          chat={chat}
+        />
+      ),
+    };
   };
 
   return (
-    <div className="ui segment">
-      <h3 className="ui dividing header">Chat</h3>
-      <ChatList
-        chats={chats}
-        onCreate={onCreate}
-        onEdit={onEdit}
-        onRemove={onRemove}
-        depth={0}
+    <>
+      <Tree
+        switcherIcon={<CarryOutOutlined />}
+        treeData={mapChatToTreeData(chat).children}
       />
-
-      <ChatInputForm
-        onCreate={onCreate}
-        onCancel={onCancel}
-        allowEscape={false}
-        users={users}
+      <Comment
+        author={chat.user.name}
+        avatar={
+          <Avatar
+            src="https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png"
+            alt={chat.user.name}
+          />
+        }
+        content={<ChatForm users={users} onSubmit={onCreate} value="" />}
       />
-    </div>
+    </>
   );
 }
