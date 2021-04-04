@@ -26,7 +26,7 @@ export default function ChatForm({ onSubmit, value, users, onFinish }: Props) {
   return (
     <Form form={form} initialValues={{ chat: value }}>
       <Form.Item name="chat">
-        <Mentions autoSize={{ minRows: 2, maxRows: 6 }}>
+        <Mentions autoSize={{ minRows: 2 }}>
           {users.map((user) => (
             <Mentions.Option key={`**${String(user.id)}**`} value={user.name}>
               {user.name}

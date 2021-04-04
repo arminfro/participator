@@ -10,6 +10,7 @@ import emoji from 'node-emoji';
 import Prism from 'prismjs';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import sanitizeHtml from 'sanitize-html';
+import * as Faker from 'faker';
 import { prismLanguageMap } from '../../constants';
 import { Chat } from '../../types/chat';
 import { User } from '../../types/user';
@@ -76,17 +77,13 @@ export default function ChatListItem({
   const chatFormProps = { users, onSubmit };
   const commentProps = {
     author: chat.user.name,
-    avatar: (
-      <Avatar
-        src="https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png"
-        alt={chat.user.name}
-      />
-    ),
+    avatar: <Avatar src={Faker.image.avatar()} alt={chat.user.name} />,
   };
 
   return (
     <>
       <Comment
+        style={{ cursor: 'default' }}
         actions={[
           <EditOutlined key="onEdit" onClick={() => setEdit(true)} />,
           <DeleteOutlined key="onDelete" onClick={() => onRemove(chat)} />,

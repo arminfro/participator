@@ -8,6 +8,7 @@ import React, {
   useMemo,
 } from 'react';
 import { toast } from 'react-toastify';
+import * as Faker from 'faker';
 import { chatMsgDeleted, noop } from '../../constants';
 import { Chat, Events, isChat } from '../../types/chat';
 import {
@@ -142,17 +143,14 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
   return (
     <>
       <Tree
+        blockNode={true}
+        selectable={false}
         switcherIcon={<CarryOutOutlined />}
         treeData={mapChatToTreeData(chat).children}
       />
       <Comment
         author={chat.user.name}
-        avatar={
-          <Avatar
-            src="https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png"
-            alt={chat.user.name}
-          />
-        }
+        avatar={<Avatar src={Faker.image.avatar()} alt={chat.user.name} />}
         content={<ChatForm users={users} onSubmit={onCreate} value="" />}
       />
     </>
