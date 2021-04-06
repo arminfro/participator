@@ -1,5 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { Chat } from '../../types/chat';
+import useWindowSize from '../utils/hooks/use-window-size';
 import ChatLinkListItem from './link-list-item';
 
 interface Props {
@@ -7,12 +8,14 @@ interface Props {
 }
 
 export default function ChatLinkList({ chat }: Props) {
+  const { width } = useWindowSize();
+
   const listStyle: CSSProperties = {
     display: 'flex',
     flexWrap: 'nowrap',
     overflowX: 'auto',
     overflowY: 'hidden',
-    width: window.visualViewport.width * 0.8, // todo
+    width: width * 0.9 - 348,
     height: '9em',
     padding: 2,
   };

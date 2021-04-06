@@ -1,6 +1,7 @@
 import { Layout } from 'antd';
 import React from 'react';
 import Navigator from '../components/navigation/navigator';
+import useWindowSize from '../components/utils/hooks/use-window-size';
 
 interface Props {
   Component: React.FC;
@@ -9,19 +10,21 @@ interface Props {
 }
 
 export default function AppLayout({ Component, pageProps, siderRef }: Props) {
+  const { height } = useWindowSize();
+
   return (
     <Layout>
       <Layout.Header style={{ zIndex: 1 }}>
         <Navigator />
       </Layout.Header>
-      <Layout style={{ padding: '0 50px 50px' }}>
+      <Layout style={{ padding: '0 50px 30px' }}>
         <div style={{ display: 'inherit' }} ref={siderRef} />
         <Layout.Content
-          className="site-layout-content"
           style={{
+            background: '#fff',
             padding: 24,
             margin: 0,
-            minHeight: 480,
+            minHeight: height - (65 + 30),
           }}
         >
           <Component {...pageProps} />

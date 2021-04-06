@@ -2,11 +2,6 @@
 @import '~antd/dist/antd.css';
 @import '~react-toastify/dist/ReactToastify.min.css';
 
-.site-layout-content {
-  min-height: 280px;
-  background: #fff;
-}
-
 .pointer {
   cursor: pointer;
 }
