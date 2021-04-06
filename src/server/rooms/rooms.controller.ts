@@ -51,4 +51,24 @@ export class RoomsController {
   ): Promise<void> {
     this.next.render(`/rooms/${id}`, req, res);
   }
+
+  @Get(':id/users')
+  @UsePolicy((ability, subjects) => ability.can(Action.Read, subjects.room))
+  async findUsers(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: IncomingMessage,
+    @Res() res: ServerResponse,
+  ): Promise<void> {
+    this.next.render(`/rooms/${id}/users`, req, res);
+  }
+
+  @Get(':id/chat')
+  @UsePolicy((ability, subjects) => ability.can(Action.Read, subjects.room))
+  async findChat(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: IncomingMessage,
+    @Res() res: ServerResponse,
+  ): Promise<void> {
+    this.next.render(`/rooms/${id}/chat`, req, res);
+  }
 }

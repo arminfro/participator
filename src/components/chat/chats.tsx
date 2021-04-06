@@ -149,7 +149,7 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
         treeData={mapChatToTreeData(chat).children}
       />
       <Comment
-        author={chat.user.name}
+        author={user.name}
         avatar={<Avatar src={Faker.image.avatar()} alt={chat.user.name} />}
         content={<ChatForm users={users} onSubmit={onCreate} value="" />}
       />

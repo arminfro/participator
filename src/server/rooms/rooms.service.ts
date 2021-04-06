@@ -39,7 +39,7 @@ export class RoomsService {
 
   async findOne(id: number): Promise<Room | undefined> {
     const room = await this.roomsRepository.findOne(id, {
-      relations: ['admin', 'members', 'chat'],
+      relations: ['admin', 'members', 'chat', 'questions', 'questions.answers'],
     });
     return room;
   }

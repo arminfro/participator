@@ -1,11 +1,11 @@
-import { Breadcrumb, Layout, Menu } from 'antd';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { SWRConfig } from 'swr';
-import Navigator from '../components/navigation/navigator';
 import { swrApi } from '../components/utils/api';
 import { AbilityContextProvider } from '../components/utils/casl-context';
+import { SiderRefProvider } from '../components/utils/sider-ref-context';
 import StoreProvider from '../components/utils/store/provider';
+import Layout from './layout';
 import './styles.css';
 
 interface Props {
@@ -14,6 +14,8 @@ interface Props {
 }
 
 export default function App({ Component, pageProps }: Props): ReactElement {
+  const siderRef = useRef<HTMLDivElement>(null);
+
   const swrOptions = {
     fetcher: (url: string) => swrApi(url),
     suspense: true,
@@ -22,25 +24,15 @@ export default function App({ Component, pageProps }: Props): ReactElement {
   return (
     <StoreProvider>
       <AbilityContextProvider>
-        <SWRConfig value={swrOptions}>
-          <Layout>
-            <Layout.Header>
-              <Navigator />
-            </Layout.Header>
-            <Layout style={{ padding: '0 100px 100px' }}>
-              <Layout.Content
-                className="site-layout-content"
-                style={{
-                  padding: 24,
-                  margin: 0,
-                  minHeight: 480,
-                }}
-              >
-                <Component {...pageProps} />
-              </Layout.Content>
-            </Layout>
-          </Layout>
-        </SWRConfig>
+        <SiderRefProvider siderRef={siderRef}>
+          <SWRConfig value={swrOptions}>
+            <Layout
+              Component={Component}
+              pageProps={pageProps}
+              siderRef={siderRef}
+            />
+          </SWRConfig>
+        </SiderRefProvider>
       </AbilityContextProvider>
       <ToastContainer />
     </StoreProvider>

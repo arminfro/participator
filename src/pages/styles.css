@@ -4,51 +4,9 @@
 
 .site-layout-content {
   min-height: 280px;
-  padding: 24px;
   background: #fff;
-}
-
-.wi-100 {
-  width: 100px;
-}
-
-.pa-tb-20 {
-  padding-bottom: 20px;
-  padding-top: 20px;
 }
 
 .pointer {
   cursor: pointer;
 }
-
-
-.dropdown-container .dropdowntext {
-  margin-left:9px;
-  /* width : 320px; */
-
-  background-color: #FFF;
-  border-radius:4px;
-  border: 1px solid #aeaeae;
-  position: absolute;
-  z-index: 1;
-  padding: 5px;
-  margin-top : -15px;
-  opacity: 1;
-  /* transition: opacity 0.5s; */
-}
-.dropdown-container .dropdowntext::after {
-  content: " ";
-  position: absolute;
-  top: 35%;
-  right: 100%;
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent #aeaeae transparent transparent;
-}
-
-.selected {
-  background-color: cornflowerblue;
-  color:cornsilk
-}
-
