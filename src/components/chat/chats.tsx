@@ -1,14 +1,15 @@
 import { CarryOutOutlined } from '@ant-design/icons';
-import { Tree, Comment, Avatar } from 'antd';
+import { Avatar, Comment, Tree } from 'antd';
+import * as Faker from 'faker';
 import React, {
   Dispatch,
   ReactElement,
   SetStateAction,
   useCallback,
+  useEffect,
   useMemo,
 } from 'react';
 import { toast } from 'react-toastify';
-import * as Faker from 'faker';
 import { chatMsgDeleted, noop } from '../../constants';
 import { Chat, Events, isChat } from '../../types/chat';
 import {
@@ -24,6 +25,8 @@ import {
 } from '../../utils/transform-tree';
 import LoadingSpinner from '../shared/loading-spinner';
 import { useSocket } from '../utils/hooks/use-socket';
+import useTree from '../utils/hooks/use-tree';
+import useWindowSize from '../utils/hooks/use-window-size';
 import { useStore } from '../utils/store/context';
 import ChatForm from './form';
 import ChatListItem from './list-item';
@@ -89,6 +92,16 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     }, []),
   );
 
+  const { height } = useWindowSize();
+
+  const { setTree, scrollToKey } = useTree();
+
+  useEffect(() => {
+    if (chat?.children) {
+      scrollToKey(chat.children[chat.children.length - 1].id);
+    }
+  }, [scrollToKey, chat?.children]);
+
   if (!chat) {
     return <LoadingSpinner />;
   }
@@ -120,29 +133,30 @@ export default function Chats({ roomId, chatId, users }: Props): ReactElement {
     if (validatedChatCreate) {
       socket.emit(Events.create, chatCreate, (chat: Chat) => {
         callback(chat);
+        scrollToKey(chat.id);
       });
     }
   };
 
-  const mapChatToTreeData = (chat: Chat) => {
-    return {
-      key: chat.id,
-      children: chat.children ? chat.children.map(mapChatToTreeData) : [],
-      title: (
-        <ChatListItem
-          onCreate={onCreate}
-          onEdit={onEdit}
-          onRemove={onRemove}
-          users={users}
-          chat={chat}
-        />
-      ),
-    };
-  };
+  const mapChatToTreeData = (chat: Chat) => ({
+    key: chat.id,
+    children: chat.children ? chat.children.map(mapChatToTreeData) : [],
+    title: (
+      <ChatListItem
+        onCreate={onCreate}
+        onEdit={onEdit}
+        onRemove={onRemove}
+        users={users}
+        chat={chat}
+      />
+    ),
+  });
 
   return (
     <>
       <Tree
+        ref={setTree}
+        height={height - 400}
         blockNode={true}
         selectable={false}
         switcherIcon={<CarryOutOutlined />}

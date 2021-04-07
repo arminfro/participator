@@ -5,12 +5,12 @@ import {
 } from '@ant-design/icons';
 import { Avatar, Comment } from 'antd';
 import { formatDistance } from 'date-fns';
+import * as Faker from 'faker';
 import marked from 'marked';
 import emoji from 'node-emoji';
 import Prism from 'prismjs';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import sanitizeHtml from 'sanitize-html';
-import * as Faker from 'faker';
 import { prismLanguageMap } from '../../constants';
 import { Chat } from '../../types/chat';
 import { User } from '../../types/user';
@@ -74,7 +74,7 @@ export default function ChatListItem({
     }
   };
 
-  const chatFormProps = { users, onSubmit };
+  const chatFormProps = { users, onSubmit, scrollOnInit: true };
   const commentProps = {
     author: chat.user.name,
     avatar: <Avatar src={Faker.image.avatar()} alt={chat.user.name} />,

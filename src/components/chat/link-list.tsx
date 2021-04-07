@@ -15,10 +15,13 @@ export default function ChatLinkList({ chat }: Props) {
     flexWrap: 'nowrap',
     overflowX: 'auto',
     overflowY: 'hidden',
-    width: width * 0.9 - 348,
     height: '9em',
     padding: 2,
   };
+
+  if (width) {
+    listStyle.width = width - 430;
+  }
 
   return (
     <>
