@@ -1,6 +1,8 @@
-import Link from 'next/link';
+import React, { ReactElement } from 'react';
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { Button, Divider, Form, Input, Radio, Space } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import { useRouter } from 'next/router';
-import React, { ReactElement, SyntheticEvent } from 'react';
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
 import { UseStructWithValidation } from '../utils/hooks/use-struct';
 
@@ -48,8 +50,7 @@ export default function QuestionForm({
     question.set.fixAnswers(newFixAnswers(question.get.fixAnswers));
   };
 
-  const onAddFixAnswer = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const onAddFixAnswer = () => {
     const newCurrentAnswers = (currentFixAnswers) => [
       ...currentFixAnswers,
       { text: '' },
@@ -57,8 +58,7 @@ export default function QuestionForm({
     question.set.fixAnswers(newCurrentAnswers(question.get.fixAnswers));
   };
 
-  const onRemoveFixAnswer = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const onRemoveFixAnswer = () => {
     const newFixAnswers = (currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
       if (copyFixAnswers.length > 1) {
@@ -69,9 +69,7 @@ export default function QuestionForm({
     question.set.fixAnswers(newFixAnswers(question.get.fixAnswers));
   };
 
-  const onSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
-    console.log('question', question.get);
+  const onSubmit = () => {
     question.sync(() => {
       router.push(
         `/rooms/${roomId}/questions${questionId ? `/${questionId}` : ''}`,
@@ -80,106 +78,66 @@ export default function QuestionForm({
   };
 
   return (
-    <>
-      <form className="ui form" onSubmit={onSubmit}>
-        <div className="field">
-          <label>
-            <h3>Your answer type</h3>
-          </label>
-          <input
-            type="radio"
-            value="fix"
-            checked={question.get.answersFormat === 'fix'}
-            onChange={answersFormatSelect}
-            name="typeOfAnswer"
-          />
-          {' fix answers '}
-          <input
-            type="radio"
-            value="free"
-            checked={question.get.answersFormat === 'free'}
-            onChange={answersFormatSelect}
-            name="typeOfAnswer"
-          />
-          {' free answers '}
-        </div>
-        <div className="field">
-          {question.get.answersFormat === 'fix' && (
-            <>
-              <label>
-                <h3>Choose a Preset</h3>
-              </label>
-              {presets.map((preset) => (
-                <button
-                  className="ui button"
-                  key={preset.label}
-                  type="button"
-                  onClick={() => question.set.fixAnswers(preset.fixAnswers)}
-                >
-                  {preset.label}
-                </button>
-              ))}
-            </>
-          )}
-          <div className="ui divider" />
-          <label>
-            <h3>Your polling question</h3>
-          </label>
-          <input
-            type="text"
-            value={question.get.text}
-            placeholder="Type your question"
-            onChange={(e) => {
-              question.set.text(e.target.value);
-            }}
-          />
-        </div>
-        <div className="ui divider" />
-        <div className="field">
-          {question.get.answersFormat === 'fix' && (
-            <>
-              <label>
-                <h3>Answers</h3>
-                <button
-                  onClick={onAddFixAnswer}
-                  className="ui mini button blue"
-                >
-                  +
-                </button>
-                <button
-                  onClick={onRemoveFixAnswer}
-                  className="ui mini button red"
-                >
-                  -
-                </button>
-              </label>
+    <Form initialValues={question.get} onFinish={onSubmit}>
+      <Form.Item label={'Your answer type'}>
+        <Radio.Group
+          value={question.get.answersFormat}
+          onChange={answersFormatSelect}
+        >
+          <Radio value={'fix'}>fix answers</Radio>
+          <Radio value={'free'}>free answers</Radio>
+        </Radio.Group>
+      </Form.Item>
+      {question.get.answersFormat === 'fix' && (
+        <Form.Item label="Choose a Preset">
+          {presets.map((preset) => (
+            <Button
+              key={preset.label}
+              onClick={() => question.set.fixAnswers(preset.fixAnswers)}
+            >
+              {preset.label}
+            </Button>
+          ))}
+        </Form.Item>
+      )}
+      <Divider />
+      <Form.Item label="Your polling question">
+        <TextArea
+          rows={4}
+          value={question.get.text}
+          onChange={(e) => question.set.text(e.target.value)}
+          placeholder="Type your question"
+        />
+      </Form.Item>
+      <Divider />
+      {question.get.answersFormat === 'fix' && (
+        <>
+          <Form.Item label="Answers">
+            <Button style={{ marginLeft: 4 }} onClick={onAddFixAnswer}>
+              <PlusCircleOutlined />
+            </Button>
+            <Button onClick={onRemoveFixAnswer}>
+              <MinusCircleOutlined />
+            </Button>
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
               {question.get.fixAnswers.map((fixAnswer, index) => (
-                <input
-                  key={index}
-                  className="eight wide field"
-                  placeholder={`Answer No.${index + 1}`}
-                  value={fixAnswer.text}
-                  onChange={(e) => {
-                    onChangeFixAnswer(e.target.value, index);
-                  }}
-                />
+                <Space key={index} style={{ margin: 4 }}>
+                  <Input
+                    placeholder={`Answer No.${index + 1}`}
+                    value={fixAnswer.text}
+                    onChange={(e) => onChangeFixAnswer(e.target.value, index)}
+                  />
+                </Space>
               ))}
-            </>
-          )}
-        </div>
-        <div>
-          <button className="ui button green">Submit</button>
-          <Link
-            href="/rooms/[id]/questions/"
-            as={`/rooms/${roomId}/questions/`}
-          >
-            <button className="ui button blue">List of all polls</button>
-          </Link>
-          <Link href="/rooms/[id]" as={`/rooms/${roomId}`}>
-            <button className="ui button yellow">Classroom</button>
-          </Link>
-        </div>
-      </form>
-    </>
+            </div>
+          </Form.Item>
+        </>
+      )}
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
   );
 }

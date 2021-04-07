@@ -1,3 +1,6 @@
+import { Avatar, Comment } from 'antd';
+import * as Faker from 'faker';
+import { formatDistance } from 'date-fns';
 import React from 'react';
 
 import { Answer } from '../../types/answer';
@@ -9,18 +12,23 @@ interface Props {
 export default function ListFreeAnswers(props: Props) {
   return (
     <div>
-      {props.answers.map((answerObject) => {
-        return (
-          <div key={answerObject.id}>
-            <h5>
-              Antwort von {answerObject.user.name},{' '}
-              {`${answerObject.createdAt.toLocaleTimeString()}, ${answerObject.createdAt.toLocaleTimeString()}`}
-            </h5>
-            <p>{answerObject.freeAnswer}</p>
-            <br />
-          </div>
-        );
-      })}
+      {props.answers.map((answerObject) => (
+        <Comment
+          key={answerObject.id}
+          datetime={
+            <>
+              {formatDistance(answerObject.createdAt, new Date(), {
+                includeSeconds: true,
+              })}
+              {' ago'}
+            </>
+          }
+          avatar={
+            <Avatar src={Faker.image.avatar()} alt={answerObject.user.name} />
+          }
+          content={<p>{answerObject.freeAnswer}</p>}
+        />
+      ))}
     </div>
   );
 }

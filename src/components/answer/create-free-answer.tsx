@@ -1,3 +1,5 @@
+import { Form } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import React from 'react';
 
 interface Props {
@@ -5,11 +7,8 @@ interface Props {
 }
 export default function CreateFreeAnswer({ setFreeAnswer }: Props) {
   return (
-    <textarea
-      maxLength={500}
-      onChange={(e) => {
-        setFreeAnswer(e.target.value);
-      }}
-    />
+    <Form.Item label={'Type your Answer'}>
+      <TextArea onChange={(e) => setFreeAnswer(e.target.value)} rows={4} />
+    </Form.Item>
   );
 }

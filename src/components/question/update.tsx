@@ -13,13 +13,10 @@ export default function QuestionUpdate({
   roomId,
 }: Props): ReactElement {
   return (
-    <>
-      <h2> Edit poll</h2>
-      <QuestionForm
-        question={useQuestionUpdate(roomId, question.id, question)}
-        roomId={roomId}
-        questionId={question.id}
-      />
-    </>
+    <QuestionForm
+      question={useQuestionUpdate(roomId, question.id, question)}
+      roomId={roomId}
+      questionId={question.id}
+    />
   );
 }

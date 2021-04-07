@@ -7,6 +7,7 @@ import { Room } from '../../../types/room';
 
 export default function RoomChat() {
   const router = useRouter();
+
   return (
     <Fetch<Room> url={`api/rooms/${router.query.id}`}>
       {(room) => (

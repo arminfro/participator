@@ -41,7 +41,7 @@ export class QuestionsService {
 
   async findOne(id: number): Promise<Question> {
     const question = await this.questionRepository.findOne(id, {
-      relations: ['answers', 'fixAnswers'],
+      relations: ['answers', 'fixAnswers', 'room'],
     });
     return question;
   }

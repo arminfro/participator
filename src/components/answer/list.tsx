@@ -1,24 +1,19 @@
 import React, { ReactElement } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-
 import { Answer } from '../../types/answer';
-import ListFreeAnswers from './list-free-answers';
+import { Question } from '../../types/question';
 import ListFixAnswers from './list-fix-answers';
+import ListFreeAnswers from './list-free-answers';
 
 interface Props {
   answers: Answer[];
+  question: Question;
 }
 
-export default function AnswerList({ answers }: Props): ReactElement {
-  const router = useRouter();
-  const roomId = router.query.id;
-
+export default function AnswerList({ answers, question }: Props): ReactElement {
   if (answers.length === 0) {
     return <p>There have no answers been given yet to this question</p>;
   }
 
-  const question = answers[0].question;
   const answersFormat = question.answersFormat;
 
   return (
@@ -28,17 +23,6 @@ export default function AnswerList({ answers }: Props): ReactElement {
       {answersFormat === 'fix' && (
         <ListFixAnswers question={question} answers={answers} />
       )}
-
-      <div className="ui divider" />
-      <Link href="/rooms/[id]/questions/" as={`/rooms/${roomId}/questions/`}>
-        <button className="ui button blue">List of all polls</button>
-      </Link>
-      <Link
-        href="/rooms/[id]/questions/[id]"
-        as={`/rooms/${roomId}/questions/${question.id}`}
-      >
-        <button className="ui button yellow">Back to poll</button>
-      </Link>
     </>
   );
 }

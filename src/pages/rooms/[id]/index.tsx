@@ -6,6 +6,7 @@ import Fetch from '../../../components/utils/fetch';
 
 export default function RoomIndex(): ReactElement {
   const router = useRouter();
+
   return (
     <Fetch<Room> url={`api/rooms/${router.query.id}`}>
       {(room) => <RoomDetails room={room} />}
