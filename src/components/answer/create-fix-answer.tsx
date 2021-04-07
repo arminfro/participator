@@ -1,6 +1,7 @@
 import { Form, Radio } from 'antd';
 import React, { ReactElement } from 'react';
 import { FixAnswer as IFixAnswer } from '../../types/question';
+import sort from '../utils/sort';
 
 interface Props {
   fixAnswers: IFixAnswer[];
@@ -19,11 +20,13 @@ export default function CreateFixAnswer({
         value={chosenAnswerId}
         onChange={(e) => setFixAnswerId(e.target.value)}
       >
-        {fixAnswers.map((fixAnswer, index: number) => (
-          <Radio key={index} value={fixAnswer.id}>
-            {fixAnswer.text}
-          </Radio>
-        ))}
+        {sort<IFixAnswer>(fixAnswers, 'text').map(
+          (fixAnswer, index: number) => (
+            <Radio key={index} value={fixAnswer.id}>
+              {fixAnswer.text}
+            </Radio>
+          ),
+        )}
       </Radio.Group>
     </Form.Item>
   );
