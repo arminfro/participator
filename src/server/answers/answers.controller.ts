@@ -16,20 +16,6 @@ import { NextService } from '../nextjs/next.service';
 export class AnswersController {
   constructor(private readonly next: NextService) {}
 
-  @Get()
-  public async index(
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
-    @Param('roomId', ParseIntPipe) roomId: number,
-    @Param('questionId', ParseIntPipe) questionId: number,
-  ): Promise<void> {
-    this.next.render(
-      `/rooms/${roomId}/questions/${questionId}/answers`,
-      req,
-      res,
-    );
-  }
-
   @Get('new')
   public async createForm(
     @Req() req: IncomingMessage,
@@ -39,21 +25,6 @@ export class AnswersController {
   ): Promise<void> {
     this.next.render(
       `/rooms/${roomId}/questions/${questionId}/answers/new`,
-      req,
-      res,
-    );
-  }
-
-  @Get(':id/edit')
-  public async editOne(
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
-    @Param('roomId', ParseIntPipe) roomId: number,
-    @Param('questionId', ParseIntPipe) questionId: number,
-    @Param('id', ParseIntPipe) answerId: number,
-  ): Promise<void> {
-    this.next.render(
-      `/rooms/${roomId}/questions/${questionId}/answers/${answerId}/edit`,
       req,
       res,
     );

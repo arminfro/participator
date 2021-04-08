@@ -10,6 +10,7 @@ interface Props {
   question: UseStructWithValidation<QuestionCreate | QuestionUpdate>;
   roomId: number;
   questionId?: number;
+  onCloseDrawer?: () => void;
 }
 
 const presets = [
@@ -34,6 +35,7 @@ export default function QuestionForm({
   question,
   roomId,
   questionId,
+  onCloseDrawer,
 }: Props): ReactElement {
   const router = useRouter();
 
@@ -71,6 +73,7 @@ export default function QuestionForm({
 
   const onSubmit = () => {
     question.sync(() => {
+      onCloseDrawer && onCloseDrawer();
       router.push(
         `/rooms/${roomId}/questions${questionId ? `/${questionId}` : ''}`,
       );
@@ -88,28 +91,30 @@ export default function QuestionForm({
           <Radio value={'free'}>free answers</Radio>
         </Radio.Group>
       </Form.Item>
-      {question.get.answersFormat === 'fix' && (
-        <Form.Item label="Choose a Preset">
-          {presets.map((preset) => (
-            <Button
-              key={preset.label}
-              onClick={() => question.set.fixAnswers(preset.fixAnswers)}
-            >
-              {preset.label}
-            </Button>
-          ))}
-        </Form.Item>
-      )}
       <Divider />
       <Form.Item label="Your polling question">
         <TextArea
-          rows={4}
+          autoSize
           value={question.get.text}
           onChange={(e) => question.set.text(e.target.value)}
           placeholder="Type your question"
         />
       </Form.Item>
-      <Divider />
+      {question.get.answersFormat === 'fix' && (
+        <>
+          <Divider />
+          <Form.Item label="Choose a Preset">
+            {presets.map((preset) => (
+              <Button
+                key={preset.label}
+                onClick={() => question.set.fixAnswers(preset.fixAnswers)}
+              >
+                {preset.label}
+              </Button>
+            ))}
+          </Form.Item>
+        </>
+      )}
       {question.get.answersFormat === 'fix' && (
         <>
           <Form.Item label="Answers">
@@ -121,7 +126,7 @@ export default function QuestionForm({
             </Button>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
               {question.get.fixAnswers.map((fixAnswer, index) => (
-                <Space key={index} style={{ margin: 4 }}>
+                <Space key={index} style={{ margin: 4, width: 190 }}>
                   <Input
                     placeholder={`Answer No.${index + 1}`}
                     value={fixAnswer.text}

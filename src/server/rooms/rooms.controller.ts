@@ -32,16 +32,6 @@ export class RoomsController {
     this.next.render(`/rooms/new`, req, res);
   }
 
-  @Get(':id/edit')
-  @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.room))
-  public async showEdit(
-    @Param('id', ParseIntPipe) id: number,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
-  ): Promise<void> {
-    await this.next.render(`/rooms/${id}/edit`, req, res);
-  }
-
   @Get(':id')
   @UsePolicy((ability, subjects) => ability.can(Action.Read, subjects.room))
   async findOne(

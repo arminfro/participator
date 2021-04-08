@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import { Answer } from '../../../../../../types/answer';
+import QuestionDetails from '../../../../../../components/question/details';
 import Fetch from '../../../../../../components/utils/fetch';
-import AnswerList from '../../../../../../components/answer/list';
 import RoomPage from '../../../../../../components/room/page';
 import { Question } from '../../../../../../types/question';
 
@@ -33,7 +33,11 @@ export default function AnswerIndex(): ReactElement {
                 },
               ]}
             >
-              <AnswerList question={question} answers={answers} />
+              <QuestionDetails
+                question={question}
+                answers={answers}
+                roomId={Number(id)}
+              />
             </RoomPage>
           )}
         </Fetch>

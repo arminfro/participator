@@ -19,13 +19,13 @@ export default function AnswerCreate({
   const answer = useAnswerCreate(roomId, question.id);
 
   const onSubmit = () => {
-    console.log('answer', answer.get);
     if (answer.get.fixAnswerId || answer.get.freeAnswer) {
       answer.sync(() => {
         router.push(`/rooms/${roomId}/questions/${question.id}/answers`);
       });
     }
   };
+
   return (
     <Form initialValues={answer.get} onFinish={onSubmit}>
       {question.answersFormat === 'fix' && (

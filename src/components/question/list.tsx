@@ -1,4 +1,6 @@
-import { Button, Timeline } from 'antd';
+import { Avatar, Comment, Timeline } from 'antd';
+import { formatDistance } from 'date-fns';
+import * as Faker from 'faker';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
@@ -16,12 +18,28 @@ export default function QuestionList({ questions }: Props): ReactElement {
     <Timeline>
       {questions.map((question) => (
         <Timeline.Item key={question.id}>
-          <Link
-            href="/rooms/[id]/questions/[id]"
-            as={`/rooms/${roomId}/questions/${question.id}`}
-          >
-            {question.text}
-          </Link>
+          <Comment
+            key={question.id}
+            datetime={
+              <>
+                {formatDistance(question.createdAt, new Date(), {
+                  includeSeconds: true,
+                })}
+                {' ago'}
+              </>
+            }
+            avatar={
+              <Avatar src={Faker.image.avatar()} alt={question.user.name} />
+            }
+            content={
+              <Link
+                href="/rooms/[id]/questions/[id]"
+                as={`/rooms/${roomId}/questions/${question.id}`}
+              >
+                {question.text}
+              </Link>
+            }
+          />
         </Timeline.Item>
       ))}
     </Timeline>

@@ -1,6 +1,9 @@
+import { Button, Form, Input, Radio, RadioChangeEvent } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import { useRouter } from 'next/router';
-import React, { ChangeEvent, ReactElement, SyntheticEvent } from 'react';
+import React, { ReactElement } from 'react';
 import { JoinConditions, RoomCreate, RoomUpdate } from '../../types/room';
+import formItemValidator from '../utils/form-item-validation';
 import { UseStructWithValidation } from '../utils/hooks/use-struct';
 
 interface Props {
@@ -8,80 +11,62 @@ interface Props {
     | UseStructWithValidation<RoomCreate>
     | UseStructWithValidation<RoomUpdate>;
   roomId?: number; // present if `isEdit`
+  onCloseDrawer?: () => void;
 }
 
-export default function RoomForm({ room, roomId }: Props): ReactElement {
+export default function RoomForm({
+  room,
+  roomId,
+  onCloseDrawer,
+}: Props): ReactElement {
   const router = useRouter();
 
-  const onSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const onSubmit = () => {
     room.sync(() => {
-      router.push(`/rooms${roomId ? `/${roomId}` : ''}`);
+      onCloseDrawer
+        ? onCloseDrawer()
+        : router.push(`/rooms${roomId ? `/${roomId}` : ''}`);
     });
   };
 
-  const onChangeJoinPolicy = (e: ChangeEvent<HTMLInputElement>) =>
+  const onChangeJoinPolicy = (e: RadioChangeEvent) =>
     room.set.openToJoin(e.target.value === JoinConditions.Open, false);
 
   return (
-    <form className="ui form" style={{ marginTop: 0 }} onSubmit={onSubmit}>
-      <label>Name</label>
-      <input
-        type="text"
-        value={room.get.name}
-        onChange={(e) => {
-          room.set.name(e.target.value, false);
-        }}
-      />
-
-      <div className="ui section divider" />
-
-      <label>Join Policy</label>
-      <div className="ui radio">
-        <div className="field">
-          <div className="ui radio checkbox">
-            <input
-              type="radio"
-              name="openToJoin"
-              onChange={onChangeJoinPolicy}
-              checked={room.get.openToJoin}
-              value={JoinConditions.Open}
-            />
-            <label htmlFor={JoinConditions.Open}>Open To Join</label>
-          </div>
-        </div>
-
-        <div className="field">
-          <div className="ui radio checkbox">
-            <input
-              type="radio"
-              name="openToJoin"
-              onChange={onChangeJoinPolicy}
-              checked={!room.get.openToJoin}
-              value={JoinConditions.Closed}
-            />
-            <label htmlFor={JoinConditions.Closed}>Only on invitation</label>
-          </div>
-        </div>
-      </div>
-
-      <div className="ui section divider" />
-
-      <label>Description</label>
-      <textarea
-        value={room.get.description}
-        onChange={(e) => room.set.description(e.target.value, false)}
-      />
-
-      <div className="ui section divider"></div>
-      {room.validationErrors.length > 0 && (
-        <ul className="ui negative message">
-          {room.validationErrors.map((failure) => (
-            <li key={failure.key}>{failure.message}</li>
-          ))}
-        </ul>
-      )}
-      <button className="ui button">Submit</button>
-    </form>
+    <Form initialValues={room.get} onFinish={onSubmit}>
+      <Form.Item
+        name="name"
+        label="Name"
+        rules={[formItemValidator(room.validationErrors)]}
+      >
+        <Input
+          value={room.get.name}
+          onChange={(e) => room.set.name(e.target.value, false)}
+        />
+      </Form.Item>
+      <Form.Item label="Join Policy">
+        <Radio.Group
+          value={
+            room.get.openToJoin ? JoinConditions.Open : JoinConditions.Closed
+          }
+          onChange={onChangeJoinPolicy}
+        >
+          <Radio value={JoinConditions.Open}>Open to Join</Radio>
+          <Radio value={JoinConditions.Closed}>Only on invitation</Radio>
+        </Radio.Group>
+      </Form.Item>
+      <Form.Item label="Description">
+        <TextArea
+          autoSize
+          value={room.get.description}
+          onChange={(e) => room.set.description(e.target.value)}
+        />
+      </Form.Item>
+      <Form.Item>
+        <Button htmlType="submit" type="primary">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
   );
 }

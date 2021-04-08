@@ -1,13 +1,12 @@
-const characterSort = <T>(answer1: T, answer2: T, key: string) => {
-  if (answer1[key] < answer2[key]) return -1;
-  if (answer1[key] > answer2[key]) return 1;
+const characterSort = <T>(t1: T, t2: T, key: string) => {
+  if (t1[key] < t2[key]) return -1;
+  if (t1[key] > t2[key]) return 1;
   return 0;
 };
 
-const numberAsStringSort = <T>(answer1: T, answer2: T, key: string) => {
-  console.log('NUMS!');
-  if (Number(answer1[key]) < Number(answer2[key])) return -1;
-  if (Number(answer1[key]) > Number(answer2[key])) return 1;
+const numberAsStringSort = <T>(t1: T, t2: T, key: string) => {
+  if (Number(t1[key]) < Number(t2[key])) return -1;
+  if (Number(t1[key]) > Number(t2[key])) return 1;
   return 0;
 };
 

@@ -5,10 +5,9 @@ import RoomForm from './form';
 export default function RoomCreate(): ReactElement {
   const room = useRoomCreate();
   return (
-    <div className="ui segment">
-      <h4 className="ui top attached block header">New Room</h4>
-      <div className="ui section divider" />
+    <>
+      <h2>New Room</h2>
       <RoomForm room={room} />
-    </div>
+    </>
   );
 }

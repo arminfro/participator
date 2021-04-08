@@ -33,7 +33,7 @@ export class QuestionsService {
 
   async findAll(roomId: number): Promise<Question[]> {
     const room = await this.findRoom(roomId);
-    return await getManager().find(Question, {
+    return await this.questionRepository.find({
       where: { room },
       relations: ['user', 'answers', 'fixAnswers'],
     });
@@ -41,7 +41,7 @@ export class QuestionsService {
 
   async findOne(id: number): Promise<Question> {
     const question = await this.questionRepository.findOne(id, {
-      relations: ['answers', 'fixAnswers', 'room'],
+      relations: ['fixAnswers', 'room'],
     });
     return question;
   }

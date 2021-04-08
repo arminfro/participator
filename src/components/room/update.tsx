@@ -5,14 +5,19 @@ import RoomForm from './form';
 
 interface Props {
   room: Room;
+  onCloseDrawer: () => void;
 }
 
-export default function RoomUpdate({ room }: Props): ReactElement {
+export default function RoomUpdate({
+  room,
+  onCloseDrawer,
+}: Props): ReactElement {
   const roomUpdate = useRoomUpdate(room.id, room);
   return (
-    <>
-      <h2>Room Edit</h2>
-      <RoomForm room={roomUpdate} roomId={room.id} />
-    </>
+    <RoomForm
+      onCloseDrawer={onCloseDrawer}
+      room={roomUpdate}
+      roomId={room.id}
+    />
   );
 }

@@ -1,19 +1,22 @@
-import { Drawer as ADrawer } from 'antd';
-import React, { ReactElement, useEffect } from 'react';
+import { Button, Drawer as ADrawer, DrawerProps } from 'antd';
+import React, { ReactElement, useEffect, useState } from 'react';
 
-interface Props {
-  children: ReactElement | ReactElement[];
-  visible: boolean;
-  setVisibility: (b: boolean) => void;
-  title: string;
+interface Props extends DrawerProps {
+  children:
+    | ReactElement
+    | ReactElement[]
+    | ((onClose: () => void) => ReactElement);
+  subject: string;
+  action: string;
 }
 
 export default function Drawer({
   children,
-  title,
-  setVisibility,
-  visible = false,
+  subject,
+  action,
+  ...drawerProps
 }: Props) {
+  const [visible, setVisibility] = useState(false);
   useEffect(() => {
     setVisibility(visible);
   }, [visible, setVisibility]);
@@ -23,8 +26,16 @@ export default function Drawer({
   };
 
   return (
-    <ADrawer title={title} onClose={onClose} visible={visible}>
-      {children}
-    </ADrawer>
+    <>
+      <Button onClick={() => setVisibility(true)}>{action}</Button>
+      <ADrawer
+        title={`${action} ${subject}`}
+        onClose={onClose}
+        visible={visible}
+        {...drawerProps}
+      >
+        {typeof children === 'function' ? children(onClose) : children}
+      </ADrawer>
+    </>
   );
 }
