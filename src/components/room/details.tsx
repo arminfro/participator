@@ -1,8 +1,8 @@
 import { subject } from '@casl/ability';
 import React, { ReactElement } from 'react';
 import { Room } from '../../types/room';
-import { Can } from '../utils/casl-context';
-import Drawer from '../utils/drawer';
+import { Can } from '../utils/context/casl-context';
+import Drawer from '../utils/container/drawer';
 import RoomDashboard from './dashboard';
 import RoomPage from './page';
 import RoomUpdate from './update';

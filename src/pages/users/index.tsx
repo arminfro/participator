@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import { User } from '../../types/user';
 import UserList from '../../components/user/list';
-import Fetch from '../../components/utils/fetch';
-import Page from '../../components/utils/page';
+import Fetch from '../../components/utils/container/fetch';
+import Page from '../../components/utils/container/page';
 
 export default function UserIndex(): ReactElement {
   return (

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Answer, AnswerCreate } from '../../../types/answer';
 import { validateAnswerCreate } from '../../../types/answer.validation';
-import api from '../api';
+import api from '../funcs/api';
 import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
 
 // export function useAnswerUpdate(

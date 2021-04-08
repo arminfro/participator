@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { Room } from '../../../types/room';
 import RoomDetails from '../../../components/room/details';
-import Fetch from '../../../components/utils/fetch';
+import Fetch from '../../../components/utils/container/fetch';
 
 export default function RoomIndex(): ReactElement {
   const router = useRouter();

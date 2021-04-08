@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import { Answer } from '../../../../../../types/answer';
 import QuestionDetails from '../../../../../../components/question/details';
-import Fetch from '../../../../../../components/utils/fetch';
+import Fetch from '../../../../../../components/utils/container/fetch';
 import RoomPage from '../../../../../../components/room/page';
 import { Question } from '../../../../../../types/question';
 

@@ -5,9 +5,9 @@ import Router from 'next/router';
 import React, { ReactElement } from 'react';
 
 import { User } from '../../types/user';
-import api from '../utils/api';
+import api from '../utils/funcs/api';
 import { useStore } from '../utils/store/context';
-import { removeToken } from '../utils/token';
+import { removeToken } from '../utils/funcs/token';
 import UserCard from './card';
 
 interface Props {

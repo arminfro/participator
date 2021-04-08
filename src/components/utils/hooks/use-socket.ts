@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 
 import { Events } from '../../../types/chat';
 import { transformDateString } from '../../../utils/transform-tree';
-import { getToken } from '../token';
+import { getToken } from '../funcs/token';
 import { noop } from '../../../constants';
 
 interface WithId {

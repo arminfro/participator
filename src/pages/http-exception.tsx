@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 
-import { getToken } from '../components/utils/token';
+import { getToken } from '../components/utils/funcs/token';
 import LoadingSpinner from '../components/shared/loading-spinner';
 import LoginForm from '../components/authentication/login-form';
 

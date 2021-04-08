@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import QuestionList from '../../../../components/question/list';
 import RoomPage from '../../../../components/room/page';
-import Fetch from '../../../../components/utils/fetch';
+import Fetch from '../../../../components/utils/container/fetch';
 import { Question } from '../../../../types/question';
 import { Room } from '../../../../types/room';
 

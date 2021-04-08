@@ -6,7 +6,7 @@ import {
   validateUserUpdate,
 } from '../../../types/user.validation';
 import { ValidationResult } from '../../../types/utils';
-import api from '../api';
+import api from '../funcs/api';
 import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
 
 export function useUserUpdate(

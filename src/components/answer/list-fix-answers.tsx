@@ -3,7 +3,7 @@ import { Column } from '@ant-design/charts';
 
 import { Answer } from '../../types/answer';
 import { Question } from '../../types/question';
-import sort from '../utils/sort';
+import sort from '../utils/funcs/sort';
 
 interface Props {
   question: Question;

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import React, { CSSProperties, ReactElement, SyntheticEvent } from 'react';
 import { Action } from '../../casl/action';
 import { User, UserUpdateToggleKeys } from '../../types/user';
-import { useAbility } from '../utils/casl-context';
+import { useAbility } from '../utils/context/casl-context';
 import { useUserUpdate } from '../utils/hooks/use-user';
 
 const onlineStyle = {

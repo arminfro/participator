@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import Page from '../components/utils/page';
+import Page from '../components/utils/container/page';
 
 export default function LandingPage(): ReactElement {
   return (

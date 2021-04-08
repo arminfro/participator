@@ -6,8 +6,8 @@ import React, { SyntheticEvent } from 'react';
 import { Action } from '../../casl/action';
 
 import { Room, RoomUpdate } from '../../types/room';
-import api from '../utils/api';
-import { useAbility } from '../utils/casl-context';
+import api from '../utils/funcs/api';
+import { useAbility } from '../utils/context/casl-context';
 import { useStore } from '../utils/store/context';
 
 interface Props {

@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import Chats from '../../../components/chat/chats';
 import RoomPage from '../../../components/room/page';
-import Fetch from '../../../components/utils/fetch';
+import Fetch from '../../../components/utils/container/fetch';
 import { Room } from '../../../types/room';
 
 export default function RoomChat() {

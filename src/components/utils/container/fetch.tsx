@@ -2,11 +2,11 @@ import React, { ReactElement, Suspense } from 'react';
 import { toast } from 'react-toastify';
 import useSWR, { ConfigInterface } from 'swr';
 
-import { isDev } from '../../utils/environment';
-import LoadingSpinner from '../shared/loading-spinner';
+import { isDev } from '../../../utils/environment';
+import LoadingSpinner from '../../shared/loading-spinner';
 import ErrorBoundary from './error-boundary';
-import useLocalStorage from './hooks/use-local-storage';
-import { getToken } from './token';
+import useLocalStorage from '../hooks/use-local-storage';
+import { getToken } from '../funcs/token';
 
 interface FetchProps<T> {
   children: (data: T) => ReactElement;

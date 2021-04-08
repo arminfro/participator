@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { createPortal } from 'react-dom';
-import { useSiderRefContext } from './sider-ref-context';
+import { useSiderRefContext } from '../context/sider-ref-context';
 
 export interface Path {
   name: string;

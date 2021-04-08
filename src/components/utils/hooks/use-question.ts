@@ -10,7 +10,7 @@ import {
   validateQuestionCreate,
   validateQuestionUpdate,
 } from '../../../types/question.validation';
-import api from '../api';
+import api from '../funcs/api';
 import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
 
 export function useQuestionUpdate(

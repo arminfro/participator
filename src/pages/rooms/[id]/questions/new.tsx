@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import QuestionCreate from '../../../../components/question/create';
 import RoomPage from '../../../../components/room/page';
-import Fetch from '../../../../components/utils/fetch';
+import Fetch from '../../../../components/utils/container/fetch';
 import { Room } from '../../../../types/room';
 
 export default function QuestionNew(): ReactElement {

@@ -4,9 +4,9 @@ import React from 'react';
 import RoomMemberManage from '../../../components/room/member-manage';
 import RoomPage from '../../../components/room/page';
 import UserList from '../../../components/user/list';
-import { Can } from '../../../components/utils/casl-context';
-import Drawer from '../../../components/utils/drawer';
-import Fetch from '../../../components/utils/fetch';
+import { Can } from '../../../components/utils/context/casl-context';
+import Drawer from '../../../components/utils/container/drawer';
+import Fetch from '../../../components/utils/container/fetch';
 import { Room } from '../../../types/room';
 import { User } from '../../../types/user';
 

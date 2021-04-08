@@ -4,7 +4,7 @@ import {
   validateRoomCreate,
   validateRoomUpdate,
 } from '../../../types/room.validation';
-import api from '../api';
+import api from '../funcs/api';
 import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
 
 export function useRoomUpdate(

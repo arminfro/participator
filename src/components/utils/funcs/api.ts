@@ -1,10 +1,10 @@
 import axios, { AxiosResponse, Method as HttpMethod } from 'axios';
 import { Dispatch } from 'react';
 import { toast } from 'react-toastify';
-import { urlWithProtocol } from '../../constants';
-import { isUser, User, UserLogin } from '../../types/user';
-import { transformDateString } from '../../utils/transform-tree';
-import { Actions } from './store/actions';
+import { urlWithProtocol } from '../../../constants';
+import { isUser, User, UserLogin } from '../../../types/user';
+import { transformDateString } from '../../../utils/transform-tree';
+import { Actions } from '../store/actions';
 import { getToken, setToken } from './token';
 
 export async function swrApi(path: string) {

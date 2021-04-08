@@ -2,7 +2,7 @@ import { Layout, Menu } from 'antd';
 import Link from 'next/link';
 import React, { ReactElement } from 'react';
 import { Room } from '../../types/room';
-import Page, { Path } from '../utils/page';
+import Page, { Path } from '../utils/container/page';
 
 interface Props {
   room: Room;

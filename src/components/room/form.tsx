@@ -3,7 +3,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { JoinConditions, RoomCreate, RoomUpdate } from '../../types/room';
-import formItemValidator from '../utils/form-item-validation';
+import formItemValidator from '../utils/funcs/form-item-validation';
 import { UseStructWithValidation } from '../utils/hooks/use-struct';
 
 interface Props {

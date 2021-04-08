@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import { useStore } from '../utils/store/context';
-import { removeToken } from '../utils/token';
+import { removeToken } from '../utils/funcs/token';
 
 export default function Logout() {
   const { store, dispatch } = useStore();

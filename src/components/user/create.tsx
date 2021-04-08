@@ -2,7 +2,7 @@ import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import Router from 'next/router';
 
 import { User, UserCreate } from '../../types/user';
-import api, { apiLogin } from '../utils/api';
+import api, { apiLogin } from '../utils/funcs/api';
 import { useUserCreate } from '../utils/hooks/use-user';
 import { useStore } from '../utils/store/context';
 

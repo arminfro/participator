@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User } from '../../types/user';
-import api from '../utils/api';
+import api from '../utils/funcs/api';
 
 interface Props {
   allUsers: User[];

@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { User } from '../../../types/user';
 import UserDetails from '../../../components/user/details';
-import Fetch from '../../../components/utils/fetch';
+import Fetch from '../../../components/utils/container/fetch';
 
 export default function UserIndex(): ReactElement {
   const router = useRouter();

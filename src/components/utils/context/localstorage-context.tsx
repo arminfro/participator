@@ -4,8 +4,8 @@ import React, {
   SetStateAction,
   useContext,
 } from 'react';
-import useLocalStorage from './hooks/use-local-storage';
-import { getToken } from './token';
+import useLocalStorage from '../hooks/use-local-storage';
+import { getToken } from '../funcs/token';
 
 interface LocalStorageProviderProps<T> {
   url: string;

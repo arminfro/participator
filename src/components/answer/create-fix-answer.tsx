@@ -1,7 +1,7 @@
 import { Form, Radio } from 'antd';
 import React, { ReactElement } from 'react';
 import { FixAnswer as IFixAnswer } from '../../types/question';
-import sort from '../utils/sort';
+import sort from '../utils/funcs/sort';
 
 interface Props {
   fixAnswers: IFixAnswer[];

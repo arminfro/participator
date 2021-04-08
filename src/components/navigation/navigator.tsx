@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { isUser, User } from '../../types/user';
-import api from '../utils/api';
+import api from '../utils/funcs/api';
 import { useStore } from '../utils/store/context';
 
 /*

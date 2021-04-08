@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import { toast } from 'react-toastify';
-import api, { apiLogin } from '../utils/api';
+import api, { apiLogin } from '../utils/funcs/api';
 import { useUserLogin } from '../utils/hooks/use-user';
 import { useStore } from '../utils/store/context';
 

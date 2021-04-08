@@ -5,8 +5,8 @@ import QuestionUpdate from '../../../../../components/question/update';
 import RoomPage from '../../../../../components/room/page';
 // todo, guard QuestionUpdate import { Can } from '../../../../../components/utils/casl-context';
 // import { subject } from '@casl/ability';
-import Drawer from '../../../../../components/utils/drawer';
-import Fetch from '../../../../../components/utils/fetch';
+import Drawer from '../../../../../components/utils/container/drawer';
+import Fetch from '../../../../../components/utils/container/fetch';
 import { Answer } from '../../../../../types/answer';
 import { Question } from '../../../../../types/question';
 
