@@ -11,11 +11,23 @@ import emoji from 'node-emoji';
 import Prism from 'prismjs';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import sanitizeHtml from 'sanitize-html';
-import { prismLanguageMap } from '../../constants';
 import { Chat } from '../../types/chat';
 import { User } from '../../types/user';
 import ChatForm from './form';
 import ChatLinkList from './link-list';
+
+const prismLanguageMap = {
+  css: Prism.languages.css,
+  html: Prism.languages.html,
+  javascript: Prism.languages.javascript,
+  js: Prism.languages.js,
+  jsx: Prism.languages.jsx,
+  svg: Prism.languages.svg,
+  ts: Prism.languages.ts,
+  tsx: Prism.languages.tsx,
+  typescript: Prism.languages.typescript,
+  xml: Prism.languages.xml,
+};
 
 interface Props {
   chat: Chat;

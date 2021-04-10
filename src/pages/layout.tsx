@@ -24,7 +24,7 @@ export default function AppLayout({ Component, pageProps, siderRef }: Props) {
             background: '#fff',
             padding: 24,
             margin: 0,
-            minHeight: height - (65 + 30),
+            minHeight: height - (65 + 30) || undefined,
           }}
         >
           <Component {...pageProps} />

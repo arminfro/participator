@@ -1,7 +1,9 @@
+import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Failure } from 'superstruct';
 import { noop } from '../../../constants';
 import { ValidationResult } from '../../../types/utils';
+import { useSwrMutateContext } from '../context/swr-mutate-context';
 
 // util types
 type Keys<T> = keyof T;
@@ -51,6 +53,8 @@ export function useStruct<T>({
   autoValidate = !!validator,
 }: StructOptions<T>): UseStructWithValidation<T> {
   const [validationErrors, setValidationErrors] = useState<Failure[]>([]);
+  const mutate = useSwrMutateContext();
+  const router = useRouter();
 
   const reduceStructArg = (): UseStruct<T> => {
     const struct = Object.keys(states).reduce(
@@ -74,6 +78,7 @@ export function useStruct<T>({
       struct.sync = (callback = noop) => {
         if (validator(struct.get)) {
           update(callback, struct.get);
+          mutateSwrData();
         }
       };
     }
@@ -81,6 +86,14 @@ export function useStruct<T>({
   };
 
   const struct = reduceStructArg();
+
+  const mutateSwrData = () => {
+    if (mutate[`api${router.asPath}`]) {
+      mutate[`api${router.asPath}`]((currentData: T) => {
+        return { ...currentData, ...struct.get };
+      });
+    }
+  };
 
   const buildUpdateStruct = (key: Keys<T>, newValue: Values<T>): T => {
     return { ...struct.get, [key]: newValue };
@@ -105,7 +118,10 @@ export function useStruct<T>({
       } else {
         setValidationErrors([]);
         setter(newValue);
-        update && (sync || autoSync) && update(callback, validatedModel);
+        if (update && (sync || autoSync)) {
+          update(callback, validatedModel);
+          mutateSwrData();
+        }
         return validatedModel;
       }
     }

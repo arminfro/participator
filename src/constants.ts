@@ -1,5 +1,3 @@
-import Prism from 'prismjs';
-
 export const noop = () => {
   /* no-op */
 };
@@ -12,15 +10,41 @@ export const protocol = process.env.protocol || 'http';
 export const url = `${domain}:${port}`;
 export const urlWithProtocol = `${protocol}://${url}`;
 
-export const prismLanguageMap = {
-  css: Prism.languages.css,
-  html: Prism.languages.html,
-  javascript: Prism.languages.javascript,
-  js: Prism.languages.js,
-  jsx: Prism.languages.jsx,
-  svg: Prism.languages.svg,
-  ts: Prism.languages.ts,
-  tsx: Prism.languages.tsx,
-  typescript: Prism.languages.typescript,
-  xml: Prism.languages.xml,
-};
+// type SN = string | string[] | number;
+// export const ressources = {
+//   user: {
+//     list: {
+//       url: () => 'api/users',
+//     },
+//     detail: {
+//       url: (userId) => `api/users/${userId}`,
+//     },
+//   },
+//   rooms: {
+//     list: {
+//       url: () => 'api/rooms',
+//     },
+//     detail: {
+//       url: (roomId: SN) => `api/rooms/${roomId}`,
+//     },
+//   },
+//   questions: {
+//     list: {
+//       url: (roomId: SN) => `api/rooms/${roomId}/questions`,
+//     },
+//     detail: {
+//       url: (roomId: SN, questionId: SN) =>
+//         `api/rooms/${roomId}/questions/${questionId}`,
+//     },
+//   },
+//   answers: {
+//     list: {
+//       url: (roomId: SN, questionId: SN) =>
+//         `api/rooms/${roomId}/questions/${questionId}/answers`,
+//     },
+//     detail: {
+//       url: (roomId: SN, questionId: SN, answerId: SN) =>
+//         `api/rooms/${roomId}/questions/${questionId}/answers/${answerId}`,
+//     },
+//   },
+// };

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { Room } from '../../types/room';
 import { User } from '../../types/user';
+import { useSwrMutateContext } from '../utils/context/swr-mutate-context';
 import api from '../utils/funcs/api';
 
 interface Props {
@@ -15,6 +17,7 @@ export default function RoomMemberManage({
   const [isInviting, setIsInviting] = useState(true);
   const [input, setInput] = useState('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
+  const mutate = useSwrMutateContext<Room>();
 
   const resetInputState = () => {
     setInput('');
@@ -44,9 +47,23 @@ export default function RoomMemberManage({
   const onChooseUser = (user: User) => {
     if (window.confirm(`Are you sure you want to ${label()} ${user.name}`)) {
       const action = isInviting ? 'addMember' : 'removeMember';
-      api('patch', `api/rooms/${roomId}/${action}`, resetInputState, {
-        [action]: user,
-      });
+      api(
+        'patch',
+        `api/rooms/${roomId}/${action}`,
+        () => {
+          resetInputState();
+          mutate[`api/rooms/${roomId}`]((currentRoom) => ({
+            ...currentRoom,
+            members:
+              action === 'addMember'
+                ? [...currentRoom.members, user]
+                : currentRoom.members.filter((member) => member.id !== user.id),
+          }));
+        },
+        {
+          [action]: user,
+        },
+      );
     }
   };
 

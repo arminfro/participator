@@ -31,7 +31,7 @@ export default function QuestionIndex(): ReactElement {
               ]}
               extra={[
                 <Drawer
-                  key={'kk'}
+                  key={'question-update'}
                   contentWrapperStyle={{ width: 512 }}
                   action="Edit"
                   subject="Room"

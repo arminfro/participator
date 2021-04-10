@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Button, Divider, Form, Input, Radio, Space } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { useRouter } from 'next/router';
+import React, { ReactElement } from 'react';
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
 import { UseStructWithValidation } from '../utils/hooks/use-struct';
 
