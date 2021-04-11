@@ -1,29 +1,31 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Room, RoomCreate, RoomUpdate } from '../../../types/room';
 import {
   validateRoomCreate,
   validateRoomUpdate,
 } from '../../../types/room.validation';
 import api from '../funcs/api';
-import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
+import { UseStruct, SetCallback, useStruct } from './use-struct';
 
 export function useRoomUpdate(
   roomId: number,
   room: Room,
   autoValidate = false,
   autoSync = false,
-): UseStructWithValidation<RoomUpdate> {
-  const states = {
-    name: useState(room.name),
-    description: useState(room.description),
-    openToJoin: useState(room.openToJoin),
-  };
-
+): UseStruct<RoomUpdate> {
   return useStruct<RoomUpdate>({
-    states,
-    validator: (room: Room) => validateRoomUpdate(room),
-    update: (callback: SetCallback<RoomUpdate>, newRoom: Room) =>
-      api('patch', `api/rooms/${roomId}`, callback, newRoom),
+    states: {
+      name: useState(room.name),
+      description: useState(room.description),
+      openToJoin: useState(room.openToJoin),
+    },
+    validator: useCallback(validateRoomUpdate, []),
+    update: useCallback(
+      (callback: SetCallback<RoomUpdate>, newRoom: Room) => {
+        return api('patch', `api/rooms/${roomId}`, callback, newRoom);
+      },
+      [roomId],
+    ),
     autoSync,
     autoValidate,
   });
@@ -32,7 +34,7 @@ export function useRoomUpdate(
 export function useRoomCreate(
   autoValidate = false,
   autoSync = false,
-): UseStructWithValidation<RoomCreate> {
+): UseStruct<RoomCreate> {
   const states = {
     name: useState(''),
     description: useState(''),

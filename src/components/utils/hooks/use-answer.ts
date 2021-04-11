@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Answer, AnswerCreate } from '../../../types/answer';
 import { validateAnswerCreate } from '../../../types/answer.validation';
 import api from '../funcs/api';
-import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
+import { SetCallback, useStruct, UseStruct } from './use-struct';
 
 // export function useAnswerUpdate(
 //   roomId: number,
@@ -11,7 +11,7 @@ import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
 //   answer: Answer,
 //   autoValidate = false,
 //   autoSync = false,
-// ): UseStructWithValidation<AnswerUpdate> {
+// ): UseStruct<AnswerUpdate> {
 //   const states = {
 //     freeAnswer: useState(answer.freeAnswer),
 //     fixAnswerId: useState(answer.fixAnswer.id),
@@ -37,7 +37,7 @@ export function useAnswerCreate(
   questionId: number,
   autoValidate = false,
   autoSync = false,
-): UseStructWithValidation<AnswerCreate> {
+): UseStruct<AnswerCreate> {
   const states = {
     freeAnswer: useState(''),
     fixAnswerId: useState<number>(),

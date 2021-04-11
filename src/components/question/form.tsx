@@ -1,13 +1,21 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { Button, Divider, Form, Input, Radio, Space } from 'antd';
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  Radio,
+  RadioChangeEvent,
+  Space,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
-import { UseStructWithValidation } from '../utils/hooks/use-struct';
+import { UseStruct } from '../utils/hooks/use-struct';
 
 interface Props {
-  question: UseStructWithValidation<QuestionCreate | QuestionUpdate>;
+  question: UseStruct<QuestionCreate | QuestionUpdate>;
   roomId: number;
   questionId?: number;
   onCloseDrawer?: () => void;
@@ -39,36 +47,33 @@ export default function QuestionForm({
 }: Props): ReactElement {
   const router = useRouter();
 
-  const answersFormatSelect = (e: any) => {
+  const answersFormatSelect = (e: RadioChangeEvent) => {
     question.set.answersFormat(e.target.value);
   };
 
   const onChangeFixAnswer = (newValue: string, index: number) => {
-    const newFixAnswers = (currentFixAnswers) => {
+    question.set.fixAnswers((currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
       copyFixAnswers[index] = { ...copyFixAnswers[index], text: newValue };
       return copyFixAnswers;
-    };
-    question.set.fixAnswers(newFixAnswers(question.get.fixAnswers));
+    });
   };
 
   const onAddFixAnswer = () => {
-    const newCurrentAnswers = (currentFixAnswers) => [
+    question.set.fixAnswers((currentFixAnswers) => [
       ...currentFixAnswers,
       { text: '' },
-    ];
-    question.set.fixAnswers(newCurrentAnswers(question.get.fixAnswers));
+    ]);
   };
 
   const onRemoveFixAnswer = () => {
-    const newFixAnswers = (currentFixAnswers) => {
+    question.set.fixAnswers((currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
       if (copyFixAnswers.length > 1) {
         copyFixAnswers.pop();
       }
       return copyFixAnswers;
-    };
-    question.set.fixAnswers(newFixAnswers(question.get.fixAnswers));
+    });
   };
 
   const onSubmit = () => {

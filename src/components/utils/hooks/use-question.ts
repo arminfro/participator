@@ -11,7 +11,7 @@ import {
   validateQuestionUpdate,
 } from '../../../types/question.validation';
 import api from '../funcs/api';
-import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
+import { SetCallback, useStruct, UseStruct } from './use-struct';
 
 export function useQuestionUpdate(
   roomId: number,
@@ -19,7 +19,7 @@ export function useQuestionUpdate(
   question: Question,
   autoValidate = false,
   autoSync = false,
-): UseStructWithValidation<QuestionUpdate> {
+): UseStruct<QuestionUpdate> {
   const states = {
     text: useState(question.text),
     answersFormat: useState(question.answersFormat),
@@ -45,7 +45,7 @@ export function useQuestionCreate(
   roomId: number,
   autoValidate = false,
   autoSync = false,
-): UseStructWithValidation<QuestionCreate> {
+): UseStruct<QuestionCreate> {
   const states = {
     text: useState(''),
     answersFormat: useState<AnswersFormat>('free'),

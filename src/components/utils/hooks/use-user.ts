@@ -7,14 +7,14 @@ import {
 } from '../../../types/user.validation';
 import { ValidationResult } from '../../../types/utils';
 import api from '../funcs/api';
-import { SetCallback, useStruct, UseStructWithValidation } from './use-struct';
+import { SetCallback, useStruct, UseStruct } from './use-struct';
 
 export function useUserUpdate(
   userId: number,
   user: UserUpdate,
   withValidation = false,
   autoSync = false,
-): UseStructWithValidation<UserUpdate> {
+): UseStruct<UserUpdate> {
   const states = {
     name: useState(user.name),
     hasHandUp: useState(user.hasHandUp),
@@ -31,7 +31,7 @@ export function useUserUpdate(
   });
 }
 
-export function useUserLogin(): UseStructWithValidation<UserLogin> {
+export function useUserLogin(): UseStruct<UserLogin> {
   const states = {
     email: useState(''),
     password: useState(''),
