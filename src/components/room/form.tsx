@@ -1,22 +1,19 @@
-import { Button, Form, Input, Radio, RadioChangeEvent } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
-import { JoinConditions, RoomCreate, RoomUpdate } from '../../types/room';
-import formItemValidator from '../utils/funcs/form-item-validation';
+import FormContainer from '../utils/container/form';
 import { UseStruct } from '../utils/hooks/use-struct';
 
-interface Props {
-  room: UseStruct<RoomCreate> | UseStruct<RoomUpdate>;
+interface Props<T> {
+  room: UseStruct<T>;
   roomId?: number; // present if `isEdit`
   onCloseDrawer?: () => void;
 }
 
-export default function RoomForm({
+export default function RoomForm<T>({
   room,
   roomId,
   onCloseDrawer,
-}: Props): ReactElement {
+}: Props<T>): ReactElement {
   const router = useRouter();
 
   const onSubmit = () => {
@@ -27,44 +24,25 @@ export default function RoomForm({
     });
   };
 
-  const onChangeJoinPolicy = (e: RadioChangeEvent) =>
-    room.set.openToJoin(e.target.value === JoinConditions.Open, false);
-
   return (
-    <Form initialValues={room.get} onFinish={onSubmit}>
-      <Form.Item
-        name="name"
-        label="Name"
-        rules={[formItemValidator(room.validationErrors)]}
-      >
-        <Input
-          value={room.get.name}
-          onChange={(e) => room.set.name(e.target.value, false)}
-        />
-      </Form.Item>
-      <Form.Item label="Join Policy">
-        <Radio.Group
-          value={
-            room.get.openToJoin ? JoinConditions.Open : JoinConditions.Closed
-          }
-          onChange={onChangeJoinPolicy}
-        >
-          <Radio value={JoinConditions.Open}>Open to Join</Radio>
-          <Radio value={JoinConditions.Closed}>Only on invitation</Radio>
-        </Radio.Group>
-      </Form.Item>
-      <Form.Item label="Description">
-        <TextArea
-          autoSize
-          value={room.get.description}
-          onChange={(e) => room.set.description(e.target.value)}
-        />
-      </Form.Item>
-      <Form.Item>
-        <Button htmlType="submit" type="primary">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+    <>
+      <FormContainer<T>
+        onSubmit={onSubmit}
+        struct={room}
+        items={[
+          { type: 'input', name: 'name', label: 'Name' },
+          {
+            type: 'radio',
+            name: 'openToJoin',
+            label: 'Open to Join',
+            choices: [
+              { value: true, label: 'Open to join' },
+              { value: false, label: 'Only on invitation' },
+            ],
+          },
+          { type: 'textarea', name: 'description', label: 'Description' },
+        ]}
+      />
+    </>
   );
 }

@@ -9,7 +9,6 @@ import {
 import { Failure } from 'superstruct';
 import { noop } from '../../../constants';
 import { ValidationResult } from '../../../types/utils';
-import { useSwrMutateContext } from '../context/swr-mutate-context';
 import { useStructConfigContext } from '../context/use-struct-config-context';
 
 // utility types
@@ -18,7 +17,7 @@ type Value<T> = T[Key<T>];
 export type SetCallback<T> = (data: T) => void;
 
 // return types
-type StateGetters<T> = { [P in keyof T]: T[P] };
+export type StateGetters<T> = { [P in keyof T]: T[P] };
 type StateSetters<T> = {
   [P in keyof T]: (
     setStateAction: SetStateAction<T[P]>,
