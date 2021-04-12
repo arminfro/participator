@@ -1,4 +1,4 @@
-import React, { ReactElement, Suspense } from 'react';
+import React, { ReactElement, Suspense, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import useSWR, { ConfigInterface } from 'swr';
 
@@ -12,6 +12,7 @@ import {
   useSwrMutateContext,
 } from '../context/swr-mutate-context';
 import { mutateCallback } from 'swr/dist/types';
+import { UseStructConfigProvider } from '../context/use-struct-config-context';
 
 interface FetchProps<T> {
   children: (data: T) => ReactElement;
@@ -40,7 +41,7 @@ function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
     <SwrMutateProvider<T>
       mutateProps={{ ...useSwrMutateContext<T>(), [url]: mutate }}
     >
-      {children(data)}
+      <UseStructConfigProvider>{children(data)}</UseStructConfigProvider>
     </SwrMutateProvider>
   );
 }

@@ -1,9 +1,9 @@
 import React, { ReactElement, useRef } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { SWRConfig } from 'swr';
-import { swrApi } from '../components/utils/funcs/api';
 import { AbilityContextProvider } from '../components/utils/context/casl-context';
 import { SiderRefProvider } from '../components/utils/context/sider-ref-context';
+import { swrApi } from '../components/utils/funcs/api';
 import StoreProvider from '../components/utils/store/provider';
 import Layout from './layout';
 import './styles.css';

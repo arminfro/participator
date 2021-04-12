@@ -2,9 +2,9 @@ import { Button, Form } from 'antd';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { Question } from '../../types/question';
-import FreeAnswer from '../answer/create-free-answer';
+import CreateFreeAnswer from '../answer/create-free-answer';
 import { useAnswerCreate } from '../utils/hooks/use-answer';
-import FixAnswer from './create-fix-answer';
+import CreateFixAnswer from './create-fix-answer';
 
 interface Props {
   question: Question;
@@ -29,14 +29,16 @@ export default function AnswerCreate({
   return (
     <Form initialValues={answer.get} onFinish={onSubmit}>
       {question.answersFormat === 'fix' && (
-        <FixAnswer
+        <CreateFixAnswer
           setFixAnswerId={(id) => answer.set.fixAnswerId(id)}
-          fixAnswers={question.fixAnswers}
+          fixAnswers={[...question.fixAnswers]}
           chosenAnswerId={answer.get.fixAnswerId}
         />
       )}
       {question.answersFormat === 'free' && (
-        <FreeAnswer setFreeAnswer={(text) => answer.set.freeAnswer(text)} />
+        <CreateFreeAnswer
+          setFreeAnswer={(text) => answer.set.freeAnswer(text)}
+        />
       )}
       <Form.Item>
         <Button type="primary" htmlType="submit">

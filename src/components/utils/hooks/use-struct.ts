@@ -10,6 +10,7 @@ import { Failure } from 'superstruct';
 import { noop } from '../../../constants';
 import { ValidationResult } from '../../../types/utils';
 import { useSwrMutateContext } from '../context/swr-mutate-context';
+import { useStructConfigContext } from '../context/use-struct-config-context';
 
 // utility types
 type Key<T> = keyof T;
@@ -58,22 +59,9 @@ export function useStruct<T>({
   autoValidate = !!validator,
 }: StructOptions<T>): UseStruct<T> {
   const [validationErrors, setValidationErrors] = useState<Failure[]>([]);
-  const mutate = useSwrMutateContext();
-  const router = useRouter();
+  const config = useStructConfigContext<T>();
 
   const struct = useMemo(() => ({ get: {}, set: {} }), []) as UseStruct<T>;
-
-  // todo, move out of custom hook
-  const mutateSwrData = useCallback(
-    (newStruct: T) => {
-      if (mutate[`api${router.asPath}`]) {
-        mutate[`api${router.asPath}`]((currentData: T) => {
-          return { ...currentData, ...newStruct };
-        }, false);
-      }
-    },
-    [mutate, router.asPath],
-  );
 
   const buildSetter = useCallback(
     (setter: Dispatch<SetStateAction<Value<T>>>, key: string) => {
@@ -84,21 +72,21 @@ export function useStruct<T>({
       ): Value<T> => {
         const newStruct = { ...struct.get, [key]: newValue };
 
-        const onUpdateSuccess = (isValid: boolean) => {
-          if (sync || autoSync) {
-            if (update && isValid) {
-              update(callback, newStruct);
-            }
-            mutateSwrData(newStruct);
+        const onInvalidUpdate = () => {
+          config.onLocalUpdate && config.onLocalUpdate(newStruct);
+        };
+
+        const onValidUpdate = () => {
+          if ((sync || autoSync) && update) {
+            update(callback, newStruct);
+            config.onRemoteUpdate && config.onRemoteUpdate(newStruct);
           }
-          // updates view data as well,
-          // todo, add some reset functionality
-          // mutateSwrData(newStruct);
-          return newValue;
+          config.onLocalUpdate && config.onLocalUpdate(newStruct);
         };
 
         const onValidate = (): T | void => {
           const validationResult = validator(newStruct);
+          config.onValidate && config.onValidate(validationResult);
           const errors: Failure[] = validationResult[0] || [];
           const validatedModel: T = validationResult[1];
           if (errors.length) {
@@ -111,10 +99,8 @@ export function useStruct<T>({
           }
         };
 
-        if (validator && onValidate()) {
-          return onUpdateSuccess(true);
-        }
-        return onUpdateSuccess(false);
+        onValidate() ? onValidUpdate() : onInvalidUpdate();
+        return newValue;
       };
 
       return (
@@ -136,7 +122,7 @@ export function useStruct<T>({
         }
       };
     },
-    [autoSync, autoValidate, validator, update, struct.get, mutateSwrData],
+    [autoSync, autoValidate, validator, update, struct.get, config],
   );
 
   const structBuilt = useMemo(() => {
@@ -155,6 +141,7 @@ export function useStruct<T>({
         sync: (callback = noop) => {
           if (validator(reducedKeys.get)) {
             update(callback, reducedKeys.get);
+            config.onRemoteUpdate && config.onRemoteUpdate(reducedKeys.get);
           }
         },
         validationErrors,
@@ -162,7 +149,15 @@ export function useStruct<T>({
     );
 
     return reducedKeys;
-  }, [struct, buildSetter, update, validator, states, validationErrors]);
+  }, [
+    config,
+    struct,
+    buildSetter,
+    update,
+    validator,
+    states,
+    validationErrors,
+  ]);
 
   return structBuilt;
 }
