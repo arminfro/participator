@@ -19,13 +19,20 @@ import { Question } from './question';
 import { Room } from './room';
 import { isEmail, stringMinLength } from './utils';
 
-export type UserCreate = Infer<typeof UserCreate>;
+export type UserCreate = {
+  name: string;
+  email: string;
+  pw1: string;
+  pw2: string;
+  passwordResetId?: string;
+};
 export const UserCreate = refine(
   object({
     name: stringMinLength(2, 'name'),
     email: isEmail('email'),
     pw1: stringMinLength(1, 'pw1'),
     pw2: stringMinLength(1, 'pw2'),
+    passwordResetId: optional(string()),
   }),
   'equalPws',
   (userCreate) => userCreate.pw1 === userCreate.pw2,
