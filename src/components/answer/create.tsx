@@ -1,10 +1,9 @@
-import { Button, Form } from 'antd';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
+import { AnswerCreate as IAnswerCreate } from '../../types/answer';
 import { Question } from '../../types/question';
-import CreateFreeAnswer from '../answer/create-free-answer';
+import FormContainer from '../utils/container/form';
 import { useAnswerCreate } from '../utils/hooks/use-answer';
-import CreateFixAnswer from './create-fix-answer';
 
 interface Props {
   question: Question;
@@ -20,31 +19,32 @@ export default function AnswerCreate({
 
   const onSubmit = () => {
     if (answer.get.fixAnswerId || answer.get.freeAnswer) {
-      answer.sync(() => {
-        router.push(`/rooms/${roomId}/questions/${question.id}/answers`);
-      });
+      router.push(`/rooms/${roomId}/questions/${question.id}`);
     }
   };
 
   return (
-    <Form initialValues={answer.get} onFinish={onSubmit}>
-      {question.answersFormat === 'fix' && (
-        <CreateFixAnswer
-          setFixAnswerId={(id) => answer.set.fixAnswerId(id)}
-          fixAnswers={[...question.fixAnswers]}
-          chosenAnswerId={answer.get.fixAnswerId}
-        />
-      )}
-      {question.answersFormat === 'free' && (
-        <CreateFreeAnswer
-          setFreeAnswer={(text) => answer.set.freeAnswer(text)}
-        />
-      )}
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+    <>
+      <FormContainer<IAnswerCreate>
+        onSubmit={onSubmit}
+        struct={answer}
+        items={[
+          question.answersFormat === 'fix' && {
+            type: 'radio',
+            name: 'fixAnswerId',
+            label: 'Choose one answer',
+            choices: question.fixAnswers.map((choice) => ({
+              value: choice.id,
+              label: choice.text,
+            })),
+          },
+          question.answersFormat === 'free' && {
+            type: 'textarea',
+            name: 'freeAnswer',
+            label: 'Type your Answer',
+          },
+        ]}
+      />
+    </>
   );
 }

@@ -1,17 +1,9 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Divider,
-  Form,
-  Input,
-  Radio,
-  RadioChangeEvent,
-  Space,
-} from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
+import { Button, Divider, Form, Input, Space } from 'antd';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
+import FormContainer from '../utils/container/form';
 import { UseStruct } from '../utils/hooks/use-struct';
 
 interface Props {
@@ -47,10 +39,6 @@ export default function QuestionForm({
 }: Props): ReactElement {
   const router = useRouter();
 
-  const answersFormatSelect = (e: RadioChangeEvent) => {
-    question.set.answersFormat(e.target.value);
-  };
-
   const onChangeFixAnswer = (newValue: string, index: number) => {
     question.set.fixAnswers((currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
@@ -69,7 +57,7 @@ export default function QuestionForm({
   const onRemoveFixAnswer = () => {
     question.set.fixAnswers((currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
-      if (copyFixAnswers.length > 1) {
+      if (copyFixAnswers.length > 2) {
         copyFixAnswers.pop();
       }
       return copyFixAnswers;
@@ -77,77 +65,69 @@ export default function QuestionForm({
   };
 
   const onSubmit = () => {
-    question.sync(() => {
-      onCloseDrawer && onCloseDrawer();
-      router.push(
-        `/rooms/${roomId}/questions${questionId ? `/${questionId}` : ''}`,
-      );
-    });
+    onCloseDrawer && onCloseDrawer();
+    router.push(
+      `/rooms/${roomId}/questions${questionId ? `/${questionId}` : ''}`,
+    );
   };
 
   return (
-    <Form initialValues={question.get} onFinish={onSubmit}>
-      <Form.Item label={'Your answer type'}>
-        <Radio.Group
-          value={question.get.answersFormat}
-          onChange={answersFormatSelect}
-        >
-          <Radio value={'fix'}>fix answers</Radio>
-          <Radio value={'free'}>free answers</Radio>
-        </Radio.Group>
-      </Form.Item>
-      <Divider />
-      <Form.Item label="Your polling question">
-        <TextArea
-          autoSize
-          value={question.get.text}
-          onChange={(e) => question.set.text(e.target.value)}
-          placeholder="Type your question"
-        />
-      </Form.Item>
-      {question.get.answersFormat === 'fix' && (
-        <>
-          <Divider />
-          <Form.Item label="Choose a Preset">
-            {presets.map((preset) => (
-              <Button
-                key={preset.label}
-                onClick={() => question.set.fixAnswers(preset.fixAnswers)}
-              >
-                {preset.label}
-              </Button>
-            ))}
-          </Form.Item>
-        </>
-      )}
-      {question.get.answersFormat === 'fix' && (
-        <>
-          <Form.Item label="Answers">
-            <Button style={{ marginLeft: 4 }} onClick={onAddFixAnswer}>
-              <PlusCircleOutlined />
-            </Button>
-            <Button onClick={onRemoveFixAnswer}>
-              <MinusCircleOutlined />
-            </Button>
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              {question.get.fixAnswers.map((fixAnswer, index) => (
-                <Space key={index} style={{ margin: 4, width: 190 }}>
-                  <Input
-                    placeholder={`Answer No.${index + 1}`}
-                    value={fixAnswer.text}
-                    onChange={(e) => onChangeFixAnswer(e.target.value, index)}
-                  />
-                </Space>
-              ))}
-            </div>
-          </Form.Item>
-        </>
-      )}
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+    <>
+      <FormContainer
+        struct={question}
+        onSubmit={onSubmit}
+        items={[
+          {
+            type: 'radio',
+            label: 'Your answer type',
+            name: 'answersFormat',
+            choices: [
+              { label: 'fix answers', value: 'fix' },
+              { label: 'free answers', value: 'free' },
+            ],
+          },
+          { component: <Divider /> },
+          { type: 'textarea', label: 'Your polling question', name: 'text' },
+          question.get.answersFormat === 'fix' && {
+            component: (
+              <>
+                <Divider />
+                <Form.Item label="Choose a Preset">
+                  {presets.map((preset) => (
+                    <Button
+                      key={preset.label}
+                      onClick={() => question.set.fixAnswers(preset.fixAnswers)}
+                    >
+                      {preset.label}
+                    </Button>
+                  ))}
+                </Form.Item>
+                <Form.Item label="Answers">
+                  <Button style={{ marginLeft: 4 }} onClick={onAddFixAnswer}>
+                    <PlusCircleOutlined />
+                  </Button>
+                  <Button onClick={onRemoveFixAnswer}>
+                    <MinusCircleOutlined />
+                  </Button>
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {question.get.fixAnswers.map((fixAnswer, index) => (
+                      <Space key={index} style={{ margin: 4, width: 190 }}>
+                        <Input
+                          placeholder={`Answer No.${index + 1}`}
+                          value={fixAnswer.text}
+                          onChange={(e) =>
+                            onChangeFixAnswer(e.target.value, index)
+                          }
+                        />
+                      </Space>
+                    ))}
+                  </div>
+                </Form.Item>
+              </>
+            ),
+          },
+        ]}
+      />
+    </>
   );
 }

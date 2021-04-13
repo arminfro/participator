@@ -18,5 +18,13 @@ export function validateQuestion<T>(
   question: T,
   struct: Struct<T>,
 ): ValidationResult<T> {
-  return customValidate<T>(question, struct, (failure) => failure);
+  return customValidate<T>(question, struct, (failure) => {
+    switch (failure.key) {
+      case 'text':
+        failure.message = 'Question is required';
+        break;
+      default:
+    }
+    return failure;
+  });
 }

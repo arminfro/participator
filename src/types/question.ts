@@ -12,6 +12,7 @@ import {
 import { Answer } from './answer';
 import { Room } from './room';
 import { User } from './user';
+import { stringMinLength } from './utils';
 
 export type AnswersFormat = 'free' | 'fix';
 export const AnswersFormat = define<AnswersFormat>('AnswersFormat', (value) =>
@@ -56,7 +57,7 @@ export type QuestionCreate = {
 };
 
 const questionCreateProps = {
-  text: string(),
+  text: stringMinLength(1, 'text'),
   answersFormat: AnswersFormat,
   fixAnswers: optional(
     array(object({ id: optional(number()), text: string() })),
@@ -71,7 +72,6 @@ export type QuestionUpdate = {
   answersFormat?: AnswersFormat;
   fixAnswers?: FixAnswer[];
 };
-export const QuestionUpdate: Describe<QuestionUpdate> = object({
-  ...questionCreateProps,
-  text: optional(string()),
-});
+export const QuestionUpdate: Describe<QuestionUpdate> = object(
+  questionCreateProps,
+);

@@ -18,5 +18,13 @@ export function validateAnswer<T>(
   answer: T,
   struct: Struct<T>,
 ): ValidationResult<T> {
-  return customValidate<T>(answer, struct, (failure) => failure);
+  return customValidate<T>(answer, struct, (failure) => {
+    switch (failure.key) {
+      case 'freeAnswer':
+        failure.message = 'Free Answer is required';
+        break;
+      default:
+    }
+    return failure;
+  });
 }

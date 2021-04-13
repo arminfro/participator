@@ -3,6 +3,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import React, { ReactElement } from 'react';
 import { Failure } from 'superstruct';
 import formItemValidator from '../funcs/form-item-validation';
+import sort from '../funcs/sort';
 import { UseStruct } from '../hooks/use-struct';
 
 interface FormItemProps {
@@ -36,9 +37,15 @@ interface FormItemProp {
   choices?: { value: any; label: string }[];
 }
 
+export type ItemProp =
+  | FormItemProp
+  | { component: ReactElement | ReactElement[] }
+  | undefined
+  | false;
+
 interface FormProps<T> {
   struct: UseStruct<T>;
-  items: FormItemProp[];
+  items: ItemProp[];
   onSubmit?: (data: T) => void;
 }
 
@@ -54,58 +61,73 @@ export default function FormContainer<T>({
       form={form}
       initialValues={struct.get}
       onFinish={() => {
-        struct.sync();
-        onSubmit && onSubmit(struct.get);
+        struct.sync(() => {
+          onSubmit && onSubmit(struct.get);
+        });
       }}
     >
-      {items.map((item) => (
-        <React.Fragment key={item.name}>
-          {item.type === 'input' && (
-            <FormItem
-              name={item.name}
-              label={item.label}
-              validationErrors={struct.validationErrors}
-            >
-              <Input
-                value={struct.get[item.name]}
-                onChange={(e) => struct.set[item.name](e.target.value, false)}
-              />
-            </FormItem>
-          )}
-          {item.type === 'textarea' && (
-            <FormItem
-              name={item.name}
-              label={item.label}
-              validationErrors={struct.validationErrors}
-            >
-              <TextArea
-                autoSize
-                value={struct.get[item.name]}
-                onChange={(e) => struct.set[item.name](e.target.value)}
-              />
-            </FormItem>
-          )}
-          {item.type === 'radio' && item.choices.length > 0 && (
-            <Form.Item
-              label={item.label}
-              rules={[formItemValidator(struct.validationErrors)]}
-            >
-              <Radio.Group
-                value={struct.get[item.name]}
-                onChange={(e) => struct.set[item.name](e.target.value, false)}
-              >
-                {item.choices.map((choice) => (
-                  <Radio key={choice.value} value={choice.value}>
-                    {choice.label}
-                  </Radio>
-                ))}
-              </Radio.Group>
-            </Form.Item>
-          )}
-        </React.Fragment>
-      ))}
+      {items
+        .filter((a) => a)
+        .map((item, index) => (
+          <React.Fragment key={index}>
+            {typeof item === 'object' && 'type' in item && (
+              <>
+                {item.type === 'input' && (
+                  <FormItem
+                    name={item.name}
+                    label={item.label}
+                    validationErrors={struct.validationErrors}
+                  >
+                    <Input
+                      value={struct.get[item.name]}
+                      onChange={(e) =>
+                        struct.set[item.name](e.target.value, false)
+                      }
+                    />
+                  </FormItem>
+                )}
+                {item.type === 'textarea' && (
+                  <FormItem
+                    name={item.name}
+                    label={item.label}
+                    validationErrors={struct.validationErrors}
+                  >
+                    <TextArea
+                      autoSize
+                      value={struct.get[item.name]}
+                      onChange={(e) => struct.set[item.name](e.target.value)}
+                    />
+                  </FormItem>
+                )}
+                {item.type === 'radio' && item.choices.length > 0 && (
+                  <Form.Item
+                    label={item.label}
+                    rules={[formItemValidator(struct.validationErrors)]}
+                  >
+                    <Radio.Group
+                      value={struct.get[item.name]}
+                      onChange={(e) => {
+                        console.log('item.name', item.name, 'struct', struct);
+                        struct.set[item.name](e.target.value, false);
+                      }}
+                    >
+                      {sort(item.choices, 'label').map((choice) => (
+                        <Radio key={choice.value} value={choice.value}>
+                          {choice.label}
+                        </Radio>
+                      ))}
+                    </Radio.Group>
+                  </Form.Item>
+                )}
+              </>
+            )}
+            {typeof item === 'object' && 'component' in item && (
+              <>{item.component}</>
+            )}
+          </React.Fragment>
+        ))}
       <Form.Item>
-        <Button htmlType="submit" type="primary">
+        <Button type="primary" htmlType="submit">
           Submit
         </Button>
       </Form.Item>
