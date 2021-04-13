@@ -35,8 +35,11 @@ export function validateUser<T>(
       case 'pws':
         failure.message = 'Passwords are not identical, or empty';
         break;
+      case 'password':
+        failure.message = 'Password is not strong';
+        break;
       case 'email':
-        failure.message = 'E-Mail address seems invalid';
+        failure.message = 'Valid E-Mail address required';
         break;
       case 'name':
         failure.message = 'Name needs to have at least two characters';

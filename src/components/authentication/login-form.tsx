@@ -1,6 +1,9 @@
+import { Divider } from 'antd';
 import { useRouter } from 'next/router';
-import React, { ReactElement, SyntheticEvent, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { toast } from 'react-toastify';
+import { UserLogin } from '../../types/user';
+import FormContainer from '../utils/container/form';
 import api, { apiLogin } from '../utils/funcs/api';
 import { useUserLogin } from '../utils/hooks/use-user';
 import { useStore } from '../utils/store/context';
@@ -12,19 +15,9 @@ interface Props {
 export default function LoginForm({ redirectUrl }: Props): ReactElement {
   const router = useRouter();
   const { dispatch } = useStore();
-  const [showErrors, setShowErrors] = useState(false);
   const [recoverPassword, setRecoverPassword] = useState(false);
 
   const user = useUserLogin();
-
-  const onSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
-    if (!user.validationErrors.length) {
-      (recoverPassword ? onRecover : onLogin)();
-    } else {
-      setShowErrors(true);
-    }
-  };
 
   const onRecover = () => {
     api(
@@ -54,47 +47,26 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
 
   return (
     <>
-      <h4>{recoverPassword ? 'Password Recover' : 'Login'}</h4>
-      <form className="ui form" onSubmit={onSubmit}>
-        <label>E-Mail</label>
-        <input
-          type="text"
-          value={user.get.email}
-          onChange={(e) => {
-            user.set.email(e.target.value);
-          }}
-        />
-        {!recoverPassword && (
-          <>
-            <label>Password</label>
-            <input
-              type="password"
-              value={user.get.password}
-              onChange={(e) => {
-                user.set.password(e.target.value);
-              }}
-            />
-          </>
-        )}
-        {showErrors && user.validationErrors.length !== 0 && (
-          <ul className="ui negative message">
-            {user.validationErrors.map((failure) => (
-              <li key={failure.key}>{failure.message}</li>
-            ))}
-          </ul>
-        )}
-        <button
-          disabled={showErrors && !!user.validationErrors.length}
-          className="ui button"
-        >
-          Submit
-        </button>
-        {!recoverPassword && (
-          <a className="pointer" onClick={() => setRecoverPassword(true)}>
-            reset Password
-          </a>
-        )}
-      </form>
+      <Divider>
+        <h1>{recoverPassword ? 'Password Recover' : 'Login'}</h1>
+      </Divider>
+      <FormContainer<UserLogin>
+        struct={user}
+        onSubmit={recoverPassword ? onRecover : onLogin}
+        items={[
+          { type: 'input', label: 'E-Mail', name: 'email' },
+          !recoverPassword && {
+            type: 'input',
+            label: 'Password',
+            name: 'password',
+          },
+        ]}
+      />
+      {recoverPassword ? (
+        <a onClick={() => setRecoverPassword(false)}>Login</a>
+      ) : (
+        <a onClick={() => setRecoverPassword(true)}>Password recover</a>
+      )}
     </>
   );
 }

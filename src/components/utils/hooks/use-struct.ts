@@ -136,12 +136,14 @@ export function useStruct<T>({
       },
       {
         ...struct,
-        sync: (callback = noop) => {
-          if (validator(reducedKeys.get)) {
-            update(callback, reducedKeys.get);
-            config.onRemoteUpdate && config.onRemoteUpdate(reducedKeys.get);
-          }
-        },
+        sync: !update
+          ? undefined
+          : (callback = noop) => {
+              if (validator(reducedKeys.get)) {
+                update && update(callback, reducedKeys.get);
+                config.onRemoteUpdate && config.onRemoteUpdate(reducedKeys.get);
+              }
+            },
         validationErrors,
       } as UseStruct<T>, // todo, better way to express
     );

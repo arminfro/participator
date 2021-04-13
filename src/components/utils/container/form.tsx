@@ -61,9 +61,13 @@ export default function FormContainer<T>({
       form={form}
       initialValues={struct.get}
       onFinish={() => {
-        struct.sync(() => {
+        if (struct.sync) {
+          struct.sync(() => {
+            onSubmit && onSubmit(struct.get);
+          });
+        } else {
           onSubmit && onSubmit(struct.get);
-        });
+        }
       }}
     >
       {items

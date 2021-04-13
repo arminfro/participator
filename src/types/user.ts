@@ -49,7 +49,7 @@ export const UserUpdate = object({
 export type UserLogin = Infer<typeof UserLogin>;
 export const UserLogin = object({
   email: isEmail('email'),
-  password: string(),
+  password: stringMinLength(2, 'password'),
 });
 
 export type User = {
