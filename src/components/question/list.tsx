@@ -16,7 +16,7 @@ export default function QuestionList({ questions }: Props): ReactElement {
 
   return (
     <Timeline>
-      {questions.map((question) => (
+      {questions.reverse().map((question) => (
         <Timeline.Item key={question.id}>
           <Comment
             key={question.id}

@@ -39,35 +39,21 @@ export function useUserLogin(): UseStruct<UserLogin> {
 
   return useStruct<UserLogin>({
     states,
-    validator: (user) =>
-      validateUserLogin({ email: user.email, password: user.password }),
+    validator: validateUserLogin,
     autoValidate: false,
   });
 }
 
-interface UseUserCreate {
-  name: string;
-  email: string;
-  pw1: string;
-  pw2: string;
-}
 export function useUserCreate(user: UserCreate, withValidation = false) {
   const states = {
     name: useState(user.name),
     email: useState(user.email),
-    pw1: useState(user.pws.pw1),
-    pw2: useState(user.pws.pw2),
+    pw1: useState(user.pw1),
+    pw2: useState(user.pw2),
   };
-  return useStruct<UseUserCreate>({
+  return useStruct<UserCreate>({
     states,
     autoValidate: withValidation,
-    validator: (user) => {
-      const validationResult = validateUserCreate({
-        name: user.name,
-        email: user.email,
-        pws: { pw1: user.pw1, pw2: user.pw2 },
-      });
-      return validationResult as ValidationResult<UseUserCreate>;
-    },
+    validator: validateUserCreate,
   });
 }

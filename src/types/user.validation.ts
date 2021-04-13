@@ -2,10 +2,17 @@ import { Struct } from 'superstruct';
 import { UserCreate, UserLogin, UserUpdate, UserUpdateToggle } from './user';
 import { customValidate, ValidationResult } from './utils';
 
+// const UCreate = refine(UserCreate, 'equalPws', (userCreate) => {
+//   console.log('userCreate', userCreate);
+//   return userCreate.pw1 === userCreate.pw2;
+// });
+
 export function validateUserCreate(
   userCreate: UserCreate,
 ): ValidationResult<UserCreate> {
-  return validateUser<UserCreate>(userCreate, UserCreate);
+  const j = validateUser<UserCreate>(userCreate, UserCreate);
+  console.log('validateUserCreate', j);
+  return j;
 }
 
 export function validateUserUpdate(
@@ -31,6 +38,11 @@ export function validateUser<T>(
   struct: Struct<T>,
 ): ValidationResult<T> {
   return customValidate<T>(user, struct, (failure) => {
+    switch (failure.refinement) {
+      case 'equalPws':
+        failure.message = 'Passwords are not identical';
+        break;
+    }
     switch (failure.key) {
       case 'pws':
         failure.message = 'Passwords are not identical, or empty';

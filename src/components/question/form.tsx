@@ -1,5 +1,6 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Button, Divider, Form, Input, Space } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
@@ -87,7 +88,7 @@ export default function QuestionForm({
             ],
           },
           { component: <Divider /> },
-          { type: 'textarea', label: 'Your polling question', name: 'text' },
+          { type: 'textarea', label: 'Your question', name: 'text' },
           question.get.answersFormat === 'fix' && {
             component: (
               <>
@@ -111,8 +112,9 @@ export default function QuestionForm({
                   </Button>
                   <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                     {question.get.fixAnswers.map((fixAnswer, index) => (
-                      <Space key={index} style={{ margin: 4, width: 190 }}>
-                        <Input
+                      <Space key={index} style={{ margin: 4, width: 188 }}>
+                        <TextArea
+                          autoSize
                           placeholder={`Answer No.${index + 1}`}
                           value={fixAnswer.text}
                           onChange={(e) =>

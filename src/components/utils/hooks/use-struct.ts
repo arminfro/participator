@@ -84,13 +84,12 @@ export function useStruct<T>({
 
         const onValidate = (): T | void => {
           const validationResult = validator(newStruct);
+          console.log('validationResult', validationResult);
           config.onValidate && config.onValidate(validationResult);
           const errors: Failure[] = validationResult[0] || [];
           const validatedModel: T = validationResult[1];
           if (errors.length) {
-            if (!autoValidate) {
-              setValidationErrors(errors);
-            }
+            setValidationErrors(errors);
           } else {
             setValidationErrors([]);
             return validatedModel;

@@ -9,24 +9,26 @@ import { UseStruct } from '../hooks/use-struct';
 interface FormItemProps {
   name: string;
   validationErrors: Failure[];
-  label: string;
-  children: ReactElement;
+  label?: string;
+  children: ReactElement | ReactElement[];
 }
 
-const FormItem = ({
+export function FormItem({
   name,
   label,
   validationErrors,
   children,
-}: FormItemProps): ReactElement => (
-  <Form.Item
-    name={name}
-    rules={[formItemValidator(validationErrors)]}
-    label={label}
-  >
-    {children}
-  </Form.Item>
-);
+}: FormItemProps): ReactElement {
+  return (
+    <Form.Item
+      name={name}
+      rules={[formItemValidator(validationErrors)]}
+      label={label}
+    >
+      {children}
+    </Form.Item>
+  );
+}
 
 type Type = 'input' | 'textarea' | 'radio';
 
@@ -49,6 +51,30 @@ interface FormProps<T> {
   onSubmit?: (data: T) => void;
 }
 
+interface FormInputItemProps<T> {
+  name: string;
+  label: string;
+  struct: UseStruct<T>;
+}
+export function FormInputItem<T>({
+  name,
+  label,
+  struct,
+}: FormInputItemProps<T>): ReactElement {
+  return (
+    <FormItem
+      name={name}
+      label={label}
+      validationErrors={struct.validationErrors}
+    >
+      <Input
+        value={struct.get[name]}
+        onChange={(e) => struct.set[name](e.target.value, false)}
+      />
+    </FormItem>
+  );
+}
+
 export default function FormContainer<T>({
   struct,
   items,
@@ -59,6 +85,9 @@ export default function FormContainer<T>({
   return (
     <Form
       form={form}
+      layout="horizontal"
+      labelCol={{ span: 4 }}
+      wrapperCol={{ span: 14 }}
       initialValues={struct.get}
       onFinish={() => {
         if (struct.sync) {
@@ -77,18 +106,11 @@ export default function FormContainer<T>({
             {typeof item === 'object' && 'type' in item && (
               <>
                 {item.type === 'input' && (
-                  <FormItem
+                  <FormInputItem<T>
                     name={item.name}
                     label={item.label}
-                    validationErrors={struct.validationErrors}
-                  >
-                    <Input
-                      value={struct.get[item.name]}
-                      onChange={(e) =>
-                        struct.set[item.name](e.target.value, false)
-                      }
-                    />
-                  </FormItem>
+                    struct={struct}
+                  />
                 )}
                 {item.type === 'textarea' && (
                   <FormItem
@@ -130,7 +152,7 @@ export default function FormContainer<T>({
             )}
           </React.Fragment>
         ))}
-      <Form.Item>
+      <Form.Item wrapperCol={{ span: 14, offset: 4 }}>
         <Button type="primary" htmlType="submit">
           Submit
         </Button>

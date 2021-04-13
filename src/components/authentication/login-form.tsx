@@ -1,9 +1,9 @@
-import { Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useState } from 'react';
 import { toast } from 'react-toastify';
 import { UserLogin } from '../../types/user';
 import FormContainer from '../utils/container/form';
+import Page from '../utils/container/page';
 import api, { apiLogin } from '../utils/funcs/api';
 import { useUserLogin } from '../utils/hooks/use-user';
 import { useStore } from '../utils/store/context';
@@ -46,10 +46,16 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
   };
 
   return (
-    <>
-      <Divider>
-        <h1>{recoverPassword ? 'Password Recover' : 'Login'}</h1>
-      </Divider>
+    <Page
+      title={recoverPassword ? 'Password Recover' : 'Login'}
+      extra={[
+        recoverPassword ? (
+          <a onClick={() => setRecoverPassword(false)}>Login</a>
+        ) : (
+          <a onClick={() => setRecoverPassword(true)}>Password recover</a>
+        ),
+      ]}
+    >
       <FormContainer<UserLogin>
         struct={user}
         onSubmit={recoverPassword ? onRecover : onLogin}
@@ -62,11 +68,6 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
           },
         ]}
       />
-      {recoverPassword ? (
-        <a onClick={() => setRecoverPassword(false)}>Login</a>
-      ) : (
-        <a onClick={() => setRecoverPassword(true)}>Password recover</a>
-      )}
-    </>
+    </Page>
   );
 }

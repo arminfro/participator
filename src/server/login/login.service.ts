@@ -50,7 +50,7 @@ export class LoginService {
       true,
     );
     if (user && user.email === userCreate.email) {
-      user.password = AuthService.hashPassword(userCreate.pws.pw1);
+      user.password = AuthService.hashPassword(userCreate.pw1);
       await user.save();
       return user;
     }

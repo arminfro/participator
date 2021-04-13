@@ -91,7 +91,7 @@ export class UsersService {
     if (user) {
       user.name = userCreate.name;
       user.email = userCreate.email;
-      user.password = AuthService.hashPassword(userCreate.pws.pw1);
+      user.password = AuthService.hashPassword(userCreate.pw1);
       return user;
     } else {
       console.error('Error in build', userCreate);

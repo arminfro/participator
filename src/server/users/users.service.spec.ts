@@ -59,10 +59,8 @@ describe('UsersService', () => {
       const builtUser = await service.create({
         name: user.name,
         email: user.email,
-        pws: {
-          pw1: 'pw',
-          pw2: 'pw',
-        },
+        pw1: 'pw',
+        pw2: 'pw',
       });
 
       expect(builtUser).toEqual(user);

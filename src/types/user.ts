@@ -20,15 +20,16 @@ import { Room } from './room';
 import { isEmail, stringMinLength } from './utils';
 
 export type UserCreate = Infer<typeof UserCreate>;
-export const UserCreate = object({
-  name: stringMinLength(2, 'name'),
-  email: isEmail('email'),
-  pws: refine(
-    object({ pw1: string(), pw2: string() }),
-    'pws',
-    (value) => equals(value.pw1, value.pw2) && isNotEmpty(value.pw1),
-  ),
-});
+export const UserCreate = refine(
+  object({
+    name: stringMinLength(2, 'name'),
+    email: isEmail('email'),
+    pw1: stringMinLength(1, 'pw1'),
+    pw2: stringMinLength(1, 'pw2'),
+  }),
+  'equalPws',
+  (userCreate) => userCreate.pw1 === userCreate.pw2,
+);
 
 export type UserUpdateToggle = Partial<Infer<typeof UserUpdateToggle>>;
 export type UserUpdateToggleKeys = keyof UserUpdateToggle;
