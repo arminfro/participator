@@ -16,9 +16,7 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
     <StructProvider struct={struct}>
       <AntdForm
         form={form}
-        layout="horizontal"
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 14 }}
+        layout="vertical"
         initialValues={struct.get}
         onFinish={() => {
           if (struct.sync) {

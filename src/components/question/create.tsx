@@ -4,9 +4,13 @@ import QuestionForm from './form';
 
 interface Props {
   roomId: number;
+  onCloseDrawer: () => void;
 }
 
-export default function QuestionCreate({ roomId }: Props): ReactElement {
+export default function QuestionCreate({
+  roomId,
+  onCloseDrawer,
+}: Props): ReactElement {
   return (
     <>
       <p>
@@ -24,7 +28,11 @@ export default function QuestionCreate({ roomId }: Props): ReactElement {
           field. Each answer is displayed in a text block.
         </li>
       </ul>
-      <QuestionForm question={useQuestionCreate(roomId)} roomId={roomId} />
+      <QuestionForm
+        question={useQuestionCreate(roomId)}
+        roomId={roomId}
+        onCloseDrawer={onCloseDrawer}
+      />
     </>
   );
 }

@@ -25,25 +25,6 @@ export class QuestionsController {
     this.next.render(`/rooms/${roomId}/questions`, req, res);
   }
 
-  @Get('new')
-  public async createForm(
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
-    @Param('roomId', ParseIntPipe) roomId: number,
-  ): Promise<void> {
-    this.next.render(`/rooms/${roomId}/questions/new`, req, res);
-  }
-
-  @Get(':id/edit')
-  public async editOne(
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
-    @Param('roomId', ParseIntPipe) roomId: number,
-    @Param('id', ParseIntPipe) questionId: number,
-  ): Promise<void> {
-    this.next.render(`/rooms/${roomId}/questions/${questionId}/edit`, req, res);
-  }
-
   @Get(':id')
   public async findOne(
     @Req() req: IncomingMessage,

@@ -84,7 +84,6 @@ export function useStruct<T>({
 
         const onValidate = (): T | void => {
           const validationResult = validator(newStruct);
-          console.log('validationResult', validationResult);
           config.onValidate && config.onValidate(validationResult);
           const errors: Failure[] = validationResult[0] || [];
           const validatedModel: T = validationResult[1];
@@ -119,7 +118,7 @@ export function useStruct<T>({
         }
       };
     },
-    [autoSync, autoValidate, validator, update, struct.get, config],
+    [autoSync, validator, update, struct.get, config],
   );
 
   const structBuilt = useMemo(() => {
@@ -136,7 +135,7 @@ export function useStruct<T>({
       {
         ...struct,
         sync: !update
-          ? undefined
+          ? () => console.error('sync called without update function')
           : (callback = noop) => {
               if (validator(reducedKeys.get)) {
                 update && update(callback, reducedKeys.get);

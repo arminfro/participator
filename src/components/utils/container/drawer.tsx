@@ -7,6 +7,7 @@ interface Props extends DrawerProps {
     | ReactElement[]
     | ((onClose: () => void) => ReactElement);
   subject: string;
+  primaryButton?: boolean;
   action: string;
 }
 
@@ -14,6 +15,7 @@ export default function Drawer({
   children,
   subject,
   action,
+  primaryButton = false,
   ...drawerProps
 }: Props) {
   const [visible, setVisibility] = useState(false);
@@ -27,7 +29,12 @@ export default function Drawer({
 
   return (
     <>
-      <Button onClick={() => setVisibility(true)}>{action}</Button>
+      <Button
+        type={primaryButton ? 'primary' : 'default'}
+        onClick={() => setVisibility(true)}
+      >
+        {action}
+      </Button>
       <ADrawer
         title={`${action} ${subject}`}
         onClose={onClose}

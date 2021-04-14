@@ -5,7 +5,9 @@ import React, {
   useCallback,
   useContext,
 } from 'react';
+import { array, is, object } from 'superstruct';
 import { ValidationResult } from '../../../types/utils';
+import { transformDateString } from '../../../utils/transform-tree';
 import { useSwrMutateContext } from './swr-mutate-context';
 
 interface UseStructConfigProps<T> {
@@ -33,8 +35,12 @@ export function UseStructConfigProvider<T>({
   const onRemoteUpdate = useCallback(
     (newStruct) => {
       if (mutate[`api${router.asPath}`]) {
+        const newData = transformDateString(newStruct);
         mutate[`api${router.asPath}`]((currentData: T) => {
-          return { ...currentData, ...newStruct };
+          if (is(currentData, array(object()))) {
+            return [newData, ...currentData];
+          }
+          return { ...currentData, ...newData };
         }, false);
       }
     },

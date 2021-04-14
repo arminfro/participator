@@ -27,11 +27,6 @@ export class RoomsController {
     this.next.render('/rooms', req, res);
   }
 
-  @Get('new')
-  createForm(@Req() req: IncomingMessage, @Res() res: ServerResponse): void {
-    this.next.render(`/rooms/new`, req, res);
-  }
-
   @Get(':id')
   @UsePolicy((ability, subjects) => ability.can(Action.Read, subjects.room))
   async findOne(

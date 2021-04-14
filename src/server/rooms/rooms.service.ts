@@ -28,7 +28,7 @@ export class RoomsService {
       room.id,
     );
     await this.roomsRepository.save(room);
-    return room;
+    return this.findOne(room.id);
   }
 
   async findAll(): Promise<Room[]> {

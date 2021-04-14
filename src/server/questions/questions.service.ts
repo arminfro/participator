@@ -28,22 +28,21 @@ export class QuestionsService {
     user: User,
   ): Promise<Question> {
     const question = await this.buildAndCreate(roomId, questionCreate, user);
-    return question;
+    return this.findOne(question.id);
   }
 
   async findAll(roomId: number): Promise<Question[]> {
     const room = await this.findRoom(roomId);
-    return await this.questionRepository.find({
+    return this.questionRepository.find({
       where: { room },
       relations: ['user', 'answers', 'fixAnswers'],
     });
   }
 
   async findOne(id: number): Promise<Question> {
-    const question = await this.questionRepository.findOne(id, {
+    return this.questionRepository.findOne(id, {
       relations: ['fixAnswers', 'room'],
     });
-    return question;
   }
 
   async update(id: number, questionUpdate: QuestionUpdate) {

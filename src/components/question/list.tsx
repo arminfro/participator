@@ -22,14 +22,17 @@ export default function QuestionList({ questions }: Props): ReactElement {
             key={question.id}
             datetime={
               <>
-                {formatDistance(question.createdAt, new Date(), {
-                  includeSeconds: true,
-                })}
+                {question.createdAt &&
+                  formatDistance(question.createdAt, new Date(), {
+                    includeSeconds: true,
+                  })}
                 {' ago'}
               </>
             }
             avatar={
-              <Avatar src={Faker.image.avatar()} alt={question.user.name} />
+              question.user && (
+                <Avatar src={Faker.image.avatar()} alt={question.user.name} />
+              )
             }
             content={
               <Link

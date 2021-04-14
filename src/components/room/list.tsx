@@ -17,9 +17,6 @@ export default function RoomList({ rooms }: Props): ReactElement {
           <Divider />
         </>
       )}
-      <Button type="primary">
-        <Link href="/rooms/new">New Room</Link>
-      </Button>
     </>
   );
 }

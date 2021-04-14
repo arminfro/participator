@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
+import { RoomCreate, RoomUpdate } from '../../types/room';
 import Form from '../utils/container/form/form';
 import { FormInputItem } from '../utils/container/form/input-item';
 import FormRadioGroupItem from '../utils/container/form/radio-group-item';
@@ -8,23 +8,15 @@ import { UseStruct } from '../utils/hooks/use-struct';
 
 interface Props<T> {
   room: UseStruct<T>;
-  roomId?: number; // present if `isEdit`
-  onCloseDrawer?: () => void;
+  onCloseDrawer: () => void;
 }
 
-export default function RoomForm<T>({
+export default function RoomForm<T = RoomUpdate | RoomCreate>({
   room,
-  roomId,
   onCloseDrawer,
 }: Props<T>): ReactElement {
-  const router = useRouter();
-
   const onSubmit = () => {
-    room.sync(() => {
-      onCloseDrawer
-        ? onCloseDrawer()
-        : router.push(`/rooms${roomId ? `/${roomId}` : ''}`);
-    });
+    onCloseDrawer();
   };
 
   return (
