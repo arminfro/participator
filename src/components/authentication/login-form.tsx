@@ -50,9 +50,13 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
       title={recoverPassword ? 'Password Recover' : 'Login'}
       extra={[
         recoverPassword ? (
-          <a onClick={() => setRecoverPassword(false)}>Login</a>
+          <a key="login" onClick={() => setRecoverPassword(false)}>
+            Login
+          </a>
         ) : (
-          <a onClick={() => setRecoverPassword(true)}>Password recover</a>
+          <a key="recover" onClick={() => setRecoverPassword(true)}>
+            Password recover
+          </a>
         ),
       ]}
     >
@@ -63,6 +67,7 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
           { type: 'input', label: 'E-Mail', name: 'email' },
           !recoverPassword && {
             type: 'input',
+            inputProps: { type: 'password' },
             label: 'Password',
             name: 'password',
           },

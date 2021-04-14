@@ -1,4 +1,11 @@
-import { Button, Form, Input, Radio } from 'antd';
+import {
+  FormItemProps as AntdFormItemProps,
+  Button,
+  Form,
+  Input,
+  InputProps,
+  Radio,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { ReactElement } from 'react';
 import { Failure } from 'superstruct';
@@ -6,7 +13,7 @@ import formItemValidator from '../funcs/form-item-validation';
 import sort from '../funcs/sort';
 import { UseStruct } from '../hooks/use-struct';
 
-interface FormItemProps {
+interface FormItemProps extends Exclude<AntdFormItemProps, 'label'> {
   name: string;
   validationErrors: Failure[];
   label?: string;
@@ -36,6 +43,7 @@ interface FormItemProp {
   name: string;
   label: string;
   type: Type;
+  inputProps?: InputProps;
   choices?: { value: any; label: string }[];
 }
 
@@ -55,19 +63,25 @@ interface FormInputItemProps<T> {
   name: string;
   label: string;
   struct: UseStruct<T>;
+  inputProps?: InputProps;
+  formItemProps?: Exclude<AntdFormItemProps, 'label'>;
 }
 export function FormInputItem<T>({
   name,
   label,
   struct,
+  inputProps = {},
+  formItemProps = {},
 }: FormInputItemProps<T>): ReactElement {
   return (
     <FormItem
+      {...formItemProps}
       name={name}
       label={label}
       validationErrors={struct.validationErrors}
     >
       <Input
+        {...inputProps}
         value={struct.get[name]}
         onChange={(e) => struct.set[name](e.target.value, false)}
       />
@@ -108,6 +122,7 @@ export default function FormContainer<T>({
                 {item.type === 'input' && (
                   <FormInputItem<T>
                     name={item.name}
+                    inputProps={item.inputProps}
                     label={item.label}
                     struct={struct}
                   />

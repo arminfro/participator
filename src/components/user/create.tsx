@@ -1,12 +1,10 @@
-import React, { ReactElement, SyntheticEvent, useState } from 'react';
 import Router from 'next/router';
-
+import React, { ReactElement } from 'react';
 import { User, UserCreate } from '../../types/user';
+import FormContainer from '../utils/container/form';
 import api, { apiLogin } from '../utils/funcs/api';
 import { useUserCreate } from '../utils/hooks/use-user';
 import { useStore } from '../utils/store/context';
-import Page from '../utils/container/page';
-import FormContainer from '../utils/container/form';
 
 interface Props {
   name?: string;
@@ -45,21 +43,29 @@ export default function UserCreateForm({
   };
 
   return (
-    <Page title={passwordResetId ? 'Reset Password' : 'Join Participator'}>
-      <FormContainer
-        onSubmit={onSubmit}
-        struct={user}
-        items={[
-          !passwordResetId && {
-            type: 'input',
-            label: 'Username',
-            name: 'name',
-          },
-          !passwordResetId && { type: 'input', label: 'E-Mail', name: 'email' },
-          { type: 'input', label: 'Password', name: 'pw1' },
-          { type: 'input', label: 'Password repeat', name: 'pw2' },
-        ]}
-      />
-    </Page>
+    <FormContainer
+      onSubmit={onSubmit}
+      struct={user}
+      items={[
+        !passwordResetId && {
+          type: 'input',
+          label: 'Username',
+          name: 'name',
+        },
+        !passwordResetId && { type: 'input', label: 'E-Mail', name: 'email' },
+        {
+          type: 'input',
+          inputProps: { type: 'password' },
+          label: 'Password',
+          name: 'pw1',
+        },
+        {
+          type: 'input',
+          inputProps: { type: 'password' },
+          label: 'Password repeat',
+          name: 'pw2',
+        },
+      ]}
+    />
   );
 }

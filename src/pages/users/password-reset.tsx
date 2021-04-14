@@ -8,7 +8,6 @@ interface Props {
   user: User;
 }
 
-// todo
 export default function PasswordResetSSR(props: Props): ReactElement {
   return <PasswordReset {...props} />;
 }
