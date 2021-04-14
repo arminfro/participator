@@ -1,6 +1,9 @@
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
-import FormContainer from '../utils/container/form';
+import Form from '../utils/container/form/form';
+import { FormInputItem } from '../utils/container/form/input-item';
+import FormRadioGroupItem from '../utils/container/form/radio-group-item';
+import FormTextareaItem from '../utils/container/form/textarea-item';
 import { UseStruct } from '../utils/hooks/use-struct';
 
 interface Props<T> {
@@ -26,23 +29,18 @@ export default function RoomForm<T>({
 
   return (
     <>
-      <FormContainer<T>
-        onSubmit={onSubmit}
-        struct={room}
-        items={[
-          { type: 'input', name: 'name', label: 'Name' },
-          {
-            type: 'radio',
-            name: 'openToJoin',
-            label: 'Open to Join',
-            choices: [
-              { value: true, label: 'Open to join' },
-              { value: false, label: 'Only on invitation' },
-            ],
-          },
-          { type: 'textarea', name: 'description', label: 'Description' },
-        ]}
-      />
+      <Form<T> onSubmit={onSubmit} struct={room}>
+        <FormInputItem label="Name" name="name" />
+        <FormRadioGroupItem
+          label="Join Policy"
+          name="openToJoin"
+          choices={[
+            { value: true, label: 'Open to join' },
+            { value: false, label: 'Only on invitation' },
+          ]}
+        />
+        <FormTextareaItem label="Description" name="description" />
+      </Form>
     </>
   );
 }

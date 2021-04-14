@@ -2,7 +2,8 @@ import { useRouter } from 'next/router';
 import React, { ReactElement, useState } from 'react';
 import { toast } from 'react-toastify';
 import { UserLogin } from '../../types/user';
-import FormContainer from '../utils/container/form';
+import Form from '../utils/container/form/form';
+import { FormInputItem } from '../utils/container/form/input-item';
 import Page from '../utils/container/page';
 import api, { apiLogin } from '../utils/funcs/api';
 import { useUserLogin } from '../utils/hooks/use-user';
@@ -60,19 +61,19 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
         ),
       ]}
     >
-      <FormContainer<UserLogin>
+      <Form<UserLogin>
         struct={user}
         onSubmit={recoverPassword ? onRecover : onLogin}
-        items={[
-          { type: 'input', label: 'E-Mail', name: 'email' },
-          !recoverPassword && {
-            type: 'input',
-            inputProps: { type: 'password' },
-            label: 'Password',
-            name: 'password',
-          },
-        ]}
-      />
+      >
+        <FormInputItem name="email" label="E-Mail" />
+        {!recoverPassword && (
+          <FormInputItem
+            inputProps={{ type: 'password' }}
+            name="password"
+            label="Password"
+          />
+        )}
+      </Form>
     </Page>
   );
 }

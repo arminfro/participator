@@ -1,7 +1,8 @@
 import Router from 'next/router';
 import React, { ReactElement } from 'react';
 import { User, UserCreate } from '../../types/user';
-import FormContainer from '../utils/container/form';
+import Form from '../utils/container/form/form';
+import { FormInputItem } from '../utils/container/form/input-item';
 import api, { apiLogin } from '../utils/funcs/api';
 import { useUserCreate } from '../utils/hooks/use-user';
 import { useStore } from '../utils/store/context';
@@ -43,29 +44,25 @@ export default function UserCreateForm({
   };
 
   return (
-    <FormContainer
-      onSubmit={onSubmit}
-      struct={user}
-      items={[
-        !passwordResetId && {
-          type: 'input',
-          label: 'Username',
-          name: 'name',
-        },
-        !passwordResetId && { type: 'input', label: 'E-Mail', name: 'email' },
-        {
-          type: 'input',
-          inputProps: { type: 'password' },
-          label: 'Password',
-          name: 'pw1',
-        },
-        {
-          type: 'input',
-          inputProps: { type: 'password' },
-          label: 'Password repeat',
-          name: 'pw2',
-        },
-      ]}
-    />
+    <Form onSubmit={onSubmit} struct={user}>
+      <>
+        {!passwordResetId && (
+          <>
+            <FormInputItem label="Username" name="name" />
+            <FormInputItem label="E-Mail" name="email" />
+          </>
+        )}
+        <FormInputItem
+          label="Password"
+          name="pw1"
+          inputProps={{ type: 'password' }}
+        />
+        <FormInputItem
+          label="Password reapeat"
+          name="pw2"
+          inputProps={{ type: 'password' }}
+        />
+      </>
+    </Form>
   );
 }

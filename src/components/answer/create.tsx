@@ -2,7 +2,9 @@ import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { AnswerCreate as IAnswerCreate } from '../../types/answer';
 import { Question } from '../../types/question';
-import FormContainer from '../utils/container/form';
+import Form from '../utils/container/form/form';
+import FormRadioGroupItem from '../utils/container/form/radio-group-item';
+import FormTextareaItem from '../utils/container/form/textarea-item';
 import { useAnswerCreate } from '../utils/hooks/use-answer';
 
 interface Props {
@@ -25,26 +27,21 @@ export default function AnswerCreate({
 
   return (
     <>
-      <FormContainer<IAnswerCreate>
-        onSubmit={onSubmit}
-        struct={answer}
-        items={[
-          question.answersFormat === 'fix' && {
-            type: 'radio',
-            name: 'fixAnswerId',
-            label: 'Choose one answer',
-            choices: question.fixAnswers.map((choice) => ({
+      <Form<IAnswerCreate> onSubmit={onSubmit} struct={answer}>
+        {question.answersFormat === 'fix' && (
+          <FormRadioGroupItem
+            label="Choose on answer"
+            name="fixAnswerId"
+            choices={question.fixAnswers.map((choice) => ({
               value: choice.id,
               label: choice.text,
-            })),
-          },
-          question.answersFormat === 'free' && {
-            type: 'textarea',
-            name: 'freeAnswer',
-            label: 'Type your Answer',
-          },
-        ]}
-      />
+            }))}
+          />
+        )}
+        {question.answersFormat === 'free' && (
+          <FormTextareaItem label="Type your answer" name="freeAnswer" />
+        )}
+      </Form>
     </>
   );
 }
