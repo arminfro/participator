@@ -1,110 +1,84 @@
+import { Button, Select } from 'antd';
 import React, { useState } from 'react';
-import { Room } from '../../types/room';
 import { User } from '../../types/user';
-import { useSwrMutateContext } from '../utils/context/swr-mutate-context';
 import api from '../utils/funcs/api';
 
 interface Props {
   allUsers: User[];
   joinedUsers: User[];
   roomId: number;
+  onCloseDrawer: () => void;
 }
 export default function RoomMemberManage({
   allUsers,
   joinedUsers,
   roomId,
+  onCloseDrawer,
 }: Props) {
   const [isInviting, setIsInviting] = useState(true);
-  const [input, setInput] = useState('');
-  const [searchResults, setSearchResults] = useState<User[]>([]);
-  const mutate = useSwrMutateContext<Room>();
-
-  const resetInputState = () => {
-    setInput('');
-    setSearchResults([]);
-  };
-
-  const onChangeInviting = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsInviting(e.target.checked);
-    resetInputState();
-  };
-
-  const onSearchUsers = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value;
-    if (!searchTerm) return resetInputState();
-
-    const regex = new RegExp(searchTerm, 'i');
-    setInput(searchTerm);
-    setSearchResults(
-      (isInviting ? allUsers : joinedUsers).filter(
-        (user) => user.email.match(regex) || user.name.match(regex),
-      ),
-    );
-  };
+  const [loading, setLoading] = useState(false);
+  const [chosenUser, setChosenUser] = useState<User>();
 
   const label = () => (isInviting ? 'Invite' : 'Kick');
 
-  const onChooseUser = (user: User) => {
-    if (window.confirm(`Are you sure you want to ${label()} ${user.name}`)) {
+  const relevantUsers = () => (isInviting ? allUsers : joinedUsers);
+
+  const onChangeActionSelect = (isInviting: string) => {
+    setChosenUser(undefined);
+    setIsInviting(isInviting === 'true');
+  };
+  const onChangeUserSelect = (userId: number) => {
+    setChosenUser(relevantUsers().find((user) => user.id === userId));
+  };
+
+  const onSubmit = () => {
+    if (
+      window.confirm(`Are you sure you want to ${label()} ${chosenUser.name}`)
+    ) {
       const action = isInviting ? 'addMember' : 'removeMember';
+      setLoading(true);
       api(
         'patch',
         `api/rooms/${roomId}/${action}`,
         () => {
-          resetInputState();
-          mutate[`api/rooms/${roomId}`]((currentRoom) => ({
-            ...currentRoom,
-            members:
-              action === 'addMember'
-                ? [...currentRoom.members, user]
-                : currentRoom.members.filter((member) => member.id !== user.id),
-          }));
+          setLoading(false);
+          setChosenUser(undefined);
+          onCloseDrawer();
         },
         {
-          [action]: user,
+          [action]: chosenUser,
         },
       );
     }
   };
 
   return (
-    <div className="fields">
-      <h4 className="ui dividing header">Member Manage</h4>
-      <div className="field">
-        <div className="ui search">
-          <div className="ui toggle checkbox">
-            <input
-              type="checkbox"
-              onChange={onChangeInviting}
-              checked={isInviting}
-            />
-            <label />
-          </div>
-          <div className="ui left icon input">
-            <input
-              type="text"
-              onChange={onSearchUsers}
-              value={input}
-              placeholder={`Search user to ${label()}...`}
-            />
-            <i className="users icon" />
-          </div>
-          {searchResults.length > 0 && (
-            <div className="results transition visible">
-              {searchResults.map((user) => (
-                <span
-                  onClick={() => onChooseUser(user)}
-                  key={user.id}
-                  className="result"
-                >
-                  {user.name}
-                  <p className="description">{user.email}</p>
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    <>
+      <Select
+        onChange={onChangeActionSelect}
+        value={String(isInviting)}
+        className="select-before"
+      >
+        <Select.Option value="true">Invite</Select.Option>
+        <Select.Option value="false">Kick</Select.Option>
+      </Select>
+      <Select
+        showSearch
+        style={{ width: 200 }}
+        placeholder="Select a person"
+        optionFilterProp="children"
+        value={chosenUser?.id}
+        onChange={onChangeUserSelect}
+      >
+        {(isInviting ? allUsers : joinedUsers).map((user) => (
+          <Select.Option key={user.id} value={user.id}>
+            {user.name}
+          </Select.Option>
+        ))}
+      </Select>
+      <Button loading={loading} onClick={onSubmit} disabled={!chosenUser}>
+        Submit
+      </Button>
+    </>
   );
 }

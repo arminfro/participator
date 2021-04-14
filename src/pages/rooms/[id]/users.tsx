@@ -20,21 +20,28 @@ export default function RoomUsers() {
           path={[{ name: 'Users', url: `/rooms/${room.id}/users` }]}
           extra={[
             <Can I="update" this={subject('Room', room)} key="can-i-update">
-              <Drawer action="Manage" subject="rooms users">
-                <Fetch<User[]> url={`api/users`}>
-                  {(allUsers) => (
-                    <RoomMemberManage
-                      allUsers={allUsers.filter(
-                        (aUser) =>
-                          ![room.admin, ...room.members].some(
-                            (jUser) => aUser.id === jUser.id,
-                          ),
-                      )}
-                      joinedUsers={room.members /* leave admin */}
-                      roomId={room.id}
-                    />
-                  )}
-                </Fetch>
+              <Drawer
+                action="Manage"
+                subject="rooms users"
+                contentWrapperStyle={{ width: 512 }}
+              >
+                {(onClose: () => void) => (
+                  <Fetch<User[]> url={`api/users`}>
+                    {(allUsers) => (
+                      <RoomMemberManage
+                        allUsers={allUsers.filter(
+                          (aUser) =>
+                            ![room.admin, ...room.members].some(
+                              (jUser) => aUser.id === jUser.id,
+                            ),
+                        )}
+                        joinedUsers={room.members /* leave admin */}
+                        roomId={room.id}
+                        onCloseDrawer={onClose}
+                      />
+                    )}
+                  </Fetch>
+                )}
               </Drawer>
             </Can>,
           ]}
