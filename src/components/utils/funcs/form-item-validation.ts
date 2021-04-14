@@ -11,7 +11,7 @@ export default function formItemValidator(
     validator: (rule) =>
       new Promise((resolve, reject) => {
         const errors = validationErrors.filter(
-          (failure) => failure.key === rule.field,
+          (failure) => failure.refinement === rule.field,
         );
         errors.length
           ? reject(errors.map((err) => err.message).join('\n'))

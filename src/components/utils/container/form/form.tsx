@@ -32,7 +32,11 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
       >
         {children}
         <AntdForm.Item wrapperCol={{ span: 14, offset: 4 }}>
-          <Button type="primary" htmlType="submit">
+          <Button
+            disabled={struct.validationErrors.length > 0}
+            type="primary"
+            htmlType="submit"
+          >
             Submit
           </Button>
         </AntdForm.Item>

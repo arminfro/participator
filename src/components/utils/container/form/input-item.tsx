@@ -18,11 +18,19 @@ export function FormInputItem<T>({
   const { struct } = useStructContext<T>();
   return (
     <FormItem {...formItemProps} name={name} label={label}>
-      <Input
-        {...inputProps}
-        value={struct.get[name]}
-        onChange={(e) => struct.set[name](e.target.value, false)}
-      />
+      {inputProps.type === 'password' ? (
+        <Input.Password
+          {...inputProps}
+          value={struct.get[name]}
+          onChange={(e) => struct.set[name](e.target.value, false)}
+        />
+      ) : (
+        <Input
+          {...inputProps}
+          value={struct.get[name]}
+          onChange={(e) => struct.set[name](e.target.value, false)}
+        />
+      )}
     </FormItem>
   );
 }
