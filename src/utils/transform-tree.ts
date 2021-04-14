@@ -8,13 +8,19 @@ interface Tree<T> {
 }
 
 export function transformDateString<T>(treeModel: T): T {
+  // guard empty string
+  if (!treeModel) return treeModel;
+
   let tree: TreeModel.Node<T>;
 
   const transform = (treeModel: T) => {
     try {
       tree = newTree<T>(treeModel);
     } catch (e) {
-      console.debug('catched, invalid data in transformDateString', treeModel);
+      console.debug(
+        'catched, invalid data in transformDateString',
+        JSON.stringify(treeModel),
+      );
       return treeModel;
     }
     tree.walk(null, (node) => {
