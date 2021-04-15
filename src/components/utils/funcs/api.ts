@@ -28,7 +28,7 @@ export default async function api<T>(
   path: string,
   callback: (data: T) => void | undefined = undefined,
   data = {},
-) {
+): Promise<T | void> {
   return axios({
     method: method,
     headers: { Authorization: `bearer ${getToken()}` },
@@ -39,9 +39,8 @@ export default async function api<T>(
       const data = transformDateString<T>(response.data);
       if (callback && response) {
         callback(data);
-      } else {
-        return data;
       }
+      return data;
     })
     .catch((error) => {
       if (!/token-to-user$/.test(error.config.url)) {

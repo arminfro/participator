@@ -30,6 +30,7 @@ export interface UseStruct<T> {
   set: StateSetters<T>;
   sync: (callback?: SetCallback<T>) => void;
   validationErrors: Failure[];
+  loading: boolean;
 }
 
 // param types
@@ -39,7 +40,7 @@ type States<T> = {
 
 type Validator<T> = (struct: T) => ValidationResult<T>;
 
-type Update<T> = (callback: SetCallback<T>, struct: T) => void;
+type Update<T> = (callback: SetCallback<T>, struct: T) => Promise<T | void>;
 
 interface StructOptions<T> {
   states: States<T>;
@@ -54,10 +55,10 @@ export function useStruct<T>({
   validator,
   update,
   autoSync = !!update,
-  autoValidate = !!validator,
 }: StructOptions<T>): UseStruct<T> {
   const [validationErrors, setValidationErrors] = useState<Failure[]>([]);
   const config = useStructConfigContext<T>();
+  const [loading, setLoading] = useState(false);
 
   const struct = useMemo(() => ({ get: {}, set: {} }), []) as UseStruct<T>;
 
@@ -76,10 +77,13 @@ export function useStruct<T>({
 
         const onValidUpdate = () => {
           if ((sync || autoSync) && update) {
-            update(callback, newStruct);
-            config.onRemoteUpdate && config.onRemoteUpdate(newStruct);
+            setLoading(true);
+            update(callback, newStruct).then((data) => {
+              config.onRemoteUpdate && config.onRemoteUpdate(data || newStruct);
+              config.onLocalUpdate && config.onLocalUpdate(newStruct);
+              setLoading(false);
+            });
           }
-          config.onLocalUpdate && config.onLocalUpdate(newStruct);
         };
 
         const onValidate = (): T | void => {
@@ -138,10 +142,15 @@ export function useStruct<T>({
           ? () => console.error('sync called without update function')
           : (callback = noop) => {
               if (validator(reducedKeys.get)) {
-                update && update(callback, reducedKeys.get);
-                config.onRemoteUpdate && config.onRemoteUpdate(reducedKeys.get);
+                setLoading(true);
+                update(callback, reducedKeys.get).then((data) => {
+                  config.onRemoteUpdate &&
+                    config.onRemoteUpdate(data || reducedKeys.get);
+                  setLoading(false);
+                });
               }
             },
+        loading,
         validationErrors,
       } as UseStruct<T>, // todo, better way to express
     );
@@ -149,6 +158,7 @@ export function useStruct<T>({
     return reducedKeys;
   }, [
     config,
+    loading,
     struct,
     buildSetter,
     update,

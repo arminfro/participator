@@ -34,7 +34,7 @@ export default function QuestionIndex(): ReactElement {
                   key={'question-update'}
                   contentWrapperStyle={{ width: 512 }}
                   action="Edit"
-                  subject="Room"
+                  subject="Question"
                 >
                   {(onClose: () => void) => (
                     <QuestionUpdate

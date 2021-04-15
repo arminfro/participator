@@ -20,6 +20,7 @@ export function FormInputItem<T>({
     <FormItem {...formItemProps} name={name} label={label}>
       {inputProps.type === 'password' ? (
         <Input.Password
+          autoComplete="current-password"
           {...inputProps}
           value={struct.get[name]}
           onChange={(e) => struct.set[name](e.target.value, false)}
