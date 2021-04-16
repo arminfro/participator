@@ -5,7 +5,7 @@ import formItemValidator from '../../funcs/form-item-validation';
 
 interface FormItemProps extends Exclude<AntdFormItemProps, 'label'> {
   name?: string;
-  label?: string;
+  label?: string | ReactElement | ReactElement[];
   children: ReactElement | ReactElement[];
 }
 

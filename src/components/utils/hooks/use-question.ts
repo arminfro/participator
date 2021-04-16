@@ -12,6 +12,7 @@ import {
   validateQuestionUpdate,
 } from '../../../types/question.validation';
 import api from '../funcs/api';
+import sort from '../funcs/sort';
 import { useStruct, UseStruct } from './use-struct';
 
 export function useQuestionUpdate(
@@ -20,10 +21,14 @@ export function useQuestionUpdate(
   question: Question,
   autoSync = false,
 ): UseStruct<QuestionUpdate> {
+  const sortedQuestion = {
+    ...question,
+    fixAnswers: sort(question.fixAnswers, 'text'),
+  };
   const states = {
     text: useState(question.text),
     answersFormat: useState(question.answersFormat),
-    fixAnswers: useState(question.fixAnswers),
+    fixAnswers: useState(sortedQuestion.fixAnswers),
   };
 
   return useStruct<QuestionUpdate>({
@@ -39,7 +44,7 @@ export function useQuestionUpdate(
       }),
     autoSync,
     isEdit: true,
-    initialValues: pick(question, 'text', 'answersFormat', 'fixAnswers'),
+    initialValues: pick(sortedQuestion, 'text', 'answersFormat', 'fixAnswers'),
   });
 }
 

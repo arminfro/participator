@@ -1,4 +1,4 @@
-import { forEach, List } from 'lodash';
+import { forEach } from 'lodash';
 import {
   Dispatch,
   SetStateAction,

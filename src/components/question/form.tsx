@@ -1,8 +1,7 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { Button, Divider, Space } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
+import { Button, Divider, Input, Space } from 'antd';
 import { useRouter } from 'next/router';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
 import Form from '../utils/container/form/form';
 import { FormItem } from '../utils/container/form/item';
@@ -58,12 +57,10 @@ export default function QuestionForm<T = QuestionCreate | QuestionUpdate>({
     ]);
   };
 
-  const onRemoveFixAnswer = () => {
+  const onRemoveFixAnswer = (index: number) => {
     question.set.fixAnswers((currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
-      if (copyFixAnswers.length > 2) {
-        copyFixAnswers.pop();
-      }
+      copyFixAnswers.splice(index, 1);
       return copyFixAnswers;
     });
   };
@@ -102,19 +99,27 @@ export default function QuestionForm<T = QuestionCreate | QuestionUpdate>({
                 </Button>
               ))}
             </FormItem>
-            <FormItem label="Answers">
-              <Button style={{ marginLeft: 4 }} onClick={onAddFixAnswer}>
-                <PlusCircleOutlined />
-              </Button>
-              <Button onClick={onRemoveFixAnswer}>
-                <MinusCircleOutlined />
-              </Button>
+            <FormItem
+              label={
+                <span>
+                  Answers
+                  <PlusCircleOutlined
+                    style={{ marginLeft: '.5em' }}
+                    onClick={onAddFixAnswer}
+                  />
+                </span>
+              }
+            >
               <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 {question.get.fixAnswers.map((fixAnswer, index) => (
                   <Space key={index} style={{ margin: 4, width: 188 }}>
-                    <TextArea
-                      autoSize
+                    <Input
                       placeholder={`Answer No.${index + 1}`}
+                      addonAfter={
+                        <MinusCircleOutlined
+                          onClick={() => onRemoveFixAnswer(index)}
+                        />
+                      }
                       value={fixAnswer.text}
                       onChange={(e) => onChangeFixAnswer(e.target.value, index)}
                     />
