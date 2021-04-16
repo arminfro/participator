@@ -20,13 +20,14 @@ import { SetCallback, useStruct, UseStruct } from './use-struct';
 //   return useStruct<AnswerUpdate>({
 //     states,
 //     validator: (answer: Answer) => validateAnswerUpdate(answer),
-//     update: (callback: SetCallback<AnswerUpdate>, newAnswer: Answer) =>
+//     remoteUpdate: (newAnswer: Answer) =>
 //       api(
 //         'patch',
 //         `api/rooms/${roomId}/questions/${questionId}/answers/${answerId}`,
-//         callback,
 //         newAnswer,
-//       ),
+//       ).then((data) => {
+//         if (data) return data;
+//       }),
 //     autoSync,
 //     autoValidate,
 //   });
@@ -48,12 +49,13 @@ export function useAnswerCreate(
     autoValidate,
     validator: (answer) => validateAnswerCreate(answer),
     autoSync,
-    update: (callback: SetCallback<AnswerCreate>, newAnswer: Answer) =>
+    remoteUpdate: (newAnswer: Answer) =>
       api<AnswerCreate>(
         'post',
         `api/rooms/${roomId}/questions/${questionId}/answers`,
-        callback,
         newAnswer,
-      ),
+      ).then((data) => {
+        if (data) return data;
+      }),
   });
 }

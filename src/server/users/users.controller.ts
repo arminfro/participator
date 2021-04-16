@@ -29,16 +29,6 @@ export class UsersController {
     this.next.render(`/users/new`, req, res);
   }
 
-  @Get(':id/edit')
-  @UseGuards(JwtAuthGuard)
-  public async showEdit(
-    @Param('id', ParseIntPipe) id: number,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
-  ): Promise<void> {
-    await this.next.render(`/users/${id}/edit`, req, res);
-  }
-
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async findOne(

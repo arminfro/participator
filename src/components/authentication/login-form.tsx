@@ -15,36 +15,27 @@ interface Props {
 
 export default function LoginForm({ redirectUrl }: Props): ReactElement {
   const router = useRouter();
-  const { dispatch } = useStore();
   const [recoverPassword, setRecoverPassword] = useState(false);
 
   const user = useUserLogin();
 
   const onRecover = () => {
-    api(
-      'post',
-      'login/password/recover',
+    api('post', 'login/password/recover', { email: user.get.email }).then(
       () => {
         toast.success(
           'Password recovery activated, please see your E-Mail inbox',
         );
         setRecoverPassword(false);
       },
-      { email: user.get.email },
     );
   };
 
-  const onLogin = () => {
-    apiLogin(
-      dispatch,
-      user.get,
-      () => router.push(redirectUrl || '/users'),
-      () => {
-        toast.error('Login failed');
-        user.set.password('');
-      },
-    );
-  };
+  const onLogin = (promise: Promise<UserLogin>) =>
+    promise
+      .then(() => {
+        router.push(redirectUrl || '/users');
+      })
+      .catch(() => user.set.password(''));
 
   return (
     <Page
@@ -61,10 +52,7 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
         ),
       ]}
     >
-      <Form<UserLogin>
-        struct={user}
-        onSubmit={recoverPassword ? onRecover : onLogin}
-      >
+      <Form<UserLogin> struct={user} onSubmit={onLogin}>
         <FormInputItem name="email" label="E-Mail" />
         {!recoverPassword && (
           <FormInputItem

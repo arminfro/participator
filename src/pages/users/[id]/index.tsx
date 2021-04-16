@@ -18,7 +18,7 @@ export default function UserIndex(): ReactElement {
 
   const onDelete = (userId: number) => {
     if (window.confirm('Are you sure you want to delete your account?')) {
-      api('DELETE', `api/users/${userId}`, () => {
+      api('DELETE', `api/users/${userId}`).then(() => {
         dispatch({ type: 'LOGOUT' });
         removeToken();
         router.push('/');

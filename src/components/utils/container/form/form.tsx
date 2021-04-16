@@ -1,16 +1,17 @@
 import { Button, Form as AntdForm } from 'antd';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { StructProvider } from '../../context/struct-context';
 import { UseStruct } from '../../hooks/use-struct';
 
 interface FormProps<T> {
   struct: UseStruct<T>;
-  onSubmit?: (data: T) => void;
+  onSubmit: (data: Promise<T>) => Promise<void>;
   children: ReactElement | ReactElement[];
 }
 
 export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
   const [form] = AntdForm.useForm();
+  const [loading, setLoading] = useState(false);
 
   return (
     <StructProvider struct={struct}>
@@ -20,11 +21,10 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
         initialValues={struct.get}
         onFinish={() => {
           if (struct.sync) {
-            struct.sync(() => {
-              onSubmit && onSubmit(struct.get);
-            });
-          } else {
-            onSubmit && onSubmit(struct.get);
+            setLoading(true);
+            onSubmit(
+              struct.sync ? struct.sync() : Promise.resolve(struct.get),
+            ).finally(() => setLoading(false)); //.catch(() => struct?.reset());
           }
         }}
       >
@@ -32,6 +32,7 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
         <AntdForm.Item>
           <Button
             disabled={struct.validationErrors.length > 0}
+            loading={loading}
             type="primary"
             htmlType="submit"
           >

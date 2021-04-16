@@ -26,7 +26,6 @@ export async function swrApi(path: string) {
 export default async function api<T>(
   method: HttpMethod,
   path: string,
-  callback: (data: T) => void | undefined = undefined,
   data = {},
 ): Promise<T | void> {
   return axios({
@@ -36,47 +35,24 @@ export default async function api<T>(
     data,
   })
     .then((response: AxiosResponse<T>) => {
-      const data = transformDateString<T>(response.data);
-      if (callback && response) {
-        callback(data);
-      }
-      return data;
+      return transformDateString<T>(response.data);
     })
     .catch((error) => {
       if (!/token-to-user$/.test(error.config.url)) {
-        if (error.response?.data?.message) {
-          toast.error(error.response.data.message);
-        } else {
-          throw error;
-        }
+        throw error;
       }
     });
 }
 
 export async function apiLogin(
-  dispatch: Dispatch<Actions>,
   payload: UserLogin,
-  successCallback: () => void = null,
-  failureCallback: () => void = null,
-): Promise<void> {
-  api<{ access_token: string; user: User }>(
+): Promise<{ access_token: string; user: User }> {
+  return api<{ access_token: string; user: User }>(
     'POST',
     'login',
-    ({ access_token, user }) => {
-      if (access_token && isUser(user)) {
-        dispatch({ type: 'LOGIN', user });
-        setToken(access_token);
-        successCallback && successCallback();
-      } else {
-        failureCallback && failureCallback();
-      }
-    },
     payload,
-  ).catch((err) => {
-    if (failureCallback) {
-      failureCallback();
-    } else {
-      throw err;
-    }
+  ).then((payload) => {
+    if (payload && isUser(payload.user)) return payload;
+    return Promise.reject('login failed');
   });
 }

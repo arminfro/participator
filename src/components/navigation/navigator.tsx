@@ -27,14 +27,16 @@ export default function Navigator() {
 
   useEffect(() => {
     if (!userFetched) {
-      api<User>('get', 'api/users/token-to-user', (user) => {
-        if (isUser(user)) {
-          console.debug('dispatch LOGIN:', user.name);
-          dispatch({ type: 'LOGIN', user });
-        } else {
-          console.error('not valid token');
-        }
-      }).finally(() => setIsLoading(false));
+      api<User>('get', 'api/users/token-to-user')
+        .then((user) => {
+          if (user && isUser(user)) {
+            console.debug('dispatch LOGIN:', user.name);
+            dispatch({ type: 'LOGIN', user });
+          } else {
+            console.error('not valid token');
+          }
+        })
+        .finally(() => setIsLoading(false));
     }
   }, [dispatch, userFetched]);
 

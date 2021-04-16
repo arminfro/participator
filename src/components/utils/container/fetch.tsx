@@ -29,7 +29,7 @@ function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
   const [localStorage] = useLocalStorage<T>(keys.join());
   const swrConfig: ConfigInterface = {
     onError: (err: Error) => {
-      if (isDev()) toast.error(err);
+      // if (isDev()) toast.error(err);
     },
   };
   if (localStorage) {

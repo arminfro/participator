@@ -11,10 +11,13 @@ interface Props {
 }
 
 export default function UserEditForm(props: Props): ReactElement {
-  const user = useUserUpdate(props.user.id, props.user, true, true);
+  const user = useUserUpdate(props.user.id, props.user);
+
+  const onSubmit = (promise: Promise<User>) =>
+    promise.then(props.onCloseDrawer);
 
   return (
-    <Form onSubmit={props.onCloseDrawer} struct={user}>
+    <Form onSubmit={onSubmit} struct={user}>
       <FormInputItem label="User name" name="name" />
       <FormSwitchItem label="Hand up" name="hasHandUp" />
       <FormSwitchItem label="Active" name="active" />

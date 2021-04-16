@@ -19,11 +19,12 @@ export default function AnswerCreate({
   const router = useRouter();
   const answer = useAnswerCreate(roomId, question.id);
 
-  const onSubmit = () => {
-    if (answer.get.fixAnswerId || answer.get.freeAnswer) {
-      router.push(`/rooms/${roomId}/questions/${question.id}`);
-    }
-  };
+  const onSubmit = (promise: Promise<IAnswerCreate>) =>
+    promise.then(() => {
+      if (answer.get.fixAnswerId || answer.get.freeAnswer) {
+        router.push(`/rooms/${roomId}/questions/${question.id}`);
+      }
+    });
 
   return (
     <>

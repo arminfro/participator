@@ -15,10 +15,7 @@ export default function RoomForm<T = RoomUpdate | RoomCreate>({
   room,
   onCloseDrawer,
 }: Props<T>): ReactElement {
-  const onSubmit = () => {
-    onCloseDrawer();
-  };
-
+  const onSubmit = (promise: Promise<T>) => promise.then(onCloseDrawer);
   return (
     <>
       <Form<T> onSubmit={onSubmit} struct={room}>

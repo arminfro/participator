@@ -4,7 +4,6 @@ import TextArea from 'antd/lib/input/TextArea';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
-import FormContainer from '../utils/container/form';
 import Form from '../utils/container/form/form';
 import { FormItem } from '../utils/container/form/item';
 import FormRadioGroupItem from '../utils/container/form/radio-group-item';
@@ -15,7 +14,7 @@ interface Props {
   question: UseStruct<QuestionCreate | QuestionUpdate>;
   roomId: number;
   questionId?: number;
-  onCloseDrawer?: () => void;
+  onCloseDrawer: () => void;
 }
 
 const presets = [
@@ -36,7 +35,7 @@ const presets = [
   },
 ];
 
-export default function QuestionForm({
+export default function QuestionForm<T = QuestionCreate | QuestionUpdate>({
   question,
   roomId,
   questionId,
@@ -69,12 +68,13 @@ export default function QuestionForm({
     });
   };
 
-  const onSubmit = () => {
-    onCloseDrawer && onCloseDrawer();
-    router.push(
-      `/rooms/${roomId}/questions${questionId ? `/${questionId}` : ''}`,
-    );
-  };
+  const onSubmit = (promise: Promise<T>) =>
+    promise.then(() => {
+      onCloseDrawer();
+      router.push(
+        `/rooms/${roomId}/questions${questionId ? `/${questionId}` : ''}`,
+      );
+    });
 
   return (
     <>

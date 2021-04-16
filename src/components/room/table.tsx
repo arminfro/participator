@@ -33,15 +33,11 @@ export default function RoomTable({ rooms }: Props) {
   const onJoin = (event: SyntheticEvent, roomId: number) => {
     event.preventDefault();
     const data: RoomUpdate = { addMember: user };
-    api<Room>(
-      'patch',
-      `api/rooms/${roomId}/addMember`,
-      () =>
-        onGoToRoom(
-          rooms.find((r) => r.id === roomId),
-          true,
-        ),
-      data,
+    api<Room>('patch', `api/rooms/${roomId}/addMember`, data).then(() =>
+      onGoToRoom(
+        rooms.find((r) => r.id === roomId),
+        true,
+      ),
     );
   };
 

@@ -37,18 +37,13 @@ export default function RoomMemberManage({
     ) {
       const action = isInviting ? 'addMember' : 'removeMember';
       setLoading(true);
-      api(
-        'patch',
-        `api/rooms/${roomId}/${action}`,
-        () => {
-          setLoading(false);
-          setChosenUser(undefined);
-          onCloseDrawer();
-        },
-        {
-          [action]: chosenUser,
-        },
-      );
+      api('patch', `api/rooms/${roomId}/${action}`, {
+        [action]: chosenUser,
+      }).finally(() => {
+        setLoading(false);
+        setChosenUser(undefined);
+        onCloseDrawer();
+      });
     }
   };
 

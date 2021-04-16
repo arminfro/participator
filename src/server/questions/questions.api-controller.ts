@@ -46,7 +46,7 @@ export class QuestionsApiController {
     @Param('id') id: string,
     @Body(new QuestionUpdatePipe()) questionUpdate: QuestionUpdate,
   ): Promise<Question> {
-    return await this.questionsService.update(+id, questionUpdate);
+    return this.questionsService.update(+id, questionUpdate);
   }
 
   @Delete(':id')

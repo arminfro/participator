@@ -5,6 +5,7 @@ import Form from '../utils/container/form/form';
 import { FormInputItem } from '../utils/container/form/input-item';
 import { FormItem } from '../utils/container/form/item';
 import api, { apiLogin } from '../utils/funcs/api';
+import { setToken } from '../utils/funcs/token';
 import { useUserCreate } from '../utils/hooks/use-user';
 import { useStore } from '../utils/store/context';
 
@@ -26,23 +27,20 @@ export default function UserCreateForm({
 
   const { dispatch } = useStore();
 
-  const onSubmit = (userCreate: UserCreate) => {
+  const onSubmit = () =>
     api<User>(
       passwordResetId ? 'PATCH' : 'POST',
       passwordResetId ? `api/users/${userId}/password-reset` : 'api/users',
-      (createdUser: User) => {
-        console.log('createdUser', createdUser);
-        return apiLogin(
-          dispatch,
-          { email: userCreate.email, password: userCreate.pw1 },
-          () => {
-            Router.push(`/users/${createdUser.id}`);
-          },
-        );
-      },
-      passwordResetId ? { ...userCreate, passwordResetId } : userCreate,
-    );
-  };
+      passwordResetId ? { ...user.get, passwordResetId } : user.get,
+    ).then(async (createdUser: User) => {
+      const login = await apiLogin({
+        email: user.get.email,
+        password: user.get.pw1,
+      });
+      dispatch({ type: 'LOGIN', user: login.user });
+      setToken(login.access_token);
+      Router.push(`/users/${createdUser.id}`);
+    });
 
   const equalPwFailure = user.validationErrors.find(
     (failure) => failure.refinement === 'equalPws',

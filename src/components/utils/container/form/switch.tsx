@@ -16,7 +16,11 @@ export function FormSwitchItem<T>({
   const { struct } = useStructContext<T>();
   return (
     <FormItem label={label} name={name}>
-      <Switch {...switchProps} checked={Boolean(struct.get[name])} />
+      <Switch
+        {...switchProps}
+        onChange={(value) => struct.set[name](value)}
+        checked={Boolean(struct.get[name])}
+      />
     </FormItem>
   );
 }

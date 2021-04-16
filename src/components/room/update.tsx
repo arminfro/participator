@@ -13,11 +13,5 @@ export default function RoomUpdate({
   onCloseDrawer,
 }: Props): ReactElement {
   const roomUpdate = useRoomUpdate(room.id, room);
-  return (
-    <RoomForm
-      onCloseDrawer={onCloseDrawer}
-      room={roomUpdate}
-      roomId={room.id}
-    />
-  );
+  return <RoomForm onCloseDrawer={onCloseDrawer} room={roomUpdate} />;
 }

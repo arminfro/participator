@@ -41,7 +41,7 @@ export class QuestionsService {
 
   async findOne(id: number): Promise<Question> {
     return this.questionRepository.findOne(id, {
-      relations: ['fixAnswers', 'room'],
+      relations: ['fixAnswers', 'room', 'user'],
     });
   }
 
@@ -62,8 +62,8 @@ export class QuestionsService {
         this.createFixAnswers(newFixAnswers, question);
       }
     }
-    await this.questionRepository.update(id, questionUpdateStripped);
-    return question;
+    this.questionRepository.update(id, questionUpdateStripped);
+    return this.findOne(id);
   }
 
   async remove(id: number): Promise<UpdateResult> {

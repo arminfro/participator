@@ -20,12 +20,11 @@ export function useRoomUpdate(
       openToJoin: useState(room.openToJoin),
     },
     validator: useCallback(validateRoomUpdate, []),
-    update: useCallback(
-      (callback: SetCallback<RoomUpdate>, newRoom: Room) => {
-        return api('patch', `api/rooms/${roomId}`, callback, newRoom);
-      },
-      [roomId],
-    ),
+    remoteUpdate: (newRoom: Room) =>
+      api('patch', `api/rooms/${roomId}`, newRoom).then((data) => {
+        if (data) return data;
+      }),
+
     autoSync,
     autoValidate,
   });
@@ -46,7 +45,9 @@ export function useRoomCreate(
     autoValidate,
     validator: (room) => validateRoomCreate(room),
     autoSync,
-    update: (callback: SetCallback<RoomCreate>, newRoom: Room) =>
-      api<RoomCreate>('post', `api/rooms`, callback, newRoom),
+    remoteUpdate: (newRoom: Room) =>
+      api<RoomCreate>('post', `api/rooms`, newRoom).then((data) => {
+        if (data) return data;
+      }),
   });
 }

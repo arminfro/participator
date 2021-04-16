@@ -51,7 +51,8 @@ export class UsersService {
     if (userUpdate.randomGroup !== undefined)
       user.randomGroup = userUpdate.randomGroup;
     if (userUpdate.active !== undefined) user.active = userUpdate.active;
-    return await user.save();
+    user.save();
+    return user;
   }
 
   async delete(id: number): Promise<DeleteResult> {

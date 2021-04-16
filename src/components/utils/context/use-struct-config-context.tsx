@@ -10,26 +10,25 @@ import { ValidationResult } from '../../../types/utils';
 import { transformDateString } from '../../../utils/transform-tree';
 import { useSwrMutateContext } from './swr-mutate-context';
 
-interface UseStructConfigProps<T> {
-  // config: UseStructContext<T>;
+interface UseStructConfigProps {
   children: ReactElement | ReactElement[];
 }
 
-interface UseStructContext<T> {
+interface UseStructContext<T, P = T> {
   onValidate?: (validationResult: ValidationResult<T>) => void;
-  onLocalUpdate?: (data: T) => void;
-  onRemoteUpdate?: (data: T) => void;
+  onLocalUpdate?: (data: P | T) => void;
+  onRemoteUpdate?: (data: P | T) => void;
 }
 
 const UseStructContext = createContext({} as UseStructContext<any>);
 
-export function useStructConfigContext<T>(): UseStructContext<T> {
-  return useContext<UseStructContext<T>>(UseStructContext);
+export function useStructConfigContext<T, P = T>(): UseStructContext<T, P> {
+  return useContext<UseStructContext<T, P>>(UseStructContext);
 }
 
 export function UseStructConfigProvider<T>({
   children,
-}: UseStructConfigProps<T>): ReactElement {
+}: UseStructConfigProps): ReactElement {
   const mutate = useSwrMutateContext();
 
   const onRemoteUpdate = useCallback(

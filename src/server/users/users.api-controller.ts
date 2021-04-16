@@ -46,7 +46,6 @@ export class UsersApiController {
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<User | undefined> {
-    console.log('id in findOne User', id);
     return await this.usersService.findOne(id, {
       relations: ['ownedRooms', 'joinedRooms'],
     });
@@ -62,13 +61,12 @@ export class UsersApiController {
   }
 
   @Patch(':id')
-  @HttpCode(204)
   @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.user))
   async editOne(
     @UserDecorator() user: User,
     @Body(new UserUpdatePipe()) userUpdate: UserUpdate,
-  ): Promise<void> {
-    await this.usersService.update(user.id, userUpdate);
+  ) {
+    return this.usersService.update(user.id, userUpdate);
   }
 
   @Delete(':id')

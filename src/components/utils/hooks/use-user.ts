@@ -1,4 +1,7 @@
+import { Router } from 'next/router';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { noop } from '../../../constants';
 import { User, UserCreate, UserLogin, UserUpdate } from '../../../types/user';
 import {
   validateUserCreate,
@@ -6,7 +9,9 @@ import {
   validateUserUpdate,
 } from '../../../types/user.validation';
 import { ValidationResult } from '../../../types/utils';
-import api from '../funcs/api';
+import api, { apiLogin } from '../funcs/api';
+import { setToken } from '../funcs/token';
+import { useStore } from '../store/context';
 import { SetCallback, useStruct, UseStruct } from './use-struct';
 
 export function useUserUpdate(
@@ -26,8 +31,14 @@ export function useUserUpdate(
     autoValidate: withValidation,
     validator: (user) => validateUserUpdate(user),
     autoSync,
-    update: (callback: SetCallback<UserUpdate>, newUser: User) =>
-      api<UserUpdate>('PATCH', `api/users/${userId}`, callback, newUser),
+    remoteUpdate: async (newUser) => {
+      const user = await api<UserUpdate>(
+        'PATCH',
+        `api/users/${userId}`,
+        newUser,
+      );
+      if (user) return user;
+    },
   });
 }
 
@@ -37,10 +48,22 @@ export function useUserLogin(): UseStruct<UserLogin> {
     password: useState(''),
   };
 
-  return useStruct<UserLogin>({
+  const { dispatch } = useStore();
+
+  return useStruct<UserLogin, User>({
     states,
     validator: validateUserLogin,
     autoValidate: false,
+    remoteUpdate: async (newUser) => {
+      try {
+        const { user, access_token } = await apiLogin(newUser);
+        dispatch({ type: 'LOGIN', user });
+        setToken(access_token);
+      } catch (err) {
+        toast.error(err);
+        return await Promise.reject(err);
+      }
+    },
   });
 }
 

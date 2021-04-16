@@ -29,13 +29,14 @@ export function useQuestionUpdate(
   return useStruct<QuestionUpdate>({
     states,
     validator: (question: Question) => validateQuestionUpdate(question),
-    update: (callback: SetCallback<QuestionUpdate>, newQuestion: Question) =>
+    remoteUpdate: (newQuestion: Question) =>
       api(
         'patch',
         `api/rooms/${roomId}/questions/${questionId}`,
-        callback,
         newQuestion,
-      ),
+      ).then((data) => {
+        if (data) return data;
+      }),
     autoSync,
     autoValidate,
   });
@@ -57,12 +58,13 @@ export function useQuestionCreate(
     autoValidate,
     validator: (question) => validateQuestionCreate(question),
     autoSync,
-    update: (callback: SetCallback<QuestionCreate>, newQuestion: Question) =>
+    remoteUpdate: (newQuestion: Question) =>
       api<QuestionCreate>(
         'post',
         `api/rooms/${roomId}/questions`,
-        callback,
         newQuestion,
-      ),
+      ).then((data) => {
+        if (data) return data;
+      }),
   });
 }

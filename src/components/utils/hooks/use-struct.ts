@@ -6,7 +6,6 @@ import {
   useState,
 } from 'react';
 import { Failure } from 'superstruct';
-import { noop } from '../../../constants';
 import { ValidationResult } from '../../../types/utils';
 import { useStructConfigContext } from '../context/use-struct-config-context';
 
@@ -28,9 +27,8 @@ type StateSetters<T> = {
 export interface UseStruct<T> {
   get: StateGetters<T>;
   set: StateSetters<T>;
-  sync: (callback?: SetCallback<T>) => void;
+  sync: () => Promise<T>;
   validationErrors: Failure[];
-  loading: boolean;
 }
 
 // param types
@@ -40,35 +38,44 @@ type States<T> = {
 
 type Validator<T> = (struct: T) => ValidationResult<T>;
 
-type Update<T> = (callback: SetCallback<T>, struct: T) => Promise<T | void>;
+type RemoteUpdate<T, P> = (struct: T) => Promise<P>;
 
-interface StructOptions<T> {
+interface StructOptions<T, P> {
   states: States<T>;
   validator?: Validator<T>;
-  update?: Update<T>;
+  remoteUpdate?: RemoteUpdate<T, P>;
   autoSync?: boolean;
   autoValidate?: boolean;
 }
 
-export function useStruct<T>({
+export function useStruct<T, P = T>({
   states,
   validator,
-  update,
-  autoSync = !!update,
-}: StructOptions<T>): UseStruct<T> {
+  remoteUpdate,
+  autoSync = false,
+}: StructOptions<T, P>): UseStruct<T> {
   const [validationErrors, setValidationErrors] = useState<Failure[]>([]);
-  const config = useStructConfigContext<T>();
-  const [loading, setLoading] = useState(false);
+  const config = useStructConfigContext<T, P>();
 
   const struct = useMemo(() => ({ get: {}, set: {} }), []) as UseStruct<T>;
 
+  const remoteUpdateWrapper = useCallback(
+    (newStruct: T) =>
+      (remoteUpdate ? remoteUpdate : Promise.resolve)(newStruct).then(
+        (data: T | P | void) => {
+          if (data) {
+            config.onRemoteUpdate && config.onRemoteUpdate(data);
+            config.onLocalUpdate && config.onLocalUpdate(data);
+            return data;
+          }
+        },
+      ),
+    [config, remoteUpdate],
+  );
+
   const buildSetter = useCallback(
     (setter: Dispatch<SetStateAction<Value<T>>>, key: string) => {
-      const onUpdate = (
-        newValue: Value<T>,
-        sync: boolean,
-        callback: SetCallback<T>,
-      ): Value<T> => {
+      const onUpdate = (newValue: Value<T>, sync: boolean): Value<T> => {
         const newStruct = { ...struct.get, [key]: newValue };
 
         const onInvalidUpdate = () => {
@@ -76,13 +83,10 @@ export function useStruct<T>({
         };
 
         const onValidUpdate = () => {
-          if ((sync || autoSync) && update) {
-            setLoading(true);
-            update(callback, newStruct).then((data) => {
-              config.onRemoteUpdate && config.onRemoteUpdate(data || newStruct);
-              config.onLocalUpdate && config.onLocalUpdate(newStruct);
-              setLoading(false);
-            });
+          if (sync || autoSync) {
+            remoteUpdateWrapper(newStruct);
+          } else {
+            onInvalidUpdate();
           }
         };
 
@@ -105,24 +109,29 @@ export function useStruct<T>({
 
       return (
         setStateAction: SetStateAction<Value<T>>,
-        sync: boolean = !!update && autoSync,
-        callback: SetCallback<T> = noop,
+        doRemoteUpdate: boolean = !!remoteUpdate && autoSync,
       ) => {
-        // todo, return promise
         if (setStateAction instanceof Function) {
           setter((currentValue) => {
             const newValue = setStateAction(currentValue);
-            const newStruct = onUpdate(newValue, sync, callback);
+            const newStruct = onUpdate(newValue, doRemoteUpdate);
             return newStruct;
           });
         } else {
           const newValue = setStateAction;
-          const newStruct = onUpdate(newValue, sync, callback);
+          const newStruct = onUpdate(newValue, doRemoteUpdate);
           setter(newStruct);
         }
       };
     },
-    [autoSync, validator, update, struct.get, config],
+    [
+      autoSync,
+      validator,
+      remoteUpdateWrapper,
+      remoteUpdate,
+      struct.get,
+      config,
+    ],
   );
 
   const structBuilt = useMemo(() => {
@@ -138,33 +147,23 @@ export function useStruct<T>({
       },
       {
         ...struct,
-        sync: !update
-          ? () => console.error('sync called without update function')
-          : (callback = noop) => {
-              if (validator(reducedKeys.get)) {
-                setLoading(true);
-                update(callback, reducedKeys.get).then((data) => {
-                  config.onRemoteUpdate &&
-                    config.onRemoteUpdate(data || reducedKeys.get);
-                  setLoading(false);
-                });
-              }
-            },
-        loading,
+        sync: async () => {
+          if (validator(reducedKeys.get)) {
+            return remoteUpdateWrapper(reducedKeys.get);
+          }
+        },
         validationErrors,
       } as UseStruct<T>, // todo, better way to express
     );
 
     return reducedKeys;
   }, [
-    config,
-    loading,
     struct,
     buildSetter,
-    update,
     validator,
     states,
     validationErrors,
+    remoteUpdateWrapper,
   ]);
 
   return structBuilt;
