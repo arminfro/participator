@@ -22,7 +22,7 @@ export interface Props {
 }
 
 export default function UserCard({ user }: Props): ReactElement {
-  const userUpdate = useUserUpdate(user.id, user, true, true);
+  const userUpdate = useUserUpdate(user.id, user, true);
   const ability = useAbility();
   const canReadUser = () => ability.can(Action.Read, subject('User', user));
 

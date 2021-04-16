@@ -88,7 +88,6 @@ export default function UserFilterCtrl({ setFilters }: Props): ReactElement {
       const newFilterState = {
         [filterKey]: onFilterChange(currentFilterValue),
       };
-      console.log('newFilterState', newFilterState);
       return { ...currentFilterState, ...newFilterState };
     });
   };

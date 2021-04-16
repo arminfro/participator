@@ -1,3 +1,4 @@
+import { pick } from 'lodash';
 import { useCallback, useState } from 'react';
 import { Room, RoomCreate, RoomUpdate } from '../../../types/room';
 import {
@@ -5,12 +6,11 @@ import {
   validateRoomUpdate,
 } from '../../../types/room.validation';
 import api from '../funcs/api';
-import { UseStruct, SetCallback, useStruct } from './use-struct';
+import { UseStruct, useStruct } from './use-struct';
 
 export function useRoomUpdate(
   roomId: number,
   room: Room,
-  autoValidate = false,
   autoSync = false,
 ): UseStruct<RoomUpdate> {
   return useStruct<RoomUpdate>({
@@ -24,25 +24,28 @@ export function useRoomUpdate(
       api('patch', `api/rooms/${roomId}`, newRoom).then((data) => {
         if (data) return data;
       }),
-
+    isEdit: true,
+    initialValues: pick(room, 'name', 'description', 'openToJoin'),
     autoSync,
-    autoValidate,
   });
 }
 
-export function useRoomCreate(
-  autoValidate = false,
-  autoSync = false,
-): UseStruct<RoomCreate> {
+export function useRoomCreate(autoSync = false): UseStruct<RoomCreate> {
+  const initialValues: RoomCreate = {
+    name: '',
+    description: '',
+    openToJoin: true,
+  };
+
   const states = {
-    name: useState(''),
-    description: useState(''),
-    openToJoin: useState(true),
+    name: useState(initialValues.name),
+    description: useState(initialValues.description),
+    openToJoin: useState(initialValues.openToJoin),
   };
 
   return useStruct<RoomCreate>({
     states,
-    autoValidate,
+    initialValues,
     validator: (room) => validateRoomCreate(room),
     autoSync,
     remoteUpdate: (newRoom: Room) =>

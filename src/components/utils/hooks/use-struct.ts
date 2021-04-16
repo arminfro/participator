@@ -1,3 +1,4 @@
+import { forEach, List } from 'lodash';
 import {
   Dispatch,
   SetStateAction,
@@ -25,9 +26,12 @@ type StateSetters<T> = {
 };
 
 export interface UseStruct<T> {
-  get: StateGetters<T>;
+  get: T;
   set: StateSetters<T>;
   sync: () => Promise<T>;
+  initialValues: T;
+  setToInitialState: () => void;
+  isEdit: boolean;
   validationErrors: Failure[];
 }
 
@@ -45,14 +49,17 @@ interface StructOptions<T, P> {
   validator?: Validator<T>;
   remoteUpdate?: RemoteUpdate<T, P>;
   autoSync?: boolean;
-  autoValidate?: boolean;
+  isEdit?: boolean;
+  initialValues?: T;
 }
 
-export function useStruct<T, P = T>({
+export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
   states,
   validator,
   remoteUpdate,
   autoSync = false,
+  isEdit = false,
+  initialValues,
 }: StructOptions<T, P>): UseStruct<T> {
   const [validationErrors, setValidationErrors] = useState<Failure[]>([]);
   const config = useStructConfigContext<T, P>();
@@ -78,16 +85,12 @@ export function useStruct<T, P = T>({
       const onUpdate = (newValue: Value<T>, sync: boolean): Value<T> => {
         const newStruct = { ...struct.get, [key]: newValue };
 
-        const onInvalidUpdate = () => {
+        const localUpdate = () => {
           config.onLocalUpdate && config.onLocalUpdate(newStruct);
         };
 
-        const onValidUpdate = () => {
-          if (sync || autoSync) {
-            remoteUpdateWrapper(newStruct);
-          } else {
-            onInvalidUpdate();
-          }
+        const remoteUpdate = () => {
+          remoteUpdateWrapper(newStruct);
         };
 
         const onValidate = (): T | void => {
@@ -103,7 +106,7 @@ export function useStruct<T, P = T>({
           }
         };
 
-        onValidate() ? onValidUpdate() : onInvalidUpdate();
+        onValidate() && (sync || autoSync) ? remoteUpdate() : localUpdate();
         return newValue;
       };
 
@@ -152,6 +155,13 @@ export function useStruct<T, P = T>({
             return remoteUpdateWrapper(reducedKeys.get);
           }
         },
+        isEdit,
+        initialValues,
+        setToInitialState: () => {
+          forEach<T>(initialValues, (value, key) => {
+            struct.set[key](value);
+          });
+        },
         validationErrors,
       } as UseStruct<T>, // todo, better way to express
     );
@@ -160,6 +170,8 @@ export function useStruct<T, P = T>({
   }, [
     struct,
     buildSetter,
+    isEdit,
+    initialValues,
     validator,
     states,
     validationErrors,

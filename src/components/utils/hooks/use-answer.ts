@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Answer, AnswerCreate } from '../../../types/answer';
 import { validateAnswerCreate } from '../../../types/answer.validation';
 import api from '../funcs/api';
-import { SetCallback, useStruct, UseStruct } from './use-struct';
+import { useStruct, UseStruct } from './use-struct';
 
 // export function useAnswerUpdate(
 //   roomId: number,
@@ -29,6 +29,7 @@ import { SetCallback, useStruct, UseStruct } from './use-struct';
 //         if (data) return data;
 //       }),
 //     autoSync,
+//     isEdit: true,
 //     autoValidate,
 //   });
 // }
@@ -36,18 +37,21 @@ import { SetCallback, useStruct, UseStruct } from './use-struct';
 export function useAnswerCreate(
   roomId: number,
   questionId: number,
-  autoValidate = false,
   autoSync = false,
 ): UseStruct<AnswerCreate> {
+  const initialValues: AnswerCreate = {
+    freeAnswer: '',
+    fixAnswerId: undefined,
+  };
   const states = {
-    freeAnswer: useState(''),
-    fixAnswerId: useState<number>(),
+    freeAnswer: useState(initialValues.freeAnswer),
+    fixAnswerId: useState<number>(initialValues.fixAnswerId),
   };
 
   return useStruct<AnswerCreate>({
     states,
-    autoValidate,
     validator: (answer) => validateAnswerCreate(answer),
+    initialValues,
     autoSync,
     remoteUpdate: (newAnswer: Answer) =>
       api<AnswerCreate>(

@@ -13,12 +13,19 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
   const [form] = AntdForm.useForm();
   const [loading, setLoading] = useState(false);
 
+  const onLocalReset = () => {
+    form.resetFields();
+    struct.initialValues
+      ? struct.setToInitialState()
+      : console.debug('Form reset called without initialValues');
+  };
+
   return (
     <StructProvider struct={struct}>
       <AntdForm
         form={form}
         layout="vertical"
-        initialValues={struct.get}
+        initialValues={struct.initialValues ? struct.initialValues : struct.get}
         onFinish={() => {
           if (struct.sync) {
             setLoading(true);
@@ -38,6 +45,7 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
           >
             Submit
           </Button>
+          {struct.isEdit && <Button onClick={onLocalReset}>Reset</Button>}
         </AntdForm.Item>
       </AntdForm>
     </StructProvider>

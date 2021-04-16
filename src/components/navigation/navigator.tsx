@@ -33,7 +33,7 @@ export default function Navigator() {
             console.debug('dispatch LOGIN:', user.name);
             dispatch({ type: 'LOGIN', user });
           } else {
-            console.error('not valid token');
+            console.debug('not valid token');
           }
         })
         .finally(() => setIsLoading(false));

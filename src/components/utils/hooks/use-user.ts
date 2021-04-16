@@ -1,23 +1,20 @@
-import { Router } from 'next/router';
+import { pick } from 'lodash';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { noop } from '../../../constants';
 import { User, UserCreate, UserLogin, UserUpdate } from '../../../types/user';
 import {
   validateUserCreate,
   validateUserLogin,
   validateUserUpdate,
 } from '../../../types/user.validation';
-import { ValidationResult } from '../../../types/utils';
 import api, { apiLogin } from '../funcs/api';
 import { setToken } from '../funcs/token';
 import { useStore } from '../store/context';
-import { SetCallback, useStruct, UseStruct } from './use-struct';
+import { useStruct, UseStruct } from './use-struct';
 
 export function useUserUpdate(
   userId: number,
   user: UserUpdate,
-  withValidation = false,
   autoSync = false,
 ): UseStruct<UserUpdate> {
   const states = {
@@ -28,9 +25,10 @@ export function useUserUpdate(
 
   return useStruct<UserUpdate>({
     states,
-    autoValidate: withValidation,
     validator: (user) => validateUserUpdate(user),
     autoSync,
+    isEdit: true,
+    initialValues: pick(user, 'name', 'hasHandUp', 'active'),
     remoteUpdate: async (newUser) => {
       const user = await api<UserUpdate>(
         'PATCH',
@@ -43,9 +41,13 @@ export function useUserUpdate(
 }
 
 export function useUserLogin(): UseStruct<UserLogin> {
+  const initialValues: UserLogin = {
+    email: '',
+    password: '',
+  };
   const states = {
-    email: useState(''),
-    password: useState(''),
+    email: useState(initialValues.email),
+    password: useState(initialValues.password),
   };
 
   const { dispatch } = useStore();
@@ -53,7 +55,7 @@ export function useUserLogin(): UseStruct<UserLogin> {
   return useStruct<UserLogin, User>({
     states,
     validator: validateUserLogin,
-    autoValidate: false,
+    initialValues,
     remoteUpdate: async (newUser) => {
       try {
         const { user, access_token } = await apiLogin(newUser);
@@ -67,7 +69,7 @@ export function useUserLogin(): UseStruct<UserLogin> {
   });
 }
 
-export function useUserCreate(user: UserCreate, withValidation = false) {
+export function useUserCreate(user: UserCreate) {
   const states = {
     name: useState(user.name),
     email: useState(user.email),
@@ -75,8 +77,8 @@ export function useUserCreate(user: UserCreate, withValidation = false) {
     pw2: useState(user.pw2),
   };
   return useStruct<UserCreate>({
+    initialValues: pick(user, 'name', 'email', 'pw1', 'pw2'),
     states,
-    autoValidate: withValidation,
     validator: validateUserCreate,
   });
 }

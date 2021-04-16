@@ -1,3 +1,4 @@
+import { pick } from 'lodash';
 import { useState } from 'react';
 import {
   AnswersFormat,
@@ -11,13 +12,12 @@ import {
   validateQuestionUpdate,
 } from '../../../types/question.validation';
 import api from '../funcs/api';
-import { SetCallback, useStruct, UseStruct } from './use-struct';
+import { useStruct, UseStruct } from './use-struct';
 
 export function useQuestionUpdate(
   roomId: number,
   questionId: number,
   question: Question,
-  autoValidate = false,
   autoSync = false,
 ): UseStruct<QuestionUpdate> {
   const states = {
@@ -38,26 +38,32 @@ export function useQuestionUpdate(
         if (data) return data;
       }),
     autoSync,
-    autoValidate,
+    isEdit: true,
+    initialValues: pick(question, 'text', 'answersFormat', 'fixAnswers'),
   });
 }
 
 export function useQuestionCreate(
   roomId: number,
-  autoValidate = false,
   autoSync = false,
 ): UseStruct<QuestionCreate> {
+  const initialValues: QuestionCreate = {
+    text: '',
+    answersFormat: 'free',
+    fixAnswers: [{ text: '' }],
+  };
+
   const states = {
-    text: useState(''),
-    answersFormat: useState<AnswersFormat>('free'),
-    fixAnswers: useState<FixAnswer[]>([{ text: '' }, { text: '' }]),
+    text: useState(initialValues.text),
+    answersFormat: useState<AnswersFormat>(initialValues.answersFormat),
+    fixAnswers: useState<FixAnswer[]>(initialValues.fixAnswers),
   };
 
   return useStruct<QuestionCreate>({
     states,
-    autoValidate,
     validator: (question) => validateQuestionCreate(question),
     autoSync,
+    initialValues,
     remoteUpdate: (newQuestion: Question) =>
       api<QuestionCreate>(
         'post',
