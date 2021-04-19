@@ -1,6 +1,8 @@
 import { Button, Select } from 'antd';
 import React, { useState } from 'react';
+import { Room } from '../../types/room';
 import { User } from '../../types/user';
+import { useSwrMutateContext } from '../utils/context/swr-mutate-context';
 import api from '../utils/funcs/api';
 
 interface Props {
@@ -18,6 +20,8 @@ export default function RoomMemberManage({
   const [isInviting, setIsInviting] = useState(true);
   const [loading, setLoading] = useState(false);
   const [chosenUser, setChosenUser] = useState<User>();
+
+  const mutate = useSwrMutateContext<Room>();
 
   const label = () => (isInviting ? 'Invite' : 'Kick');
 
@@ -39,11 +43,22 @@ export default function RoomMemberManage({
       setLoading(true);
       api('patch', `api/rooms/${roomId}/${action}`, {
         [action]: chosenUser,
-      }).finally(() => {
-        setLoading(false);
-        setChosenUser(undefined);
-        onCloseDrawer();
-      });
+      })
+        .then(() => {
+          if (mutate[`api/rooms/${roomId}`]) {
+            mutate[`api/rooms/${roomId}`]((room: Room) => ({
+              ...room,
+              members: isInviting
+                ? [...room.members, chosenUser]
+                : room.members.filter((user) => user.id !== chosenUser.id),
+            }));
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+          setChosenUser(undefined);
+          onCloseDrawer();
+        });
     }
   };
 

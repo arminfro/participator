@@ -1,18 +1,17 @@
-import React, { ReactElement, Suspense, useCallback } from 'react';
+import React, { ReactElement, Suspense } from 'react';
 import { toast } from 'react-toastify';
-import useSWR, { ConfigInterface } from 'swr';
-
+import useSWR from 'swr';
+import { MutatorCallback, SWRConfiguration } from 'swr/dist/types';
 import { isDev } from '../../../utils/environment';
 import LoadingSpinner from '../../shared/loading-spinner';
-import ErrorBoundary from './error-boundary';
-import useLocalStorage from '../hooks/use-local-storage';
-import { getToken } from '../funcs/token';
 import {
   SwrMutateProvider,
   useSwrMutateContext,
 } from '../context/swr-mutate-context';
-import { mutateCallback } from 'swr/dist/types';
 import { UseStructConfigProvider } from '../context/use-struct-config-context';
+import { getToken } from '../funcs/token';
+import useLocalStorage from '../hooks/use-local-storage';
+import ErrorBoundary from './error-boundary';
 
 interface FetchProps<T> {
   children: (data: T) => ReactElement;
@@ -20,16 +19,16 @@ interface FetchProps<T> {
 }
 
 export type Mutate<T> = (
-  data?: T | Promise<T> | mutateCallback<T>,
+  data?: T | Promise<T> | MutatorCallback<T>,
   shouldRevalidate?: boolean,
 ) => Promise<T>;
 
 function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
   const keys = [url, getToken()];
   const [localStorage] = useLocalStorage<T>(keys.join());
-  const swrConfig: ConfigInterface = {
+  const swrConfig: SWRConfiguration = {
     onError: (err: Error) => {
-      // if (isDev()) toast.error(err);
+      if (isDev()) toast.error(err);
     },
   };
   if (localStorage) {
