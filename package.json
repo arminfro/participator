@@ -36,6 +36,7 @@
     "@nestjs/swagger": "^4.7.12",
     "@nestjs/typeorm": "^7.1.5",
     "@nestjs/websockets": "^7.6.6",
+    "@welldone-software/why-did-you-render": "^6.1.1",
     "antd": "^4.14.1",
     "babel-plugin-prismjs": "^2.0.1",
     "bcrypt": "^5.0.0",

@@ -28,7 +28,7 @@ export class UsersApiController {
   ) {}
 
   @Get()
-  @UsePolicy((ability) => ability.can(Action.Read, 'User'))
+  @UseGuards(JwtAuthGuard)
   public async index(): Promise<User[]> {
     return await this.usersService.findAll({
       relations: ['ownedRooms', 'joinedRooms'],
