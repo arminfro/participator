@@ -64,7 +64,6 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
     "sanitize-html": "^2.3.2",
-    "semantic-ui-css": "^2.4.1",
     "socket.io-client": "^2.4.0",
     "sqlite3": "^5.0.1",
     "superstruct": "^0.15.1",

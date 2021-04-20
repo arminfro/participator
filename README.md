@@ -42,8 +42,8 @@ There are three groups of directories in `src`.
 
 * Server code is in `server`
 * Client code is in `pages` and `components`
-  * `pages` is the file-based routing of next.js. It's the bridge betwenn `server` and `components`. That's where data fetching happens.
-  * `components` has all components grouped by subjects. They get called from `pages` when data has arrived.
+  * `pages` is the file-based routing of next.js. It's the bridge betwenn `server` and `components`. That's where initial data fetching happens.
+  * `components` has all components grouped by subjects.
 * Common code is in `types, casl` and `utils`
   * `types` has all type definitions and validations using `superstruct`
   * `casl` defines abilities
@@ -70,7 +70,6 @@ Call `yarn doc` for `compodoc` docs generation. It'll show documentation about b
 * [Socket.io v2 Client](https://socket.io/docs/v2/client-api)
 * [Antd](https://ant.design/components/overview/) - Design system
 * [React Toaster](https://fkhadra.github.io/react-toastify/api/toast) - Notifications
-* [SemanticUI](https://semantic-ui.com/) - Css
 * [date-fns](https://github.com/date-fns/date-fns) - Date functions
 * [marked](https://github.com/markedjs/marked) - Markdown
 * [faker.js](https://github.com/Marak/Faker.js) - Random Data for testing
