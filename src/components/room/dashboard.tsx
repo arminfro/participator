@@ -9,11 +9,13 @@ interface Props {
 export default function RoomDashboard({ room }: Props) {
   return (
     <>
-      <Descriptions>
-        <Descriptions.Item label="Description">
-          {room.description}
-        </Descriptions.Item>
-      </Descriptions>
+      {room.description && (
+        <Descriptions>
+          <Descriptions.Item label="Description">
+            {room.description}
+          </Descriptions.Item>
+        </Descriptions>
+      )}
     </>
   );
 }

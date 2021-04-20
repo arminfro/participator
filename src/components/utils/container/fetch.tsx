@@ -2,6 +2,7 @@ import React, { ReactElement, Suspense } from 'react';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import { MutatorCallback, SWRConfiguration } from 'swr/dist/types';
+import Exception from '../../../pages/exception';
 import { isDev } from '../../../utils/environment';
 import LoadingSpinner from '../../shared/loading-spinner';
 import {
@@ -47,7 +48,15 @@ function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
 
 export default function Fetch<T>(props: FetchProps<T>): ReactElement {
   return (
-    <ErrorBoundary fallback={<h1>Error</h1>}>
+    <ErrorBoundary
+      fallback={(e) =>
+        'status' in e && 'message' in e && 'path' in e ? (
+          <Exception status={e.status} message={e.message} path={e.path} />
+        ) : (
+          <p>{JSON.stringify(e)}</p>
+        )
+      }
+    >
       <Suspense fallback={<LoadingSpinner />}>
         <Fetcher<T> {...props} />
       </Suspense>

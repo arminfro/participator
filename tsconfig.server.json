@@ -26,6 +26,7 @@
     "./src/pages",
     "./bin",
     "./dist",
-    "./next"
+    "./next",
+    "./.next"
   ]
 }

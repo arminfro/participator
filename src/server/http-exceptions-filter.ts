@@ -24,19 +24,19 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     const data = {
       status: exception.getStatus(),
       message: exception.message,
-      reqUrl: req.url,
+      path: req.url,
     };
 
-    const contentType = req.headers['content-type'];
-
     this.logger.warn(
-      `${data.status} @ ${data.reqUrl} is ${data.message} from ${req.headers['referer']} with ${req.headers['user-agent']}`,
+      `${data.status} @ ${data.path} is ${data.message} from ${req.headers['referer']} with ${req.headers['user-agent']}`,
       'HttpExceptionsFilter',
     );
 
-    // todo, use some on text/html,application/xhtml+xml,application/xml for next.render
-    /\/json/.test(contentType)
-      ? res.status(data.status).send(data)
-      : this.next.render(`/http-exception`, data, req, res);
+    res.status(data.status);
+    req.headers.accept
+      ?.split(',')
+      ?.some((mime: string) => mime.includes('html'))
+      ? this.next.render(`/exception`, data, req, res)
+      : res.status(data.status).send(data);
   }
 }

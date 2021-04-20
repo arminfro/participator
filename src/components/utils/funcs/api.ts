@@ -1,15 +1,31 @@
-import axios, { AxiosResponse, Method as HttpMethod } from 'axios';
+import axios, { AxiosResponse, AxiosError, Method as HttpMethod } from 'axios';
 import { urlWithProtocol } from '../../../constants';
 import { isUser, User, UserLogin } from '../../../types/user';
 import { transformDateString } from '../../../utils/transform-tree';
 import { getToken } from './token';
+
+export interface ApiError {
+  path: string;
+  message: string;
+  status: number;
+}
+
+function axiosCatch(error: AxiosError) {
+  throw {
+    path: error.config.url,
+    message: error.message,
+    status: error.request.status,
+  } as ApiError;
+}
 
 export async function swrApi(path: string) {
   return axios({
     method: 'GET',
     headers: { Authorization: `bearer ${getToken()}` },
     url: `${urlWithProtocol}/${path}`,
-  }).then((resp) => transformDateString(resp.data));
+  })
+    .then((resp) => transformDateString(resp.data))
+    .catch(axiosCatch);
 }
 
 /*
@@ -27,18 +43,16 @@ export default async function api<T>(
 ): Promise<T | void> {
   return axios({
     method: method,
-    headers: { Authorization: `bearer ${getToken()}` },
+    headers: {
+      Authorization: `bearer ${getToken()}`,
+    },
     url: `${urlWithProtocol}/${path}`,
     data,
   })
     .then((response: AxiosResponse<T>) => {
       return transformDateString<T>(response.data);
     })
-    .catch((error) => {
-      if (!/token-to-user$/.test(error.config.url)) {
-        throw error;
-      }
-    });
+    .catch(axiosCatch);
 }
 
 export async function apiLogin(

@@ -1,13 +1,16 @@
 import React, { ReactElement } from 'react';
+import { ApiError } from '../funcs/api';
+
+type Errors = Error | ApiError;
 
 interface ErrorProps {
   children: ReactElement;
-  fallback: ReactElement;
+  fallback: (e: Errors) => ReactElement;
 }
 
 export default class ErrorBoundary extends React.Component<
   ErrorProps,
-  { hasError: boolean; error: null | Error }
+  { hasError: boolean; error: null | Errors }
 > {
   state = { hasError: false, error: null };
   static getDerivedStateFromError(error: Error) {
@@ -18,8 +21,7 @@ export default class ErrorBoundary extends React.Component<
   }
   render() {
     if (this.state.hasError) {
-      console.debug('error in ErrorBoundary', this.state.error);
-      return this.props.fallback;
+      return this.props.fallback(this.state.error);
     }
     return this.props.children;
   }

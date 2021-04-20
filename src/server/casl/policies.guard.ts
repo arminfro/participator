@@ -3,8 +3,11 @@ import {
   ExecutionContext,
   Injectable,
   SetMetadata,
+  UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { every } from 'lodash';
 import { getManager } from 'typeorm';
 import { AppAbility } from '../../casl/ability';
 import { Room } from '../rooms/room.entity';
@@ -34,7 +37,7 @@ export class PoliciesGuard implements CanActivate {
     private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean | never> {
     const policyHandlers =
       this.reflector.get<PolicyHandler[]>(
         CHECK_POLICIES_KEY,
@@ -54,6 +57,12 @@ export class PoliciesGuard implements CanActivate {
       const allowed = policyHandlers.every((handler) =>
         this.execPolicyHandler(handler, ability, requestedSubjects),
       );
+      if (every(requestedSubjects, (subject) => !subject)) {
+        throw new BadRequestException();
+      }
+      if (!allowed) {
+        throw new UnauthorizedException();
+      }
       return allowed;
     } else {
       return false;
