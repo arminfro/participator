@@ -17,21 +17,29 @@ export class AnswersService {
   async create(answerCreate: AnswerCreate, questionId: number, user: User) {
     const answer = await this.build(questionId, answerCreate, user);
     await getManager().save(answer);
-    return answer;
+    return this.findOne(answer.id);
   }
 
   async findAll(questionId: number): Promise<Answer[]> {
     const question = await this.findQuestion(questionId);
-    return await getManager().find(Answer, {
+    return await this.answerRepository.find({
       where: { question },
-      relations: ['user', 'question', 'question.fixAnswers', 'fixAnswer'],
+      relations: ['user', 'question', 'question.answers', 'fixAnswer'],
     });
   }
 
-  // async findOne(id: number): Promise<Answer> {
-  //   const answer = await this.answerRepository.findOne(id);
-  //   return answer;
-  // }
+  async findOne(id: number): Promise<Answer> {
+    const answer = await this.answerRepository.findOne(id, {
+      relations: [
+        'user',
+        'question',
+        'question.answers',
+        'question.answers.user',
+        'fixAnswer',
+      ],
+    });
+    return answer;
+  }
 
   // async update(id: number, answerUpdate: AnswerUpdate): Promise<UpdateResult> {
   //   return await this.answerRepository.update(id, answerUpdate);

@@ -18,8 +18,6 @@ export default function QuestionUpdate({
     <QuestionForm
       onCloseDrawer={onCloseDrawer}
       question={useQuestionUpdate(roomId, question.id, question)}
-      roomId={roomId}
-      questionId={question.id}
     />
   );
 }

@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { AnswerCreate as IAnswerCreate } from '../../types/answer';
 import { Question } from '../../types/question';
@@ -16,15 +15,10 @@ export default function AnswerCreate({
   question,
   roomId,
 }: Props): ReactElement {
-  const router = useRouter();
   const answer = useAnswerCreate(roomId, question.id);
 
   const onSubmit = (promise: Promise<IAnswerCreate>) =>
-    promise.then(() => {
-      if (answer.get.fixAnswerId || answer.get.freeAnswer) {
-        router.push(`/rooms/${roomId}/questions/${question.id}`);
-      }
-    });
+    promise.then(answer.setToInitialState);
 
   return (
     <>

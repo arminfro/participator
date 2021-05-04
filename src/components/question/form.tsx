@@ -1,7 +1,6 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Button, Divider, Input, Space } from 'antd';
-import { useRouter } from 'next/router';
-import React, { ReactElement, useRef } from 'react';
+import React, { ReactElement } from 'react';
 import { QuestionCreate, QuestionUpdate } from '../../types/question';
 import Form from '../utils/container/form/form';
 import { FormItem } from '../utils/container/form/item';
@@ -11,8 +10,6 @@ import { UseStruct } from '../utils/hooks/use-struct';
 
 interface Props {
   question: UseStruct<QuestionCreate | QuestionUpdate>;
-  roomId: number;
-  questionId?: number;
   onCloseDrawer: () => void;
 }
 
@@ -36,12 +33,8 @@ const presets = [
 
 export default function QuestionForm<T = QuestionCreate | QuestionUpdate>({
   question,
-  roomId,
-  questionId,
   onCloseDrawer,
 }: Props): ReactElement {
-  const router = useRouter();
-
   const onChangeFixAnswer = (newValue: string, index: number) => {
     question.set.fixAnswers((currentFixAnswers) => {
       const copyFixAnswers = [...currentFixAnswers];
@@ -68,9 +61,6 @@ export default function QuestionForm<T = QuestionCreate | QuestionUpdate>({
   const onSubmit = (promise: Promise<T>) =>
     promise.then(() => {
       onCloseDrawer();
-      router.push(
-        `/rooms/${roomId}/questions${questionId ? `/${questionId}` : ''}`,
-      );
     });
 
   return (

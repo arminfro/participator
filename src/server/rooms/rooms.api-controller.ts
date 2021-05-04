@@ -58,8 +58,8 @@ export class RoomsApiController {
     @Param('id', ParseIntPipe) id: number,
     @Body(new RoomUpdatePipe()) roomUpdate: RoomUpdate,
   ): Promise<Room> {
-    this.roomsService.update(id, roomUpdate);
-    return await this.roomsService.findOne(id);
+    await this.roomsService.update(id, roomUpdate);
+    return this.roomsService.findOne(id);
   }
 
   @Patch(':id/removeMember')

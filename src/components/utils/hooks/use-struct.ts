@@ -48,46 +48,49 @@ interface StructOptions<T, P> {
   states: States<T>;
   validator?: Validator<T>;
   remoteUpdate?: RemoteUpdate<T, P>;
+  initialValues?: T;
+  afterRemoteUpdate?: (requestPayload: T | P, responsePayload: T | P) => any;
   autoSync?: boolean;
   isEdit?: boolean;
-  initialValues?: T;
 }
 
 export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
   states,
   validator,
   remoteUpdate,
+  afterRemoteUpdate,
+  initialValues,
   autoSync = false,
   isEdit = false,
-  initialValues,
 }: StructOptions<T, P>): UseStruct<T> {
   const [validationErrors, setValidationErrors] = useState<Failure[]>([]);
   const config = useStructConfigContext<T, P>();
 
   const struct = useMemo(() => ({ get: {}, set: {} }), []) as UseStruct<T>;
 
+  const mutate = useCallback(
+    (data: T | P) =>
+      afterRemoteUpdate ? afterRemoteUpdate(data, struct.get) : data,
+    [afterRemoteUpdate, struct.get],
+  );
+
   const remoteUpdateWrapper = useCallback(
     (newStruct: T) =>
       (remoteUpdate ? remoteUpdate : Promise.resolve)(newStruct).then(
         (data: T | P | void) => {
           if (data) {
-            config.onRemoteUpdate && config.onRemoteUpdate(data);
-            config.onLocalUpdate && config.onLocalUpdate(data);
+            config.afterRemoteUpdate && config.afterRemoteUpdate(mutate(data));
             return data;
           }
         },
       ),
-    [config, remoteUpdate],
+    [config, remoteUpdate, mutate],
   );
 
   const buildSetter = useCallback(
     (setter: Dispatch<SetStateAction<Value<T>>>, key: string) => {
       const onUpdate = (newValue: Value<T>, sync: boolean): Value<T> => {
         const newStruct = { ...struct.get, [key]: newValue };
-
-        const localUpdate = () => {
-          config.onLocalUpdate && config.onLocalUpdate(newStruct);
-        };
 
         const remoteUpdate = () => {
           remoteUpdateWrapper(newStruct);
@@ -106,7 +109,7 @@ export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
           }
         };
 
-        onValidate() && (sync || autoSync) ? remoteUpdate() : localUpdate();
+        onValidate() && (sync || autoSync) && remoteUpdate();
         return newValue;
       };
 

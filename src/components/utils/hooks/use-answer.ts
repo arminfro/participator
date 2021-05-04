@@ -53,6 +53,9 @@ export function useAnswerCreate(
     validator: (answer) => validateAnswerCreate(answer),
     initialValues,
     autoSync,
+    afterRemoteUpdate: (answer: any) => {
+      return answer.question;
+    },
     remoteUpdate: (newAnswer: Answer) =>
       api<AnswerCreate>(
         'post',

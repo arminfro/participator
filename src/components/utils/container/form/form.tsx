@@ -30,7 +30,12 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
           if (struct.sync) {
             setLoading(true);
             onSubmit(
-              struct.sync ? struct.sync() : Promise.resolve(struct.get),
+              (struct.sync ? struct.sync() : Promise.resolve(struct.get)).then(
+                (payload: T) => {
+                  onLocalReset();
+                  return payload;
+                },
+              ),
             ).finally(() => setLoading(false)); //.catch(() => struct?.reset());
           }
         }}

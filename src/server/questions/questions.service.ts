@@ -41,7 +41,7 @@ export class QuestionsService {
 
   async findOne(id: number): Promise<Question> {
     return this.questionRepository.findOne(id, {
-      relations: ['fixAnswers', 'room', 'user'],
+      relations: ['fixAnswers', 'answers', 'answers.user', 'room', 'user'],
     });
   }
 
@@ -77,8 +77,7 @@ export class QuestionsService {
   ): Promise<Question> {
     const question = new Question();
     question.text = questionCreate.text;
-    if (questionCreate.answersFormat)
-      question.answersFormat = questionCreate.answersFormat;
+    question.answersFormat = questionCreate.answersFormat;
     question.room = await this.findRoom(roomId);
     question.user = user;
     await this.questionRepository.save(question);
@@ -96,12 +95,14 @@ export class QuestionsService {
   }
 
   private createFixAnswers(fixAnswers: IFixAnswer[], question: Question): void {
-    const uniqueFixAnswers = fixAnswers.reduce((acc, fixAnswer) => {
-      acc.find((fixA) => fixA.text === fixAnswer.text) || acc.push(fixAnswer);
-      return acc;
-    }, [] as IFixAnswer[]);
+    const uniqueAndNonEmptyFixAnswers = fixAnswers
+      .filter((fixA) => fixA.text)
+      .reduce((acc, fixAnswer) => {
+        acc.find((fixA) => fixA.text === fixAnswer.text) || acc.push(fixAnswer);
+        return acc;
+      }, [] as IFixAnswer[]);
 
-    uniqueFixAnswers.forEach((answer) => {
+    uniqueAndNonEmptyFixAnswers.forEach((answer) => {
       if (
         !question.fixAnswers.some((fixAnswer) => fixAnswer.id === answer.id)
       ) {
@@ -109,7 +110,6 @@ export class QuestionsService {
         fixAnswer.text = answer.text;
         fixAnswer.question = question;
         fixAnswer.save();
-        return fixAnswer;
       }
     });
   }

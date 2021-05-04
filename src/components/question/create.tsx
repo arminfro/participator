@@ -30,7 +30,6 @@ export default function QuestionCreate({
       </ul>
       <QuestionForm
         question={useQuestionCreate(roomId)}
-        roomId={roomId}
         onCloseDrawer={onCloseDrawer}
       />
     </>

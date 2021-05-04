@@ -16,8 +16,7 @@ interface UseStructConfigProps {
 
 interface UseStructContext<T, P = T> {
   onValidate?: (validationResult: ValidationResult<T>) => void;
-  onLocalUpdate?: (data: P | T) => void;
-  onRemoteUpdate?: (data: P | T) => void;
+  afterRemoteUpdate?: (data: P | T) => void;
 }
 
 const UseStructContext = createContext({} as UseStructContext<any>);
@@ -31,7 +30,7 @@ export function UseStructConfigProvider<T>({
 }: UseStructConfigProps): ReactElement {
   const mutate = useSwrMutateContext();
 
-  const onRemoteUpdate = useCallback(
+  const afterRemoteUpdate = useCallback(
     (newStruct) => {
       if (mutate[`api${router.asPath}`]) {
         const newData = transformDateString(newStruct);
@@ -47,7 +46,7 @@ export function UseStructConfigProvider<T>({
   );
 
   return (
-    <UseStructContext.Provider value={{ onRemoteUpdate }}>
+    <UseStructContext.Provider value={{ afterRemoteUpdate }}>
       {children}
     </UseStructContext.Provider>
   );
