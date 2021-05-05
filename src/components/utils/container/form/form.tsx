@@ -36,7 +36,11 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
                   return payload;
                 },
               ),
-            ).finally(() => setLoading(false)); //.catch(() => struct?.reset());
+            )
+              .catch(onLocalReset)
+              .finally(() => {
+                setLoading(false);
+              }); //.catch(() => struct?.reset());
           }
         }}
       >

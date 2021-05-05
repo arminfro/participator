@@ -1,10 +1,17 @@
+import { message } from 'antd';
 import { pick } from 'lodash';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { User, UserCreate, UserLogin, UserUpdate } from '../../../types/user';
+import {
+  User,
+  UserCreate,
+  UserLogin,
+  UserPasswordRecover,
+  UserUpdate,
+} from '../../../types/user';
 import {
   validateUserCreate,
   validateUserLogin,
+  validateUserPasswordRecover,
   validateUserUpdate,
 } from '../../../types/user.validation';
 import api, { apiLogin } from '../funcs/api';
@@ -61,11 +68,28 @@ export function useUserLogin(): UseStruct<UserLogin> {
         const { user, access_token } = await apiLogin(newUser);
         dispatch({ type: 'LOGIN', user });
         setToken(access_token);
+        message.success(`Login success. Welcome ${user.name}`);
       } catch (err) {
-        toast.error(err);
+        message.error(err);
         return await Promise.reject(err);
       }
     },
+  });
+}
+
+export function useUserPasswordRecover(): UseStruct<UserPasswordRecover> {
+  const initialValues: UserPasswordRecover = {
+    email: '',
+  };
+  const states = {
+    email: useState(initialValues.email),
+  };
+
+  return useStruct<UserPasswordRecover, User>({
+    states,
+    validator: validateUserPasswordRecover,
+    initialValues,
+    remoteUpdate: async (user) => api('post', 'login/password/recover', user),
   });
 }
 

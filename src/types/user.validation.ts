@@ -1,18 +1,17 @@
 import { Struct } from 'superstruct';
-import { UserCreate, UserLogin, UserUpdate, UserUpdateToggle } from './user';
+import {
+  UserCreate,
+  UserLogin,
+  UserPasswordRecover,
+  UserUpdate,
+  UserUpdateToggle,
+} from './user';
 import { customValidate, ValidationResult } from './utils';
-
-// const UCreate = refine(UserCreate, 'equalPws', (userCreate) => {
-//   console.log('userCreate', userCreate);
-//   return userCreate.pw1 === userCreate.pw2;
-// });
 
 export function validateUserCreate(
   userCreate: UserCreate,
 ): ValidationResult<UserCreate> {
-  const j = validateUser<UserCreate>(userCreate, UserCreate);
-  console.log('validateUserCreate', j);
-  return j;
+  return validateUser<UserCreate>(userCreate, UserCreate);
 }
 
 export function validateUserUpdate(
@@ -31,6 +30,15 @@ export function validateUserLogin(
   userLogin: UserLogin,
 ): ValidationResult<UserLogin> {
   return validateUser<UserLogin>(userLogin, UserLogin);
+}
+
+export function validateUserPasswordRecover(
+  userPasswordRecover: UserPasswordRecover,
+): ValidationResult<UserPasswordRecover> {
+  return validateUser<UserPasswordRecover>(
+    userPasswordRecover,
+    UserPasswordRecover,
+  );
 }
 
 export function validateUser<T>(

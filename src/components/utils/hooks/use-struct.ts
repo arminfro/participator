@@ -42,7 +42,7 @@ type States<T> = {
 
 type Validator<T> = (struct: T) => ValidationResult<T>;
 
-type RemoteUpdate<T, P> = (struct: T) => Promise<P>;
+type RemoteUpdate<T, P> = (struct: T) => Promise<P | void>;
 
 interface StructOptions<T, P> {
   states: States<T>;
@@ -76,14 +76,14 @@ export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
 
   const remoteUpdateWrapper = useCallback(
     (newStruct: T) =>
-      (remoteUpdate ? remoteUpdate : Promise.resolve)(newStruct).then(
-        (data: T | P | void) => {
-          if (data) {
-            config.afterRemoteUpdate && config.afterRemoteUpdate(mutate(data));
-            return data;
-          }
-        },
-      ),
+      (remoteUpdate ? remoteUpdate : Promise.resolve.bind(Promise))(
+        newStruct,
+      ).then((data: T | P | void) => {
+        if (data) {
+          config.afterRemoteUpdate && config.afterRemoteUpdate(mutate(data));
+          return data;
+        }
+      }),
     [config, remoteUpdate, mutate],
   );
 

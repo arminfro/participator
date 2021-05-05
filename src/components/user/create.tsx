@@ -1,6 +1,6 @@
 import Router from 'next/router';
 import React, { ReactElement } from 'react';
-import { User, UserCreate } from '../../types/user';
+import { User } from '../../types/user';
 import Form from '../utils/container/form/form';
 import { FormInputItem } from '../utils/container/form/input-item';
 import { FormItem } from '../utils/container/form/item';
@@ -23,24 +23,25 @@ export default function UserCreateForm({
   userId = null,
   passwordResetId = null,
 }: Props): ReactElement {
-  const user = useUserCreate({ name, email, pw1: '', pw2: '' }, true);
+  const user = useUserCreate({ name, email, pw1: '', pw2: '' });
 
   const { dispatch } = useStore();
 
-  const onSubmit = () =>
-    api<User>(
+  const onSubmit = async () => {
+    const password = user.get.pw1;
+    const createdUser = await api<User>(
       passwordResetId ? 'PATCH' : 'POST',
       passwordResetId ? `api/users/${userId}/password-reset` : 'api/users',
       passwordResetId ? { ...user.get, passwordResetId } : user.get,
-    ).then(async (createdUser: User) => {
-      const login = await apiLogin({
-        email: user.get.email,
-        password: user.get.pw1,
-      });
-      dispatch({ type: 'LOGIN', user: login.user });
-      setToken(login.access_token);
-      Router.push(`/users/${createdUser.id}`);
+    );
+    const login = await apiLogin({
+      email: user.get.email,
+      password,
     });
+    dispatch({ type: 'LOGIN', user: login.user });
+    setToken(login.access_token);
+    if (createdUser) Router.push(`/users/${createdUser.id}`);
+  };
 
   const equalPwFailure = user.validationErrors.find(
     (failure) => failure.refinement === 'equalPws',

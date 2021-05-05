@@ -59,6 +59,11 @@ export const UserLogin = object({
   password: stringMinLength(2, 'password'),
 });
 
+export type UserPasswordRecover = Infer<typeof UserPasswordRecover>;
+export const UserPasswordRecover = object({
+  email: isEmail('email'),
+});
+
 export type User = {
   readonly id: number;
   name: string;
