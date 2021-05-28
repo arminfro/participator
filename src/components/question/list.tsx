@@ -34,7 +34,7 @@ export default function QuestionList({ questions }: Props): ReactElement {
               }
               content={
                 <Link
-                  href="/rooms/[id]/questions/[id]"
+                  href="/rooms/[id]/questions/[questionId]"
                   as={`/rooms/${roomId}/questions/${question.id}`}
                 >
                   {question.text}

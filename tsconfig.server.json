@@ -13,6 +13,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
+    "skipLibCheck": true,
     "lib": [
       "es2019"
     ]

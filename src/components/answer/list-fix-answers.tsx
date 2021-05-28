@@ -15,7 +15,7 @@ interface ReducedFixAnswer {
   count: any;
 }
 
-export default function FixAnswersResults(props: Props) {
+export default function ListFixAnswers(props: Props) {
   const givenAnswersCountMap = props.answers.reduce(function (acc, answer) {
     const value = answer.fixAnswer.text;
     acc[value] = acc[value] ? acc[value] + 1 : 1;

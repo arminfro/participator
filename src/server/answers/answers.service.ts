@@ -35,6 +35,7 @@ export class AnswersService {
         'question',
         'question.answers',
         'question.answers.user',
+        'question.answers.fixAnswer',
         'fixAnswer',
       ],
     });

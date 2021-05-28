@@ -126,8 +126,8 @@ export default function ChatListItem({
                   __html: sanitizeHtml(emoji.emojify(marked(chat.msg)), {
                     // allow any css class for `code` and `span`
                     allowedClasses: {
-                      code: false,
-                      span: false,
+                      code: ['*'],
+                      span: ['*'],
                     },
                   }),
                 }}

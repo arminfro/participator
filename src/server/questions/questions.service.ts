@@ -40,9 +40,18 @@ export class QuestionsService {
   }
 
   async findOne(id: number): Promise<Question> {
-    return this.questionRepository.findOne(id, {
-      relations: ['fixAnswers', 'answers', 'answers.user', 'room', 'user'],
+    const j = await this.questionRepository.findOne(id, {
+      relations: [
+        'fixAnswers',
+        'answers',
+        'answers.fixAnswer',
+        'answers.user',
+        'room',
+        'user',
+      ],
     });
+    console.log('findOne Question', j);
+    return j;
   }
 
   async update(id: number, questionUpdate: QuestionUpdate) {
