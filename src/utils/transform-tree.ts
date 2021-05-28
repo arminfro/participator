@@ -75,6 +75,12 @@ export function removeChild<T extends Tree<T>>(treeModel: T, id: number): T {
   return tree.model;
 }
 
+export function getAllIds<T extends Tree<T>>(treeModel: T): number[] {
+  return newTree<T>(treeModel)
+    .all((node) => node.model.children?.length)
+    .map((node) => node.model.id);
+}
+
 export function newTree<T>(treeModel: T): TreeModel.Node<T> {
   return new TreeModel().parse(treeModel);
 }

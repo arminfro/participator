@@ -5,6 +5,8 @@ import { Events } from '../../../types/chat';
 import { transformDateString } from '../../../utils/transform-tree';
 import { getToken } from '../funcs/token';
 import { noop } from '../../../constants';
+import { isDev } from '../../../utils/environment';
+import { message } from 'antd';
 
 interface WithId {
   id: number;
@@ -26,6 +28,7 @@ interface Exception {
 export function useSocket<T extends WithId>(
   namespace: string,
   effectFuncs: EffectFuncs<T> = {},
+  dataProp: T = undefined,
   errorFunc: (error: string, failures: string[]) => void = noop,
 ): [T, SocketIOClient.Socket] {
   const [socket] = useState(
@@ -39,12 +42,14 @@ export function useSocket<T extends WithId>(
       },
     }),
   );
-  const [data, setData] = useState<T>();
+  const [data, setData] = useState<T>(
+    dataProp ? transformDateString<T>(dataProp) : undefined,
+  );
 
   useEffect(() => {
     socket.on('connect', () => {
       socket.emit(Events.findAll, (data: T) => {
-        effectFuncs[Events.findAll] &&
+        effectFuncs[Events.findAll] && // || dataProp
           effectFuncs[Events.findAll](
             transformDateString<T>(data),
             setData,
@@ -76,8 +81,9 @@ export function useSocket<T extends WithId>(
       });
 
       socket.on(Events.exception, (exception: Exception) => {
-        const [message, ...failures] = exception.message.split('\n');
-        errorFunc(message, failures);
+        const [exMessage, ...failures] = exception.message.split('\n');
+        if (isDev()) message.error(exMessage);
+        errorFunc(exMessage, failures);
       });
     });
     return () => {

@@ -36,7 +36,11 @@ export default function ChatForm({
 
   return (
     <div ref={ref}>
-      <Form form={form} initialValues={{ chat: value }}>
+      <Form
+        onFinish={onLocalSubmit}
+        form={form}
+        initialValues={{ chat: value }}
+      >
         <Form.Item name="chat">
           <Mentions autoSize={{ minRows: 2 }}>
             {users.map((user) => (
@@ -47,12 +51,7 @@ export default function ChatForm({
           </Mentions>
         </Form.Item>
         <Form.Item>
-          <Button
-            htmlType="submit"
-            loading={loading}
-            onClick={onLocalSubmit}
-            type="primary"
-          >
+          <Button htmlType="submit" loading={loading} type="primary">
             {value !== '' ? 'Edit' : onFinish ? 'Reply' : 'Add'}
           </Button>
           {onFinish && <Button onClick={onFinish}>Cancel</Button>}

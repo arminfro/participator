@@ -1,5 +1,5 @@
+import { message } from 'antd';
 import React, { ReactElement, Suspense } from 'react';
-import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import { MutatorCallback, SWRConfiguration } from 'swr/dist/types';
 import Exception from '../../../pages/exception';
@@ -29,7 +29,7 @@ function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
   const [localStorage] = useLocalStorage<T>(keys.join());
   const swrConfig: SWRConfiguration = {
     onError: (err: Error) => {
-      if (isDev()) toast.error(err);
+      if (isDev()) message.error(err);
     },
   };
   if (localStorage) {

@@ -29,17 +29,21 @@ export default function UserCreateForm({
 
   const onSubmit = async () => {
     const password = user.get.pw1;
+    const loginProps = {
+      email: user.get.email,
+      password,
+    };
+
     const createdUser = await api<User>(
       passwordResetId ? 'PATCH' : 'POST',
       passwordResetId ? `api/users/${userId}/password-reset` : 'api/users',
       passwordResetId ? { ...user.get, passwordResetId } : user.get,
     );
-    const login = await apiLogin({
-      email: user.get.email,
-      password,
-    });
+
+    const login = await apiLogin(loginProps);
     dispatch({ type: 'LOGIN', user: login.user });
     setToken(login.access_token);
+
     if (createdUser) Router.push(`/users/${createdUser.id}`);
   };
 

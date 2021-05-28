@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LinksModule } from '../links/links.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
+import { ChatsApiController } from './chat.api-controller';
+import { CaslModule } from '../casl/casl.module';
 
 @Module({
   providers: [ChatsGateway, ChatsService],
@@ -14,7 +16,9 @@ import { UsersModule } from '../users/users.module';
     UsersModule,
     LinksModule,
     AuthModule,
+    CaslModule,
   ],
+  controllers: [ChatsApiController],
   exports: [ChatsService],
 })
 export class ChatsModule {}

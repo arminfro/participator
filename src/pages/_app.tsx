@@ -1,5 +1,4 @@
 import React, { ReactElement, useRef } from 'react';
-import { ToastContainer } from 'react-toastify';
 import { SWRConfig } from 'swr';
 import { AbilityContextProvider } from '../components/utils/context/casl-context';
 import { SiderRefProvider } from '../components/utils/context/sider-ref-context';
@@ -34,7 +33,6 @@ export default function App({ Component, pageProps }: Props): ReactElement {
           </SWRConfig>
         </SiderRefProvider>
       </AbilityContextProvider>
-      <ToastContainer />
     </StoreProvider>
   );
 }

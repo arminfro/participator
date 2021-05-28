@@ -1,0 +1,14 @@
+{
+  "presets": ["next/babel", {
+  "preset-react": {
+    "importSource": "@welldone-software/why-did-you-render"
+  }
+}],
+  "plugins": [
+    ["prismjs", {
+        "languages": ["javascript", "typescript", "jsx", "tsx", "css", "markup"],
+        "theme": "coy",
+        "css": true
+    }]
+  ]
+}

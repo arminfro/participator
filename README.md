@@ -69,7 +69,6 @@ Call `yarn doc` for `compodoc` docs generation. It'll show documentation about b
 * [Socket.io v2 Server](https://socket.io/docs/v2/server-api/)
 * [Socket.io v2 Client](https://socket.io/docs/v2/client-api)
 * [Antd](https://ant.design/components/overview/) - Design system
-* [React Toaster](https://fkhadra.github.io/react-toastify/api/toast) - Notifications
 * [date-fns](https://github.com/date-fns/date-fns) - Date functions
 * [marked](https://github.com/markedjs/marked) - Markdown
 * [faker.js](https://github.com/Marak/Faker.js) - Random Data for testing
