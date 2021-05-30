@@ -915,6 +915,11 @@
   resolved "https://registry.yarnpkg.com/@casl/react/-/react-2.3.0.tgz#e97493c4ff6cfc99001b71f59a9dbe132f884da2"
   integrity sha512-xP5G9ShXviE56IrU4mPpj1K7bl8KmNOjz3e4YgwrirmRdtZ38rF70a5AkFotWX9hgdH2mqZK/VHiYDGAIlYu1Q==
 
+"@codebrew/nestjs-storage@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@codebrew/nestjs-storage/-/nestjs-storage-0.1.4.tgz#72691810f2b9cce0e7044055006300f1201591db"
+  integrity sha512-WdQsOQtLrzfJJzBbWtFNuEyYwzXA7V9ub5evpXdJK+Zsflu6G72g0s12Iu7UZ0gO0z5RVxo/iriowbvAqSARlQ==
+
 "@compodoc/compodoc@^1.1.11":
   version "1.1.11"
   resolved "https://registry.yarnpkg.com/@compodoc/compodoc/-/compodoc-1.1.11.tgz#44df8522479e5039911d8b2f10c24198831c5ede"
@@ -1346,6 +1351,13 @@
     jsonc-parser "3.0.0"
     pluralize "8.0.0"
 
+"@nestjs/serve-static@^2.1.4":
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/@nestjs/serve-static/-/serve-static-2.1.4.tgz#d25f7691b0cb19d3f12d161129dd1469dfdc880d"
+  integrity sha512-w2PpLKzQOB8rJ+vMOy28xm8jwE8VjJfA9U+KOm0H0OY62g2oOWJ+OQPSDogP7XxAzZwq+Bt8wNU2oS8+z6v6Zg==
+  dependencies:
+    path-to-regexp "0.1.7"
+
 "@nestjs/swagger@^4.7.12":
   version "4.8.0"
   resolved "https://registry.yarnpkg.com/@nestjs/swagger/-/swagger-4.8.0.tgz#7ebfeb0d59e0c27ff40beb429d7311b752c0dca4"
@@ -1485,6 +1497,14 @@
   integrity sha512-am34LJf0N2nON/PT9G7pauA+xjcwX9P6x31m4hBgfUeSXYRZBRv/R6EcdWs8iV4XJjPO++NTsrj7ua/cN2s6ZA==
   dependencies:
     "@sinonjs/commons" "^1.7.0"
+
+"@slynova/flydrive@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@slynova/flydrive/-/flydrive-1.0.3.tgz#1ca4be055c759abd3f55b2a46f279baa1e6ce2b2"
+  integrity sha512-XJ8tfijqfXUuFPwrceCgXr/GqwkO49u4fBYsXZV7lBt9/9HqbdEG2E//R3pOIp2L35zqxrOe3Vk/getnYibjAA==
+  dependencies:
+    fs-extra "^9.0.0"
+    node-exceptions "^4.0.1"
 
 "@sqltools/formatter@^1.2.2":
   version "1.2.3"
@@ -1745,6 +1765,13 @@
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-1.3.2.tgz#93e25bf9ee75fe0fd80b594bc4feb0e862111b5a"
   integrity sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==
+
+"@types/multer@^1.4.5":
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/@types/multer/-/multer-1.4.5.tgz#db0557562307e9adb6661a9500c334cd7ddd0cd9"
+  integrity sha512-9b/0a8JyrR0r2nQhL73JR86obWL7cogfX12augvlrvcpciCo/hkvEsgu80Z4S2g2DHGVXHr8pUIi1VhqFJ8Ufw==
+  dependencies:
+    "@types/express" "*"
 
 "@types/node-emoji@^1.8.1":
   version "1.8.1"
@@ -8062,6 +8089,11 @@ node-emoji@1.10.0, node-emoji@^1.10.0:
   integrity sha512-Yt3384If5H6BYGVHiHwTL+99OzJKHhgp82S8/dktEK73T26BazdgZ4JZh92xSVtGNJvz9UbXdNAc5hcrXV42vw==
   dependencies:
     lodash.toarray "^4.4.0"
+
+node-exceptions@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/node-exceptions/-/node-exceptions-4.0.1.tgz#70425d17a245c3c00709c72f57c4c20b39ef1a4c"
+  integrity sha512-KJI+FawYOv74x60H6+zrBPfO2vvp9m0pHZi6SH8BBBuc67Irv11DsqY4Le4EBFq1/T5aXFU3hkLrMgtW7RNXxA==
 
 node-fetch@2.6.1, node-fetch@^2.6.1:
   version "2.6.1"

@@ -85,11 +85,9 @@ export default function RoomTable({ rooms }: Props) {
       pagination={false}
       bordered={true}
       rowClassName={(room) => (canReadRoom(room) && 'pointer') || ''}
-      onRow={(room) => {
-        return {
-          onClick: () => onGoToRoom(room),
-        };
-      }}
+      onRow={(room) => ({
+        onClick: () => onGoToRoom(room),
+      })}
     />
   );
 }

@@ -1,9 +1,8 @@
-import { Avatar, Comment } from 'antd';
-import * as Faker from 'faker';
+import { Comment } from 'antd';
 import { formatDistance } from 'date-fns';
 import React from 'react';
-
 import { Answer } from '../../types/answer';
+import UserAvatar from '../utils/container/user-avatar';
 
 interface Props {
   answers: Answer[];
@@ -23,9 +22,7 @@ export default function ListFreeAnswers(props: Props) {
               {' ago'}
             </>
           }
-          avatar={
-            <Avatar src={Faker.image.avatar()} alt={answerObject.user.name} />
-          }
+          avatar={<UserAvatar user={answerObject.user} />}
           content={<p>{answerObject.freeAnswer}</p>}
         />
       ))}

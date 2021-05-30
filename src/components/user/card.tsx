@@ -1,11 +1,12 @@
 import { CloudOutlined, LikeOutlined } from '@ant-design/icons';
 import { subject } from '@casl/ability';
-import { Card, Image, Skeleton } from 'antd';
+import { Card, Skeleton } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import Link from 'next/link';
 import React, { CSSProperties, ReactElement, SyntheticEvent } from 'react';
 import { Action } from '../../casl/action';
 import { User, UserUpdateToggleKeys } from '../../types/user';
+import UserAvatar from '../utils/container/user-avatar';
 import { useAbility } from '../utils/context/casl-context';
 import { useUserUpdate } from '../utils/hooks/use-user';
 
@@ -41,10 +42,11 @@ export default function UserCard({ user }: Props): ReactElement {
       <LinkWrapper canReadAbility={canReadUser()} id={user.id}>
         <Card
           cover={
-            <Image
-              style={{ width: '60%', margin: 'auto' }}
-              preview={false}
-              src="https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png"
+            <UserAvatar
+              style={{ height: 180 }}
+              shape="square"
+              size="large"
+              user={user}
             />
           }
           actions={[

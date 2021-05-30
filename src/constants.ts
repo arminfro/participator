@@ -10,3 +10,8 @@ export const port = process.env.port || 3000;
 export const protocol = process.env.protocol || 'http';
 export const url = `${domain}:${port}`;
 export const urlWithProtocol = `${protocol}://${url}`;
+
+export const staticRoot = `static`;
+export const staticUrl = `${urlWithProtocol}/${staticRoot}`;
+export const avatarRoot = `${staticRoot}/avatar`;
+export const avatarUrl = `${staticUrl}/avatar`;

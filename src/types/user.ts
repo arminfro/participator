@@ -77,6 +77,7 @@ export type User = {
   hasHandUp: boolean;
   randomGroup: boolean;
   active: boolean;
+  readonly uuid?: string;
   readonly createdAt?: Date | string;
   readonly updatedAt?: Date | string;
 };
@@ -93,6 +94,7 @@ export const User: Describe<User> = object({
   hasHandUp: boolean(),
   randomGroup: boolean(),
   active: boolean(),
+  uuid: optional(string()),
   createdAt: optional(any()),
   updatedAt: optional(any()),
 });

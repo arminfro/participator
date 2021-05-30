@@ -3,9 +3,8 @@ import {
   DeliveredProcedureOutlined,
   EditOutlined,
 } from '@ant-design/icons';
-import { Avatar, Comment } from 'antd';
+import { Comment } from 'antd';
 import { formatDistance } from 'date-fns';
-import * as Faker from 'faker';
 import marked from 'marked';
 import emoji from 'node-emoji';
 import Prism from 'prismjs';
@@ -13,6 +12,7 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import sanitizeHtml from 'sanitize-html';
 import { Chat } from '../../types/chat';
 import { User } from '../../types/user';
+import UserAvatar from '../utils/container/user-avatar';
 import ChatForm from './form';
 import ChatLinkList from './link-list';
 
@@ -89,7 +89,7 @@ export default function ChatListItem({
   const chatFormProps = { users, onSubmit, scrollOnInit: true };
   const commentProps = {
     author: chat.user.name,
-    avatar: <Avatar src={Faker.image.avatar()} alt={chat.user.name} />,
+    avatar: <UserAvatar user={chat.user} />,
   };
 
   return (

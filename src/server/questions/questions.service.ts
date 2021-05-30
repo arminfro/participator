@@ -40,7 +40,7 @@ export class QuestionsService {
   }
 
   async findOne(id: number): Promise<Question> {
-    const j = await this.questionRepository.findOne(id, {
+    return await this.questionRepository.findOne(id, {
       relations: [
         'fixAnswers',
         'answers',
@@ -50,8 +50,6 @@ export class QuestionsService {
         'user',
       ],
     });
-    console.log('findOne Question', j);
-    return j;
   }
 
   async update(id: number, questionUpdate: QuestionUpdate) {

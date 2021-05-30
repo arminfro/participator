@@ -1,3 +1,4 @@
+import { StorageService } from '@codebrew/nestjs-storage';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validate } from 'class-validator';
@@ -18,6 +19,7 @@ import { User } from './user.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    private storage: StorageService,
     private readonly mailerService: MailerService,
   ) {}
 
@@ -63,6 +65,10 @@ export class UsersService {
     await this.usersRepository.delete(id);
   }
 
+  async saveAvatar(file: Express.Multer.File, user: User): Promise<void> {
+    this.storage.getDisk().put(user.avatarStaticPath(), file.buffer);
+  }
+
   async findByEMail(
     email: string,
     opts: FindOneOptions<User> = null,
@@ -80,7 +86,6 @@ export class UsersService {
       ...failures.map((failure) => failure.message),
       ...validationErrors.map((err) => err.toString(false)),
     ];
-    console.debug('user create', user, errors.join('. '));
 
     if (errors.length > 0 || !user) {
       throw new HttpException(errors.join('. '), HttpStatus.BAD_REQUEST);

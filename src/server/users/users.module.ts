@@ -1,3 +1,4 @@
+import { StorageModule } from '@codebrew/nestjs-storage';
 import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CaslModule } from '../casl/casl.module';
@@ -22,6 +23,7 @@ import { UsersService } from './users.service';
   imports: [
     NextModule,
     CaslModule,
+    StorageModule,
     TypeOrmModule.forFeature([User, PasswordRecover]),
   ],
   controllers: [UsersController, UsersApiController],

@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -15,6 +16,7 @@ import { Chat } from '../chats/chat.entity';
 import { Question } from '../questions/question.entity';
 import { Room } from '../rooms/room.entity';
 import PasswordRecover from '../login/password-recover.entity';
+import { avatarRoot } from '../../constants';
 
 @Entity()
 export class User extends BaseEntity implements UserModel {
@@ -47,6 +49,10 @@ export class User extends BaseEntity implements UserModel {
   @IsBoolean()
   @IsOptional()
   active!: boolean;
+
+  @Column()
+  @Generated('uuid')
+  uuid!: string;
 
   @OneToMany(() => Room, (room) => room.admin)
   ownedRooms: Room[];
@@ -81,5 +87,9 @@ export class User extends BaseEntity implements UserModel {
     return !![...this.joinedRooms, ...this.ownedRooms].find(
       (room) => room.id === roomId,
     );
+  }
+
+  avatarStaticPath(): string {
+    return `${avatarRoot}/${this.uuid}`;
   }
 }

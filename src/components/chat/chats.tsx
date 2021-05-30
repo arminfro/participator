@@ -1,6 +1,5 @@
 import { VerticalLeftOutlined } from '@ant-design/icons';
-import { Avatar, Comment, message, Tooltip, Tree } from 'antd';
-import * as Faker from 'faker';
+import { Comment, message, Tooltip, Tree } from 'antd';
 import { uniq } from 'lodash';
 import React, {
   Dispatch,
@@ -23,6 +22,7 @@ import {
   removeChild,
   replaceChild,
 } from '../../utils/transform-tree';
+import UserAvatar from '../utils/container/user-avatar';
 import { useSocket } from '../utils/hooks/use-socket';
 import useTree from '../utils/hooks/use-tree';
 import useWindowSize from '../utils/hooks/use-window-size';
@@ -197,7 +197,7 @@ export default function Chats({
       )}
       <Comment
         author={user.name}
-        avatar={<Avatar src={Faker.image.avatar()} alt={user.name} />}
+        avatar={<UserAvatar user={user} />}
         content={<ChatForm users={users} onSubmit={onCreate} value="" />}
       />
     </>

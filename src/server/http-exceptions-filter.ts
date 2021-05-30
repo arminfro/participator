@@ -28,7 +28,7 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     };
 
     this.logger.warn(
-      `${data.status} @ ${data.path} is ${data.message} from ${req.headers['referer']} with ${req.headers['user-agent']}`,
+      `${data.status} @ ${data.path} by ${data.message} from ${req.headers['referer']} with ${req.headers['user-agent']}`,
       'HttpExceptionsFilter',
     );
 

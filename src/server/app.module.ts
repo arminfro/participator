@@ -19,6 +19,9 @@ import { ChatsModule } from './chats/chats.module';
 import { LoginModule } from './login/login.module';
 import { HttpExceptionsFilter } from './http-exceptions-filter';
 import { WsExceptionsFilter } from './ws-exceptions-filter';
+import { DriverType, StorageModule } from '@codebrew/nestjs-storage';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { staticRoot } from '../constants';
 
 @Module({
   imports: [
@@ -30,6 +33,21 @@ import { WsExceptionsFilter } from './ws-exceptions-filter';
     ChatsModule,
     RoomsModule,
     TypeOrmModule.forRoot(),
+    StorageModule.forRoot({
+      default: 'local',
+      disks: {
+        local: {
+          driver: DriverType.LOCAL,
+          config: {
+            root: process.cwd(),
+          },
+        },
+      },
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: `${process.cwd()}/static`,
+      serveRoot: `/${staticRoot}`,
+    }),
   ],
   controllers: [AppController],
   providers: [

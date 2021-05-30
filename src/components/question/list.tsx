@@ -1,10 +1,10 @@
-import { Avatar, Comment, Timeline } from 'antd';
+import { Comment, Timeline } from 'antd';
 import { formatDistance } from 'date-fns';
-import * as Faker from 'faker';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { Question } from '../../types/question';
+import UserAvatar from '../utils/container/user-avatar';
 
 interface Props {
   questions: Question[];
@@ -29,9 +29,7 @@ export default function QuestionList({ questions }: Props): ReactElement {
                   {' ago'}
                 </>
               }
-              avatar={
-                <Avatar src={Faker.image.avatar()} alt={question.user.name} />
-              }
+              avatar={<UserAvatar user={question.user} />}
               content={
                 <Link
                   href="/rooms/[id]/questions/[questionId]"

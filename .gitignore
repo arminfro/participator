@@ -39,3 +39,5 @@ tags*
 documentation
 .env
 .vimrc.local
+
+static/upload

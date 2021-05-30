@@ -4,14 +4,21 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Action } from '../../casl/action';
+import { avatarRoot } from '../../constants';
 import { UserCreate, UserUpdate } from '../../types/user';
+import { verifyAvatar } from '../../utils/verify-avatar';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsePolicy } from '../casl/use-policy.decorator';
 import { LoginService } from '../login/login.service';
@@ -69,9 +76,25 @@ export class UsersApiController {
     return this.usersService.update(user.id, userUpdate);
   }
 
+  @Post(':id/upload-avatar')
+  @UseInterceptors(FileInterceptor('avatar'))
+  @UsePolicy((ability, subjects) => ability.can(Action.Update, subjects.user))
+  async uploadAvatar(
+    @UserDecorator() user: User,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<string | never> {
+    // todo, use decorator to guard verification
+    const errors = verifyAvatar(file);
+    if (errors.length === 0) {
+      this.usersService.saveAvatar(file, user);
+      return `${avatarRoot}/${user.uuid}`;
+    } else {
+      throw new HttpException(errors.join('. '), HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Delete(':id')
   @HttpCode(204)
-  @UseGuards(JwtAuthGuard)
   @UsePolicy((ability, subjects) => ability.can(Action.Delete, subjects.user))
   async deleteOne(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.usersService.delete(id);
