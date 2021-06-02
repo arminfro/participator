@@ -34,7 +34,7 @@ Once started, you can go to `localhost:3000/api` to see a summary of all `http` 
 
 All routes prefixed with `api/` return json. Others call Next.js to render components.
 
-<!-- You can call `yarn seed <EMAIL> [<EMAIL2>]` to populate dev db with some data. !Currently broken! -->
+You can call `yarn seed <EMAIL> [<EMAIL2>, [<EMAIL3>, ...]]` to populate dev db with some data.
 
 ## File Structure
 

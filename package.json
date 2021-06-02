@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "seed": "node -r ts-node/register --experimental-modules ./bin/seed.ts",
+    "seed": "node -r ts-node/register --experimental-modules ./scripts/seed/app.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start --path ./tsconfig.server.json",
@@ -110,6 +110,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "form-data": "^4.0.0",
     "jest": "^27.0.1",
     "prettier": "^2.3.0",
     "supertest": "^6.0.0",

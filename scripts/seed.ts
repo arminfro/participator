@@ -15,10 +15,14 @@ if (!emails.length) {
 let token: string;
 
 const postReq = async (path, data) => {
-  return await axios.post(`${urlWithProtocol}/${path}`, data, {
-    headers: { Authorization: `bearer ${token}` },
-    timeout: 10000,
-  });
+  return await axios
+    .post(`${urlWithProtocol}/${path}`, data, {
+      headers: { Authorization: `bearer ${token}` },
+      timeout: 10000,
+    })
+    .catch((e) => {
+      console.log('error at', path, e);
+    });
 };
 
 const register = async (name, email, pw = 'hi') => {
