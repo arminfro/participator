@@ -54,6 +54,10 @@ export class User extends BaseEntity implements UserModel {
   @Generated('uuid')
   uuid!: string;
 
+  @Column({ nullable: true })
+  @IsOptional()
+  avatarUrl: string | null;
+
   @OneToMany(() => Room, (room) => room.admin)
   ownedRooms: Room[];
 

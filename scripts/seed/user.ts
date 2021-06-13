@@ -6,7 +6,7 @@ import RoomSeeder from './room';
 import { api } from './utils';
 
 export default class UserSeeder extends GenericSeeder<User> {
-  static password = 'h3ll0-w0rld!';
+  static password = 'hello-world';
 
   user: User | undefined;
   roomSeeders: RoomSeeder[];
@@ -29,6 +29,7 @@ export default class UserSeeder extends GenericSeeder<User> {
         pw1: UserSeeder.password,
         pw2: UserSeeder.password,
         email: email || Faker.internet.email().replace(/@.*$/, '@localhost.me'),
+        avatarUrl: Faker.internet.avatar(),
       } as UserCreate,
     );
     await this.login();

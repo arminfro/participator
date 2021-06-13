@@ -50,6 +50,8 @@ export class UsersService {
     if (userUpdate.name) user.name = userUpdate.name;
     if (userUpdate.hasHandUp !== undefined)
       user.hasHandUp = userUpdate.hasHandUp;
+    if (userUpdate.avatarUrl !== undefined)
+      user.avatarUrl = userUpdate.avatarUrl;
     if (userUpdate.randomGroup !== undefined)
       user.randomGroup = userUpdate.randomGroup;
     if (userUpdate.active !== undefined) user.active = userUpdate.active;
@@ -65,8 +67,11 @@ export class UsersService {
     await this.usersRepository.delete(id);
   }
 
-  async saveAvatar(file: Express.Multer.File, user: User): Promise<void> {
-    this.storage.getDisk().put(user.avatarStaticPath(), file.buffer);
+  async storeAvatar(file: Express.Multer.File, user: User): Promise<void> {
+    const avatarPath = `${user.avatarStaticPath()}-${file.originalname}`;
+    console.log('avatarPath', avatarPath);
+    this.storage.getDisk().put(avatarPath, file.buffer);
+    this.update(user.id, { avatarUrl: avatarPath });
   }
 
   async findByEMail(
@@ -83,7 +88,9 @@ export class UsersService {
     const validationErrors = user ? await validate(user) : [];
 
     const errors = [
-      ...failures.map((failure) => failure.message),
+      ...failures.map(
+        (failure) => `${failure.message} at ${failure.path.join(', ')}`,
+      ),
       ...validationErrors.map((err) => err.toString(false)),
     ];
 
@@ -97,6 +104,9 @@ export class UsersService {
     if (user) {
       user.name = userCreate.name;
       user.email = userCreate.email;
+      if (userCreate.avatarUrl) {
+        user.avatarUrl = userCreate.avatarUrl;
+      }
       user.password = AuthService.hashPassword(userCreate.pw1);
       return user;
     } else {

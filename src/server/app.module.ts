@@ -1,27 +1,24 @@
+import { DriverType, StorageModule } from '@codebrew/nestjs-storage';
 import {
+  Logger,
+  MiddlewareConsumer,
   Module,
   NestModule,
-  MiddlewareConsumer,
   RequestMethod,
-  Logger,
 } from '@nestjs/common';
-import { NextModule } from './nextjs/next.module';
-import { NextMiddleware } from './nextjs/next.middleware';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER } from '@nestjs/core';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
-import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
-import { RoomsModule } from './rooms/rooms.module';
 import { ChatsModule } from './chats/chats.module';
-import { LoginModule } from './login/login.module';
 import { HttpExceptionsFilter } from './http-exceptions-filter';
+import { LoginModule } from './login/login.module';
+import { NextMiddleware } from './nextjs/next.middleware';
+import { NextModule } from './nextjs/next.module';
+import { RoomsModule } from './rooms/rooms.module';
+import { UsersModule } from './users/users.module';
 import { WsExceptionsFilter } from './ws-exceptions-filter';
-import { DriverType, StorageModule } from '@codebrew/nestjs-storage';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { staticRoot } from '../constants';
 
 @Module({
   imports: [
@@ -43,10 +40,6 @@ import { staticRoot } from '../constants';
           },
         },
       },
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: `${process.cwd()}/static`,
-      serveRoot: `/${staticRoot}`,
     }),
   ],
   controllers: [AppController],

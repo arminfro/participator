@@ -1,4 +1,4 @@
-import { Button, Drawer as ADrawer, DrawerProps } from 'antd';
+import { Button, Drawer as AntdDrawer, DrawerProps } from 'antd';
 import React, { ReactElement, useEffect, useState } from 'react';
 
 interface Props extends DrawerProps {
@@ -35,14 +35,14 @@ export default function Drawer({
       >
         {action}
       </Button>
-      <ADrawer
+      <AntdDrawer
         title={`${action} ${subject}`}
         onClose={onClose}
         visible={visible}
         {...drawerProps}
       >
         {typeof children === 'function' ? children(onClose) : children}
-      </ADrawer>
+      </AntdDrawer>
     </>
   );
 }

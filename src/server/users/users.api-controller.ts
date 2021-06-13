@@ -16,7 +16,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Action } from '../../casl/action';
-import { avatarRoot } from '../../constants';
 import { UserCreate, UserUpdate } from '../../types/user';
 import { verifyAvatar } from '../../utils/verify-avatar';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -86,8 +85,8 @@ export class UsersApiController {
     // todo, use decorator to guard verification
     const errors = verifyAvatar(file);
     if (errors.length === 0) {
-      this.usersService.saveAvatar(file, user);
-      return `${avatarRoot}/${user.uuid}`;
+      this.usersService.storeAvatar(file, user);
+      return user.avatarUrl;
     } else {
       throw new HttpException(errors.join('. '), HttpStatus.BAD_REQUEST);
     }

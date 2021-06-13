@@ -1,6 +1,5 @@
 import { Avatar, AvatarProps } from 'antd';
 import React, { ReactElement, useState } from 'react';
-import { avatarUrl } from '../../../constants';
 import { User } from '../../../types/user';
 
 interface Props extends AvatarProps {
@@ -25,7 +24,7 @@ export default function UserAvatar({
         fallbackChildren
       ) : (
         <Avatar
-          src={error ? defaultUrl : `${avatarUrl}/${user.uuid}`}
+          src={error || !user.avatarUrl ? defaultUrl : user.avatarUrl}
           alt={user.name}
           onError={() => {
             setError(true);

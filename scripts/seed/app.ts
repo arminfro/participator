@@ -7,7 +7,7 @@ export class App {
 
   constructor() {
     const emails = process.argv.filter((arg) => isEmail(arg));
-    this.users = times(5).map(() => new UserSeeder());
+    this.users = times(8).map(() => new UserSeeder());
     this.users.forEach(async (user) => {
       await user.create(emails.pop());
       user.roomSeeders.forEach(async (room) => {

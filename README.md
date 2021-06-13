@@ -34,7 +34,7 @@ Once started, you can go to `localhost:3000/api` to see a summary of all `http` 
 
 All routes prefixed with `api/` return json. Others call Next.js to render components.
 
-You can call `yarn seed <EMAIL> [<EMAIL2>, [<EMAIL3>, ...]]` to populate dev db with some data.
+You can call `yarn seed <EMAIL> [<EMAIL2>, [<EMAIL3>, ...]]` to populate dev db with some data, pw will be `hello-world`
 
 ## File Structure
 
@@ -45,7 +45,7 @@ There are three groups of directories in `src`.
   * `pages` is the file-based routing of next.js. It's the bridge betwenn `server` and `components`. That's where initial data fetching happens.
   * `components` has all components grouped by subjects.
 * Common code is in `types, casl` and `utils`
-  * `types` has all type definitions and validations using `superstruct`
+  * `types` has all type definitions and validations using superstruct
   * `casl` defines abilities
   * `utils` contains common helper functions
 

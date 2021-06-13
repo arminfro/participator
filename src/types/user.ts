@@ -1,5 +1,6 @@
 import {
   any,
+  nullable,
   array,
   boolean,
   Describe,
@@ -24,6 +25,7 @@ export type UserCreate = {
   pw1: string;
   pw2: string;
   passwordResetId?: string;
+  avatarUrl?: string;
 };
 export const UserCreate = refine(
   object({
@@ -32,6 +34,7 @@ export const UserCreate = refine(
     pw1: stringMinLength(1, 'pw1'),
     pw2: stringMinLength(1, 'pw2'),
     passwordResetId: optional(string()),
+    avatarUrl: optional(string()),
   }),
   'equalPws',
   (userCreate) => userCreate.pw1 === userCreate.pw2,
@@ -51,6 +54,7 @@ export const UserUpdate = object({
   hasHandUp: optional(boolean()),
   randomGroup: optional(boolean()),
   active: optional(boolean()),
+  avatarUrl: optional(string()),
 });
 
 export type UserLogin = Infer<typeof UserLogin>;
@@ -77,6 +81,7 @@ export type User = {
   hasHandUp: boolean;
   randomGroup: boolean;
   active: boolean;
+  avatarUrl: string | null;
   readonly uuid?: string;
   readonly createdAt?: Date | string;
   readonly updatedAt?: Date | string;
@@ -94,6 +99,7 @@ export const User: Describe<User> = object({
   hasHandUp: boolean(),
   randomGroup: boolean(),
   active: boolean(),
+  avatarUrl: nullable(string()),
   uuid: optional(string()),
   createdAt: optional(any()),
   updatedAt: optional(any()),

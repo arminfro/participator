@@ -9,10 +9,16 @@ import { getToken } from '../../utils/funcs/token';
 interface Props {
   uploadUrl: string;
   previewImgUrl?: string;
+  onDone?: (fileUrl: string) => void;
   children: ReactElement;
 }
 
-export default function Upload({ uploadUrl, previewImgUrl, children }: Props) {
+export default function Upload({
+  uploadUrl,
+  previewImgUrl,
+  onDone,
+  children,
+}: Props) {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(previewImgUrl);
 
@@ -24,8 +30,8 @@ export default function Upload({ uploadUrl, previewImgUrl, children }: Props) {
     if (info.file.status === 'done') {
       setLoading(false);
       message.success('Avatar uploaded!');
-      message.info('Please reload to see new Avatar');
       setImageUrl(`/${info.file.xhr.responseText}`);
+      onDone && onDone(`/${info.file.xhr.responseText}`);
     }
   };
 

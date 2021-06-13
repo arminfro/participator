@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { isUser, User } from '../../types/user';
 import api from '../utils/funcs/api';
+import { getToken } from '../utils/funcs/token';
 import { useStore } from '../utils/store/context';
 
 /*
@@ -27,16 +28,20 @@ export default function Navigator() {
 
   useEffect(() => {
     if (!userFetched) {
-      api<User>('get', 'api/users/token-to-user')
-        .then((user) => {
-          if (user && isUser(user)) {
-            console.debug('dispatch LOGIN:', user.name);
-            dispatch({ type: 'LOGIN', user });
-          } else {
-            console.debug('not valid token');
-          }
-        })
-        .finally(() => setIsLoading(false));
+      if (getToken()) {
+        api<User>('get', 'api/users/token-to-user')
+          .then((user) => {
+            if (user && isUser(user)) {
+              console.debug('dispatch LOGIN:', user.name);
+              dispatch({ type: 'LOGIN', user });
+            } else {
+              console.debug('not valid token');
+            }
+          })
+          .finally(() => setIsLoading(false));
+      } else {
+        setIsLoading(false);
+      }
     }
   }, [dispatch, userFetched]);
 
@@ -46,21 +51,23 @@ export default function Navigator() {
   };
 
   return (
-    <Menu mode="horizontal" selectedKeys={[selectedKey()]}>
-      <Menu.Item key="/">
-        <Link href="/">Home</Link>
-      </Menu.Item>
-      {userFetched && (
-        <>
-          <Menu.Item key="/users">
-            <Link href="/users">Users</Link>
-          </Menu.Item>
-          <Menu.Item key="/rooms">
-            <Link href="/rooms">Rooms</Link>
-          </Menu.Item>
-        </>
-      )}
-      <LoginOrLogout isLoading={isLoading} />
-    </Menu>
+    <>
+      <Menu mode="horizontal" selectedKeys={[selectedKey()]}>
+        <Menu.Item key="/">
+          <Link href="/">Home</Link>
+        </Menu.Item>
+        {userFetched && (
+          <>
+            <Menu.Item key="/users">
+              <Link href="/users">Users</Link>
+            </Menu.Item>
+            <Menu.Item key="/rooms">
+              <Link href="/rooms">Rooms</Link>
+            </Menu.Item>
+          </>
+        )}
+        <LoginOrLogout isLoading={isLoading} />
+      </Menu>
+    </>
   );
 }

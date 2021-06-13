@@ -1,4 +1,3 @@
-import { message } from 'antd';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import { UserLogin } from '../../types/user';

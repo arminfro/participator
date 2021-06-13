@@ -4,21 +4,23 @@ import { NestFactory } from '@nestjs/core';
 import { NextModule } from './server/nextjs/next.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
-
-// needed for parallel link parsing in LinksService#getPreview
-require('events').EventEmitter.prototype._maxListeners = 128;
-require('events').defaultMaxListeners = 128;
-
-import { AppModule } from './server/app.module';
 import {
   WinstonModule,
   utilities as nestWinstonModuleUtilities,
 } from 'nest-winston';
 import * as winston from 'winston';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+
+// needed for parallel link parsing in LinksService#getPreview
+require('events').EventEmitter.prototype._maxListeners = 128;
+require('events').defaultMaxListeners = 128;
+
 import { domain, port, url } from './constants';
+import { AppModule } from './server/app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: WinstonModule.createLogger({
       transports: [
         new winston.transports.Console({
@@ -42,6 +44,11 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
+
+  app.useStaticAssets(join(__dirname, '..', '..', 'static'), {
+    index: false,
+    prefix: '/static',
+  });
 
   app.use(
     helmet({

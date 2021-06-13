@@ -89,10 +89,13 @@ export class RoomsService {
     room: Room,
     failures: Failure[],
   ): Promise<void | never> {
-    const validationErrors = room ? await validate(room) : [];
+    const roomErrors = await validate(room);
+    const validationErrors = room ? roomErrors : [];
 
     const errors = [
-      ...failures.map((failure) => failure.message),
+      ...failures.map(
+        (failure) => `${failure.message} at ${failure.path.join(', ')}`,
+      ),
       ...validationErrors.map((err) => err.toString(false)),
     ];
 

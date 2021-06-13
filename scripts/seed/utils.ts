@@ -10,7 +10,6 @@ export async function api<T>(
   headers = {},
 ): Promise<T | void> {
   const url = `${urlWithProtocol}/${path}`;
-  console.log('url:', url, 'data:', data);
   return axios({
     method: method,
     headers: {
@@ -24,6 +23,10 @@ export async function api<T>(
       return transformDateString<T>(response.data);
     })
     .catch((e) => {
-      console.log('error at', path, 'response data:', e.response.data);
+      if (e.response.data) {
+        console.error('error at', path, 'response data:', e.response.data);
+      } else {
+        console.error('no response, check server log');
+      }
     });
 }

@@ -143,10 +143,8 @@ export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
   const structBuilt = useMemo(() => {
     const reducedKeys = Object.keys(states).reduce(
       (acc: UseStruct<T>, key) => {
-        const [getter, setter]: [
-          Value<T>,
-          Dispatch<SetStateAction<Value<T>>>,
-        ] = states[key];
+        const [getter, setter]: [Value<T>, Dispatch<SetStateAction<Value<T>>>] =
+          states[key];
         acc.get[key] = getter;
         acc.set[key] = buildSetter(setter, key);
         return acc;
@@ -166,7 +164,7 @@ export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
           });
         },
         validationErrors,
-      } as UseStruct<T>, // todo, better way to express
+      },
     );
 
     return reducedKeys;
