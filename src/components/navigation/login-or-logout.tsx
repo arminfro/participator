@@ -1,4 +1,4 @@
-import { Spin } from 'antd';
+import { Menu, Spin } from 'antd';
 import React from 'react';
 import { useStore } from '../utils/store/context';
 import Login from './login';
@@ -12,11 +12,8 @@ export default function LoginOrLogout({ isLoading }: Props) {
   const { store } = useStore();
 
   return (
-    <li
-      className="ant-menu-item ant-menu-item-only-child"
-      style={{ float: 'right' }}
-    >
+    <Menu.Item style={{ float: 'right' }}>
       {isLoading ? <Spin /> : store.user ? <Logout /> : <Login />}
-    </li>
+    </Menu.Item>
   );
 }

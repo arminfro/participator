@@ -41,3 +41,5 @@ documentation
 .vimrc.local
 
 static/avatar
+
+src/server/db/test.db.sqlite3
