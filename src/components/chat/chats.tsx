@@ -23,10 +23,10 @@ import {
   replaceChild,
 } from '../../utils/transform-tree';
 import UserAvatar from '../utils/container/user-avatar';
+import { useCurrentUser } from '../utils/context/current-user';
 import { useSocket } from '../utils/hooks/use-socket';
 import useTree from '../utils/hooks/use-tree';
 import useWindowSize from '../utils/hooks/use-window-size';
-import { useStore } from '../utils/store/context';
 import ChatForm from './form';
 import ChatListItem from './list-item';
 
@@ -47,9 +47,7 @@ export default function Chats({
   expandedKeys,
   setExpandedKeys,
 }: Props): ReactElement {
-  const {
-    store: { user },
-  } = useStore();
+  const { user } = useCurrentUser();
 
   const [chat, socket] = useSocket<Chat>(
     `/rooms/${roomId}/chat`,

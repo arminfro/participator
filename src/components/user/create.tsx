@@ -4,10 +4,10 @@ import { User } from '../../types/user';
 import Form from '../utils/container/form/form';
 import { FormInputItem } from '../utils/container/form/input-item';
 import { FormItem } from '../utils/container/form/item';
+import { useCurrentUser } from '../utils/context/current-user';
 import api, { apiLogin } from '../utils/funcs/api';
 import { setToken } from '../utils/funcs/token';
 import { useUserCreate } from '../utils/hooks/use-user';
-import { useStore } from '../utils/store/context';
 
 interface Props {
   name?: string;
@@ -25,7 +25,7 @@ export default function UserCreateForm({
 }: Props): ReactElement {
   const user = useUserCreate({ name, email, pw1: '', pw2: '' });
 
-  const { dispatch } = useStore();
+  const { dispatch } = useCurrentUser();
 
   const onSubmit = async () => {
     const password = user.get.pw1;

@@ -1,6 +1,6 @@
 import { Menu, Spin } from 'antd';
 import React from 'react';
-import { useStore } from '../utils/store/context';
+import { useCurrentUser } from '../utils/context/current-user';
 import Login from './login';
 import Logout from './logout';
 
@@ -9,11 +9,11 @@ interface Props {
 }
 
 export default function LoginOrLogout({ isLoading }: Props) {
-  const { store } = useStore();
+  const { user } = useCurrentUser();
 
   return (
     <Menu.Item style={{ float: 'right' }}>
-      {isLoading ? <Spin /> : store.user ? <Logout /> : <Login />}
+      {isLoading ? <Spin /> : user ? <Logout /> : <Login />}
     </Menu.Item>
   );
 }

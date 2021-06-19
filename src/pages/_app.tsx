@@ -1,9 +1,9 @@
 import React, { ReactElement, useRef } from 'react';
 import { SWRConfig } from 'swr';
 import { AbilityContextProvider } from '../components/utils/context/casl-context';
+import CurrentUserProvider from '../components/utils/context/current-user';
 import { SiderRefProvider } from '../components/utils/context/sider-ref-context';
 import { swrApi } from '../components/utils/funcs/api';
-import StoreProvider from '../components/utils/store/provider';
 import Layout from './layout';
 import './styles.css';
 
@@ -21,7 +21,7 @@ export default function App({ Component, pageProps }: Props): ReactElement {
   };
 
   return (
-    <StoreProvider>
+    <CurrentUserProvider>
       <AbilityContextProvider>
         <SiderRefProvider siderRef={siderRef}>
           <SWRConfig value={swrOptions}>
@@ -33,6 +33,6 @@ export default function App({ Component, pageProps }: Props): ReactElement {
           </SWRConfig>
         </SiderRefProvider>
       </AbilityContextProvider>
-    </StoreProvider>
+    </CurrentUserProvider>
   );
 }

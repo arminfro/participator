@@ -8,17 +8,14 @@ import { Action } from '../../casl/action';
 import { Room, RoomUpdate } from '../../types/room';
 import api from '../utils/funcs/api';
 import { useAbility } from '../utils/context/casl-context';
-import { useStore } from '../utils/store/context';
+import { useCurrentUser } from '../utils/context/current-user';
 
 interface Props {
   rooms: Room[];
 }
 
 export default function RoomTable({ rooms }: Props) {
-  const {
-    store: { user },
-  } = useStore();
-
+  const { user } = useCurrentUser();
   const ability = useAbility();
   const router = useRouter();
 

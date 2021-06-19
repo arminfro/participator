@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { isUser, User } from '../../types/user';
+import { useCurrentUser } from '../utils/context/current-user';
 import api from '../utils/funcs/api';
 import { getToken } from '../utils/funcs/token';
-import { useStore } from '../utils/store/context';
 
 /*
  * Populates store with fetching user by token,
@@ -16,10 +16,7 @@ export default function Navigator() {
     ssr: false,
   });
 
-  const {
-    dispatch,
-    store: { user },
-  } = useStore();
+  const { dispatch, user } = useCurrentUser();
 
   const userFetched = !!user;
 

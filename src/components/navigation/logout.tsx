@@ -1,19 +1,18 @@
 import { Button } from 'antd';
 import { useRouter } from 'next/router';
 import React from 'react';
-
-import { useStore } from '../utils/store/context';
 import { removeToken } from '../utils/funcs/token';
 import Link from 'next/link';
+import { useCurrentUser } from '../utils/context/current-user';
 
 export default function Logout() {
   const {
-    store: {
-      user: { id, name },
-    },
+    user: { id, name },
     dispatch,
-  } = useStore();
+  } = useCurrentUser();
+
   const router = useRouter();
+
   const onLogout = () => {
     router.push('/').then(() => {
       removeToken();

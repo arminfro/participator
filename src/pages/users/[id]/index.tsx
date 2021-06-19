@@ -1,20 +1,19 @@
+import { Button } from 'antd';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
-import { User } from '../../../types/user';
 import UserDetails from '../../../components/user/details';
-import Fetch from '../../../components/utils/container/fetch';
-import Page from '../../../components/utils/container/page';
-import Link from 'next/link';
-import { Button } from 'antd';
-import api from '../../../components/utils/funcs/api';
-import { useStore } from '../../../components/utils/store/context';
-import { removeToken } from '../../../components/utils/funcs/token';
 import UserEditForm from '../../../components/user/update';
 import Drawer from '../../../components/utils/container/drawer';
+import Fetch from '../../../components/utils/container/fetch';
+import Page from '../../../components/utils/container/page';
+import { useCurrentUser } from '../../../components/utils/context/current-user';
+import api from '../../../components/utils/funcs/api';
+import { removeToken } from '../../../components/utils/funcs/token';
+import { User } from '../../../types/user';
 
 export default function UserIndex(): ReactElement {
   const router = useRouter();
-  const { dispatch } = useStore();
+  const { dispatch } = useCurrentUser();
 
   const onDelete = (userId: number) => {
     if (window.confirm('Are you sure you want to delete your account?')) {

@@ -14,9 +14,9 @@ import {
   validateUserPasswordRecover,
   validateUserUpdate,
 } from '../../../types/user.validation';
+import { useCurrentUser } from '../context/current-user';
 import api, { apiLogin } from '../funcs/api';
 import { setToken } from '../funcs/token';
-import { useStore } from '../store/context';
 import { useStruct, UseStruct } from './use-struct';
 
 export function useUserUpdate(
@@ -57,7 +57,7 @@ export function useUserLogin(): UseStruct<UserLogin> {
     password: useState(initialValues.password),
   };
 
-  const { dispatch } = useStore();
+  const { dispatch } = useCurrentUser();
 
   return useStruct<UserLogin, User>({
     states,
