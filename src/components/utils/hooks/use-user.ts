@@ -69,9 +69,9 @@ export function useUserLogin(): UseStruct<UserLogin> {
         dispatch({ type: 'LOGIN', user });
         setToken(access_token);
         message.success(`Login success. Welcome ${user.name}`);
+        return Promise.resolve(user);
       } catch (err) {
-        message.error(err);
-        return await Promise.reject(err);
+        return Promise.reject(err);
       }
     },
   });

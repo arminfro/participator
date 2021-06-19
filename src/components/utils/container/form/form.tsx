@@ -38,6 +38,7 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
               ),
             )
               .catch((e) => {
+                console.debug('Error in Form container', e);
                 if (e.message) {
                   message.error(e.message);
                 }
