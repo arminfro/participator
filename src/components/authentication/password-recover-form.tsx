@@ -9,13 +9,11 @@ export default function PasswordRecoverForm(): ReactElement {
   const user = useUserPasswordRecover();
 
   const onRecover = (promise: Promise<any>) =>
-    promise
-      .then(() => {
-        message.success(
-          'Password recovery activated, please see your E-Mail inbox',
-        );
-      })
-      .catch((e) => message.error(e.message));
+    promise.then(() => {
+      message.success(
+        'Password recovery activated, please see your E-Mail inbox',
+      );
+    });
 
   return (
     <Form<UserPasswordRecover> struct={user} onSubmit={onRecover}>

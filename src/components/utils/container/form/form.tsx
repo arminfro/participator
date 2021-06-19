@@ -1,4 +1,4 @@
-import { Button, Form as AntdForm } from 'antd';
+import { Button, Form as AntdForm, message } from 'antd';
 import React, { ReactElement, useState } from 'react';
 import { StructProvider } from '../../context/struct-context';
 import { UseStruct } from '../../hooks/use-struct';
@@ -37,10 +37,15 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
                 },
               ),
             )
-              .catch(onLocalReset)
+              .catch((e) => {
+                if (e.message) {
+                  message.error(e.message);
+                }
+                onLocalReset();
+              })
               .finally(() => {
                 setLoading(false);
-              }); //.catch(() => struct?.reset());
+              });
           }
         }}
       >

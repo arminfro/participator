@@ -11,11 +11,18 @@ export interface ApiError {
 }
 
 function axiosCatch(error: AxiosError) {
-  throw {
-    path: error.config.url,
-    message: error.message,
-    status: error.request.status,
-  } as ApiError;
+  if (error.response?.data?.path === '/api/users/token-to-user') {
+    console.debug('Invalid token, may due to server side rendering');
+    return;
+  }
+  throw (
+    error.response?.data ||
+    ({
+      path: error.config.url,
+      message: error.message,
+      status: error.request.status,
+    } as ApiError)
+  );
 }
 
 export async function swrApi(path: string) {

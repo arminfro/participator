@@ -34,8 +34,6 @@ export default function Navigator() {
             if (user && isUser(user)) {
               console.debug('dispatch LOGIN:', user.name);
               dispatch({ type: 'LOGIN', user });
-            } else {
-              console.debug('not valid token');
             }
           })
           .finally(() => setIsLoading(false));
