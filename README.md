@@ -42,8 +42,10 @@ There are three groups of directories in `src`.
 
 * Server code is in `server`
 * Client code is in `pages` and `components`
-  * `pages` is the file-based routing of next.js. It's the bridge betwenn `server` and `components`. That's where initial data fetching happens.
   * `components` has all components grouped by subjects.
+  * `pages` is the file-based routing of next.js.
+    * It's the bridge between `server` and `components`
+    * That's where initial data fetching and layout setting happens.
 * Common code is in `types, casl` and `utils`
   * `types` has all type definitions and validations using superstruct
   * `casl` defines abilities

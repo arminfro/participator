@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getManager, TreeRepository } from 'typeorm';
 import TreeModel = require('tree-model');
@@ -11,7 +11,8 @@ import { UsersService } from '../users/users.service';
 import { Chat } from './chat.entity';
 import { chatMsgDeleted } from '../../constants';
 
-const urlRegex = /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/gi;
+const urlRegex =
+  /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/gi;
 
 @Injectable()
 export class ChatsService {
@@ -26,7 +27,7 @@ export class ChatsService {
     await this.chatsRepository.save(chat);
     const urls = chat.msg.match(urlRegex);
     if (urls) {
-      await this.linksService.buildLinksForChat(chat.id, urls);
+      this.linksService.dispatchBuildLinksForChat(chat.id, urls);
     }
     chat.save();
     return chat;

@@ -75,6 +75,14 @@ export function removeChild<T extends Tree<T>>(treeModel: T, id: number): T {
   return tree.model;
 }
 
+export function findChilds<T extends Tree<T>>(
+  treeModel: T,
+  compareFunc: TreeModel.NodeVisitorFunction<T>,
+): T[] {
+  const tree = newTree<T>(treeModel);
+  return tree.all(compareFunc).map((childs) => childs.model);
+}
+
 export function getAllIds<T extends Tree<T>>(treeModel: T): number[] {
   return newTree<T>(treeModel)
     .all((node) => node.model.children?.length)

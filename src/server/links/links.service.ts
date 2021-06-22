@@ -1,13 +1,20 @@
-import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+  LoggerService,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Repository } from 'typeorm';
-import LinkPreviewGenerator = require('link-preview-generator');
 import { IncomingMessage } from 'http';
-import request = require('request');
-
+import { Repository } from 'typeorm';
+import { Events } from '../../types/chat';
 import { LinkCreate } from '../../types/link';
-import { Chat } from '../chats/chat.entity';
+import { ChatsGateway } from '../chats/chats.gateway';
+import { ChatsService } from '../chats/chats.service';
 import { Link } from './link.entity';
+import LinkPreviewGenerator = require('link-preview-generator');
+import request = require('request');
 
 interface PreviewData {
   title: string;
@@ -21,12 +28,15 @@ export class LinksService {
   constructor(
     @InjectRepository(Link) private linksRepository: Repository<Link>,
     @Inject(Logger) private readonly logger: LoggerService,
+    @Inject(ChatsGateway) private readonly chatsGateway: ChatsGateway,
+    @Inject(forwardRef(() => ChatsService))
+    private readonly chatsService: ChatsService,
   ) {}
 
   async create(linkCreate: LinkCreate): Promise<Link | undefined> {
     const link = await this.build(linkCreate);
     if (link) {
-      return await this.linksRepository.save(link);
+      return await link.save();
     }
   }
 
@@ -36,7 +46,7 @@ export class LinksService {
     });
   }
 
-  async findOne(id: number): Promise<Link> {
+  async findOne(id: number): Promise<Link | undefined> {
     return await this.linksRepository.findOne(id);
   }
 
@@ -45,22 +55,78 @@ export class LinksService {
   // }
 
   remove(id: number) {
-    this.linksRepository.softDelete(id);
+    this.linksRepository.delete(id);
   }
 
-  async buildLinksForChat(chatId: number, rawLinks: string[]): Promise<Link[]> {
+  async dispatchBuildLinksForChat(
+    chatId: number,
+    rawLinks: string[],
+  ): Promise<Link[]> {
+    const preSavedLinks = await Promise.all(
+      rawLinks.map(async () => {
+        const link = new Link();
+        await link.save();
+        return link;
+      }),
+    );
+    this.buildLinksForChat(chatId, rawLinks, preSavedLinks);
+    return preSavedLinks;
+  }
+
+  private async buildLinksForChat(
+    chatId: number,
+    rawLinks: string[],
+    preSavedLinks: Link[],
+  ): Promise<Link[]> {
     const links = await Promise.all(
-      rawLinks.map(async (url) => {
+      rawLinks.map(async (url, index) => {
         const urlWithProtocol = await this.setHttpPrefix(url);
         if (urlWithProtocol) {
-          return await this.create({
-            url: urlWithProtocol,
-            chatId,
-          });
+          return await this.updatePreSaved(
+            {
+              url: urlWithProtocol,
+              chatId,
+            },
+            preSavedLinks[index],
+          );
+        } else {
+          const link = preSavedLinks[index];
+          this.remove(link.id);
         }
       }),
     );
     return links.filter((a) => a);
+  }
+
+  private async updatePreSaved(
+    linkCreate: LinkCreate,
+    preSavedLink: Link,
+  ): Promise<Link> {
+    const previewData = await this.getPreview(linkCreate.url);
+    if (previewData) {
+      preSavedLink.url = linkCreate.url;
+      preSavedLink.title = previewData.title;
+      preSavedLink.description = previewData.description;
+      preSavedLink.domain = previewData.domain;
+      preSavedLink.imgUrl = previewData.img;
+      preSavedLink.chat = await this.chatsService.findOne(linkCreate.chatId);
+      preSavedLink.save();
+      this.updateChat(preSavedLink);
+      return preSavedLink;
+    } else {
+      preSavedLink.remove();
+    }
+  }
+
+  private updateChat(preSavedLink: Link): void {
+    const chat = preSavedLink.chat;
+    const newChat = {
+      ...chat,
+      links: chat.links.map((currentLink) =>
+        currentLink.id === preSavedLink.id ? preSavedLink : currentLink,
+      ),
+    };
+    this.chatsGateway.server.emit(Events.update, newChat);
   }
 
   private async build(linkCreate: LinkCreate): Promise<Link | undefined> {
@@ -72,13 +138,9 @@ export class LinksService {
       link.description = previewData.description;
       link.domain = previewData.domain;
       link.imgUrl = previewData.img;
-      link.chat = await this.findChat(linkCreate.chatId);
+      link.chat = await this.chatsService.findOne(linkCreate.chatId);
       return link;
     }
-  }
-
-  private async findChat(chatId: number): Promise<Chat> {
-    return await getManager().findOne(Chat, chatId);
   }
 
   private async getPreview(url: string): Promise<PreviewData> {

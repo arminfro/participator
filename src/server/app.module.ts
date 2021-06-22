@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
 import { ChatsModule } from './chats/chats.module';
 import { HttpExceptionsFilter } from './http-exceptions-filter';
+import { LinksModule } from './links/links.module';
 import { LoginModule } from './login/login.module';
 import { NextMiddleware } from './nextjs/next.middleware';
 import { NextModule } from './nextjs/next.module';
@@ -29,6 +30,7 @@ import { WsExceptionsFilter } from './ws-exceptions-filter';
     LoginModule,
     ChatsModule,
     RoomsModule,
+    LinksModule,
     TypeOrmModule.forRoot(),
     StorageModule.forRoot({
       default: 'local',

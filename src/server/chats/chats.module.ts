@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { ChatsGateway } from './chats.gateway';
 import { Chat } from './chat.entity';
@@ -19,6 +19,6 @@ import { CaslModule } from '../casl/casl.module';
     CaslModule,
   ],
   controllers: [ChatsApiController],
-  exports: [ChatsService],
+  exports: [ChatsService, ChatsGateway],
 })
 export class ChatsModule {}

@@ -1,12 +1,14 @@
+import { forwardRef, Inject } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Chat, ChatCreate, ChatUpdate, Events } from '../../types/chat';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
@@ -16,10 +18,14 @@ import { ChatsService } from './chats.service';
 @WebSocketGateway({ namespace: /^\/rooms\/\d\/chat$/ })
 export class ChatsGateway implements NestGateway, OnGatewayConnection {
   constructor(
+    @Inject(forwardRef(() => ChatsService))
     private readonly chatsService: ChatsService,
     private readonly usersService: UsersService,
     private authService: AuthService,
   ) {}
+
+  @WebSocketServer()
+  server: Server;
 
   async handleConnection(client: Socket) {
     const payload = this.authService.verify(
@@ -52,10 +58,10 @@ export class ChatsGateway implements NestGateway, OnGatewayConnection {
     return await this.chatsService.findAll(this.roomIdByNsp(client.nsp.name));
   }
 
-  @SubscribeMessage('findOneChat')
-  async findOne(@MessageBody() id: number): Promise<Chat> {
-    return await this.chatsService.findOne(id);
-  }
+  // @SubscribeMessage('findOneChat')
+  // async findOne(@MessageBody() id: number): Promise<Chat> {
+  //   return await this.chatsService.findOne(id);
+  // }
 
   @SubscribeMessage(Events.update)
   async update(

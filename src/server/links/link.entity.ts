@@ -15,19 +15,19 @@ export class Link extends BaseEntity implements LinkModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ nullable: true })
   title!: string;
 
   @Column({ nullable: true })
   description!: string;
 
-  @Column()
+  @Column({ nullable: true })
   domain!: string;
 
   @Column({ nullable: true })
   imgUrl!: string;
 
-  @Column()
+  @Column({ nullable: true })
   url!: string;
 
   @ManyToOne(() => Chat, (chat) => chat.links)
