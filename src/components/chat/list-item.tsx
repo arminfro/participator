@@ -102,7 +102,12 @@ export default function ChatListItem({
         actions={[
           <Can I={Action.Delete} this={subject('Chat', chat)} key="onDelete">
             <Tooltip title="Delete">
-              <DeleteOutlined />
+              <Popconfirm
+                title="Are you sure to delete this Chat?"
+                onConfirm={() => onRemove(chat)}
+              >
+                <DeleteOutlined />
+              </Popconfirm>
             </Tooltip>
           </Can>,
           <Can I={Action.Update} this={subject('Chat', chat)} key="onDelete">

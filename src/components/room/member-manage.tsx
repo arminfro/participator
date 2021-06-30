@@ -1,4 +1,4 @@
-import { Button, Select } from 'antd';
+import { Button, message, Popconfirm, Select } from 'antd';
 import React, { useState } from 'react';
 import { Room } from '../../types/room';
 import { User } from '../../types/user';
@@ -36,30 +36,27 @@ export default function RoomMemberManage({
   };
 
   const onSubmit = () => {
-    if (
-      window.confirm(`Are you sure you want to ${label()} ${chosenUser.name}`)
-    ) {
-      const action = isInviting ? 'addMember' : 'removeMember';
-      setLoading(true);
-      api('patch', `api/rooms/${roomId}/${action}`, {
-        [action]: chosenUser,
+    const action = isInviting ? 'addMember' : 'removeMember';
+    setLoading(true);
+    api('patch', `api/rooms/${roomId}/${action}`, {
+      [action]: chosenUser,
+    })
+      .then(() => {
+        message.success(`${label()} of ${chosenUser.name} succeeded`);
+        if (mutate[`api/rooms/${roomId}`]) {
+          mutate[`api/rooms/${roomId}`]((room: Room) => ({
+            ...room,
+            members: isInviting
+              ? [...room.members, chosenUser]
+              : room.members.filter((user) => user.id !== chosenUser.id),
+          }));
+        }
       })
-        .then(() => {
-          if (mutate[`api/rooms/${roomId}`]) {
-            mutate[`api/rooms/${roomId}`]((room: Room) => ({
-              ...room,
-              members: isInviting
-                ? [...room.members, chosenUser]
-                : room.members.filter((user) => user.id !== chosenUser.id),
-            }));
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-          setChosenUser(undefined);
-          onCloseDrawer();
-        });
-    }
+      .finally(() => {
+        setLoading(false);
+        setChosenUser(undefined);
+        onCloseDrawer();
+      });
   };
 
   return (
@@ -86,9 +83,15 @@ export default function RoomMemberManage({
           </Select.Option>
         ))}
       </Select>
-      <Button loading={loading} onClick={onSubmit} disabled={!chosenUser}>
-        Submit
-      </Button>
+      <Popconfirm
+        title={
+          chosenUser && `Are you sure you want to ${label()} ${chosenUser.name}`
+        }
+        disabled={!chosenUser}
+        onConfirm={onSubmit}
+      >
+        <Button loading={loading}>Submit</Button>
+      </Popconfirm>
     </>
   );
 }

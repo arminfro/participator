@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import UserDetails from '../../../components/user/details';
@@ -16,13 +16,11 @@ export default function UserIndex(): ReactElement {
   const { dispatch } = useCurrentUser();
 
   const onDelete = (userId: number) => {
-    if (window.confirm('Are you sure you want to delete your account?')) {
-      api('DELETE', `api/users/${userId}`).then(() => {
-        dispatch({ type: 'LOGOUT' });
-        removeToken();
-        router.push('/');
-      });
-    }
+    api('DELETE', `api/users/${userId}`).then(() => {
+      dispatch({ type: 'LOGOUT' });
+      removeToken();
+      router.push('/');
+    });
   };
 
   return (
@@ -41,9 +39,13 @@ export default function UserIndex(): ReactElement {
                 <UserEditForm onCloseDrawer={onClose} user={user} />
               )}
             </Drawer>,
-            <Button key="delete" danger onClick={() => onDelete(user.id)}>
-              Delete
-            </Button>,
+            <Popconfirm
+              key="delete"
+              title="Are you sure you want to delete your account?"
+              onConfirm={() => onDelete(user.id)}
+            >
+              <Button danger>Delete</Button>
+            </Popconfirm>,
           ]}
         >
           <UserDetails user={user} />
