@@ -3,16 +3,19 @@ import {
   DeliveredProcedureOutlined,
   EditOutlined,
 } from '@ant-design/icons';
-import { Comment } from 'antd';
+import { subject } from '@casl/ability';
+import { Comment, Popconfirm, Tooltip } from 'antd';
 import { formatDistance } from 'date-fns';
 import marked from 'marked';
 import emoji from 'node-emoji';
 import Prism from 'prismjs';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import sanitizeHtml from 'sanitize-html';
+import { Action } from '../../casl/action';
 import { Chat } from '../../types/chat';
 import { User } from '../../types/user';
 import UserAvatar from '../utils/container/user-avatar';
+import { Can } from '../utils/context/casl-context';
 import ChatForm from './form';
 import ChatLinkList from './link-list';
 
@@ -97,12 +100,21 @@ export default function ChatListItem({
       <Comment
         style={{ cursor: 'default' }}
         actions={[
-          <EditOutlined key="onEdit" onClick={() => setEdit(true)} />,
-          <DeleteOutlined key="onDelete" onClick={() => onRemove(chat)} />,
-          <DeliveredProcedureOutlined
-            key="onReply"
-            onClick={() => setReply(true)}
-          />,
+          <Can I={Action.Delete} this={subject('Chat', chat)} key="onDelete">
+            <Tooltip title="Delete">
+              <DeleteOutlined />
+            </Tooltip>
+          </Can>,
+          <Can I={Action.Update} this={subject('Chat', chat)} key="onDelete">
+            <Tooltip title="Edit">
+              <EditOutlined
+                onClick={() => setEdit((editState) => !editState)}
+              />
+            </Tooltip>
+          </Can>,
+          <Tooltip key="onReply" title="Reply">
+            <DeliveredProcedureOutlined onClick={() => setReply(true)} />
+          </Tooltip>,
         ]}
         datetime={
           <>
