@@ -13,7 +13,7 @@ import { LinkCreate } from '../../types/link';
 import { ChatsGateway } from '../chats/chats.gateway';
 import { ChatsService } from '../chats/chats.service';
 import { Link } from './link.entity';
-import LinkPreviewGenerator = require('link-preview-generator');
+import LinkPreviewGenerator from 'link-preview-generator';
 import request = require('request');
 
 interface PreviewData {
@@ -36,6 +36,7 @@ export class LinksService {
   async create(linkCreate: LinkCreate): Promise<Link | undefined> {
     const link = await this.build(linkCreate);
     if (link) {
+      this.updateChat(link);
       return await link.save();
     }
   }
@@ -58,64 +59,19 @@ export class LinksService {
     this.linksRepository.delete(id);
   }
 
-  async dispatchBuildLinksForChat(
-    chatId: number,
-    rawLinks: string[],
-  ): Promise<Link[]> {
-    const preSavedLinks = await Promise.all(
-      rawLinks.map(async () => {
-        const link = new Link();
-        await link.save();
-        return link;
-      }),
-    );
-    this.buildLinksForChat(chatId, rawLinks, preSavedLinks);
-    return preSavedLinks;
-  }
-
-  private async buildLinksForChat(
-    chatId: number,
-    rawLinks: string[],
-    preSavedLinks: Link[],
-  ): Promise<Link[]> {
+  async buildLinksForChat(chatId: number, rawLinks: string[]): Promise<Link[]> {
     const links = await Promise.all(
-      rawLinks.map(async (url, index) => {
+      rawLinks.map(async (url) => {
         const urlWithProtocol = await this.setHttpPrefix(url);
         if (urlWithProtocol) {
-          return await this.updatePreSaved(
-            {
-              url: urlWithProtocol,
-              chatId,
-            },
-            preSavedLinks[index],
-          );
-        } else {
-          const link = preSavedLinks[index];
-          this.remove(link.id);
+          return await this.create({
+            url: urlWithProtocol,
+            chatId,
+          });
         }
       }),
     );
     return links.filter((a) => a);
-  }
-
-  private async updatePreSaved(
-    linkCreate: LinkCreate,
-    preSavedLink: Link,
-  ): Promise<Link> {
-    const previewData = await this.getPreview(linkCreate.url);
-    if (previewData) {
-      preSavedLink.url = linkCreate.url;
-      preSavedLink.title = previewData.title;
-      preSavedLink.description = previewData.description;
-      preSavedLink.domain = previewData.domain;
-      preSavedLink.imgUrl = previewData.img;
-      preSavedLink.chat = await this.chatsService.findOne(linkCreate.chatId);
-      preSavedLink.save();
-      this.updateChat(preSavedLink);
-      return preSavedLink;
-    } else {
-      preSavedLink.remove();
-    }
   }
 
   private updateChat(preSavedLink: Link): void {
@@ -143,8 +99,11 @@ export class LinksService {
     }
   }
 
-  private async getPreview(url: string): Promise<PreviewData> {
-    return await LinkPreviewGenerator(url).catch((e: Error) => {
+  // throws error in my env, issue tracker:
+  // https://github.com/puppeteer/puppeteer/issues?q=Navigation+failed+because+browser+has+disconnected%21
+  private async getPreview(url: string): Promise<PreviewData | void> {
+    console.log('url for getPreview', url);
+    const a = await LinkPreviewGenerator(url).catch((e: Error) => {
       if (/^net::ERR_ABORTED/.test(e.message)) {
         this.logger.warn(e.message, 'LinksService');
       } else {
@@ -155,6 +114,8 @@ export class LinksService {
         );
       }
     });
+    console.log('getPreview', a);
+    return a;
   }
 
   private async setHttpPrefix(url: string): Promise<string> {

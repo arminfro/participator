@@ -1,15 +1,14 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getManager, TreeRepository } from 'typeorm';
-import TreeModel = require('tree-model');
-
+import { chatMsgDeleted } from '../../constants';
 import { ChatCreate, ChatUpdate } from '../../types/chat';
 import { LinksService } from '../links/links.service';
 import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { Chat } from './chat.entity';
-import { chatMsgDeleted } from '../../constants';
+import TreeModel = require('tree-model');
 
 const urlRegex =
   /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/gi;
@@ -27,7 +26,7 @@ export class ChatsService {
     await this.chatsRepository.save(chat);
     const urls = chat.msg.match(urlRegex);
     if (urls) {
-      this.linksService.dispatchBuildLinksForChat(chat.id, urls);
+      this.linksService.buildLinksForChat(chat.id, urls);
     }
     chat.save();
     return chat;
