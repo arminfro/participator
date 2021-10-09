@@ -1,7 +1,7 @@
 // source: https://github.com/saltyshiomix/nestpress/blob/master/packages/next/LICENSE
 import { Module } from '@nestjs/common';
 import next from 'next';
-import { ServerConstructor } from 'next/dist/next-server/server/next-server';
+import { ServerConstructor } from 'next/dist/server/next-server';
 import { NextService } from './next.service';
 
 @Module({
