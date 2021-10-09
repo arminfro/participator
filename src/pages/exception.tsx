@@ -8,7 +8,7 @@ import { getToken } from '../components/utils/funcs/token';
 
 interface Props {
   path: string;
-  status: number;
+  status: string;
   message: string;
 }
 
@@ -21,7 +21,7 @@ export default function Exception({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === 401 && getToken() && !path.match(/^\/api*/)) {
+    if (+status === 401 && getToken() && !path.match(/^\/api*/)) {
       router.push(path);
     } else {
       setLoading(false);
@@ -51,4 +51,4 @@ export default function Exception({
   );
 }
 
-Exception.getInitialProps = async ({ query }: NextPageContext) => query;
+Exception.getInitialProps = async ({ query }: NextPageContext & Props) => query;

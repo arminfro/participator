@@ -11,34 +11,29 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage } from 'http';
+import { RenderableResponse } from 'nest-next';
 import { AccessToken, AuthService } from '../auth/auth.service';
 import { LocalAuthGuard } from '../auth/local-auth.guard';
-import { NextService } from '../nextjs/next.service';
 import { User } from '../users/user.entity';
 import { LoginService } from './login.service';
 
 @Controller('login')
 export class LoginController {
   constructor(
-    private readonly next: NextService,
     private authService: AuthService,
     private loginService: LoginService,
   ) {}
 
   @Get()
-  public async loginForm(
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
-  ): Promise<void> {
-    await this.next.render('/login', req, res);
+  public async loginForm(@Res() res: RenderableResponse): Promise<void> {
+    res.render('login');
   }
 
   @Get('password/reset/:id')
   async passwordReset(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
+    @Res() res: RenderableResponse,
   ): Promise<void> {
     const user = await this.loginService.findByPasswordRecoverId(id);
     if (!user) {
@@ -47,7 +42,7 @@ export class LoginController {
         HttpStatus.NOT_FOUND,
       );
     }
-    this.next.render('/users/password-reset', { id, user }, req, res);
+    res.render('users/password-reset', { id: id, user: JSON.stringify(user) });
   }
 
   @Post('password/recover')

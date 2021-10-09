@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnswersModule } from '../answers/answers.module';
 import { CaslModule } from '../casl/casl.module';
 import { ChatsModule } from '../chats/chats.module';
-import { NextModule } from '../nextjs/next.module';
 import { QuestionsModule } from '../questions/questions.module';
 import { Room } from './room.entity';
 import { RoomsApiController } from './rooms.api-controller';
@@ -16,7 +15,6 @@ import { RoomsService } from './rooms.service';
     AnswersModule,
     QuestionsModule,
     ChatsModule,
-    NextModule,
     CaslModule,
     TypeOrmModule.forFeature([Room]),
   ],

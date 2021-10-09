@@ -5,7 +5,6 @@ import { CaslModule } from '../casl/casl.module';
 import { LoginService } from '../login/login.service';
 import PasswordRecover from '../login/password-recover.entity';
 import { MailerService } from '../mailer/mailer.service';
-import { NextModule } from '../nextjs/next.module';
 import { UserSubscriber } from '../users/user.subscriber';
 import { User } from './user.entity';
 import { UsersApiController } from './users.api-controller';
@@ -21,7 +20,6 @@ import { UsersService } from './users.service';
     Logger,
   ],
   imports: [
-    NextModule,
     CaslModule,
     StorageModule,
     TypeOrmModule.forFeature([User, PasswordRecover]),

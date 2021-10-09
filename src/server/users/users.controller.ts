@@ -1,41 +1,36 @@
-import { IncomingMessage, ServerResponse } from 'http';
 import {
   Controller,
   Get,
-  Req,
-  Res,
-  ParseIntPipe,
   Param,
+  ParseIntPipe,
+  Render,
+  Res,
   UseGuards,
 } from '@nestjs/common';
-import { NextService } from '../nextjs/next.service';
+import { RenderableResponse } from 'nest-next';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly next: NextService) {}
-
   @Get()
   @UseGuards(JwtAuthGuard)
-  public async index(
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
-  ): Promise<void> {
-    this.next.render('/users', req, res);
+  @Render('users')
+  public async index(): Promise<any> {
+    return {};
   }
 
   @Get('new')
-  createForm(@Req() req: IncomingMessage, @Res() res: ServerResponse): void {
-    this.next.render(`/users/new`, req, res);
+  @Render('/users/new')
+  createForm(): any {
+    return {};
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async findOne(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
+    @Res() res: RenderableResponse,
   ): Promise<void> {
-    this.next.render(`/users/${id}`, req, res);
+    res.render(`/users/${id}`);
   }
 }

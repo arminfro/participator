@@ -50,6 +50,7 @@
     "link-preview-generator": "^1.0.5",
     "lodash": "^4.17.21",
     "marked": "^3.0.7",
+    "nest-next": "^9.4.0",
     "nest-winston": "^1.6.1",
     "next": "^11.1.2",
     "next-secure-headers": "^2.2.0",

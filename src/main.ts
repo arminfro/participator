@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
-import { NextModule } from './server/nextjs/next.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import {
@@ -56,14 +55,10 @@ async function bootstrap() {
       contentSecurityPolicy: false,
     }),
   );
-  app
-    .get(NextModule)
-    .prepare()
-    .then(() => {
-      app.listen(port, domain, () => {
-        console.log(`> Ready on http://${url} with Next.js!`);
-      });
-    });
+
+  app.listen(port, domain, () => {
+    console.log(`> Ready on http://${url} with Next.js!`);
+  });
 }
 
 dotenv.config();

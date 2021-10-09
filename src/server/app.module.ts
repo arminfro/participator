@@ -8,6 +8,9 @@ import {
 } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RenderModule } from 'nest-next';
+// import { NextModule } from './nextjs/next.module';
+import Next from 'next';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
@@ -15,8 +18,6 @@ import { ChatsModule } from './chats/chats.module';
 import { HttpExceptionsFilter } from './http-exceptions-filter';
 import { LinksModule } from './links/links.module';
 import { LoginModule } from './login/login.module';
-import { NextMiddleware } from './nextjs/next.middleware';
-import { NextModule } from './nextjs/next.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { UsersModule } from './users/users.module';
 import { WsExceptionsFilter } from './ws-exceptions-filter';
@@ -25,7 +26,6 @@ import { WsExceptionsFilter } from './ws-exceptions-filter';
   imports: [
     AuthModule,
     CaslModule,
-    NextModule,
     UsersModule,
     LoginModule,
     ChatsModule,
@@ -43,6 +43,10 @@ import { WsExceptionsFilter } from './ws-exceptions-filter';
         },
       },
     }),
+    RenderModule.forRootAsync(
+      Next({ dev: process.env.NODE_ENV !== 'production' }),
+      { viewsDir: null, dev: process.env.NODE_ENV !== 'production' },
+    ),
   ],
   controllers: [AppController],
   providers: [
@@ -57,26 +61,4 @@ import { WsExceptionsFilter } from './ws-exceptions-filter';
     },
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(NextMiddleware).forRoutes({
-      path: '__next*',
-      method: RequestMethod.GET,
-    });
-
-    consumer.apply(NextMiddleware).forRoutes({
-      path: '_next*',
-      method: RequestMethod.GET,
-    });
-
-    consumer.apply(NextMiddleware).forRoutes({
-      path: 'images/*',
-      method: RequestMethod.GET,
-    });
-
-    consumer.apply(NextMiddleware).forRoutes({
-      path: 'favicon.ico',
-      method: RequestMethod.GET,
-    });
-  }
-}
+export class AppModule {}

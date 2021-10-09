@@ -5,13 +5,11 @@ import { QuestionsApiController } from './questions.api-controller';
 import { QuestionsController } from './questions.controller';
 import { Question } from './question.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { NextModule } from '../nextjs/next.module';
 import { FixAnswer } from './fix-answer.entity';
 
 @Module({
   controllers: [QuestionsController, QuestionsApiController],
   imports: [
-    NextModule,
     TypeOrmModule.forFeature([Question]),
     TypeOrmModule.forFeature([FixAnswer]),
   ],
