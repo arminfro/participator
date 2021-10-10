@@ -16,14 +16,18 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Action } from '../../casl/action';
-import { UserCreate, UserUpdate } from '../../types/user';
+import { UserCreate, UserPasswordUpdate, UserUpdate } from '../../types/user';
 import { verifyAvatar } from '../../utils/verify-avatar';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsePolicy } from '../casl/use-policy.decorator';
 import { LoginService } from '../login/login.service';
 import { User as UserDecorator } from './user.decorator';
 import { User } from './user.entity';
-import { UserCreatePipe, UserUpdatePipe } from './user.pipes';
+import {
+  UserCreatePipe,
+  UserPasswordUpdatePipe,
+  UserUpdatePipe,
+} from './user.pipes';
 import { UsersService } from './users.service';
 
 @Controller('api/users')
@@ -60,10 +64,10 @@ export class UsersApiController {
   @Patch(':id/password-reset')
   @HttpCode(200)
   async passwordReset(
-    @Body(new UserCreatePipe())
-    userCreate: UserCreate & { passwordResetId: string },
+    @Body(new UserPasswordUpdatePipe())
+    userPasswordUpdate: UserPasswordUpdate,
   ): Promise<User | void> {
-    return this.loginService.resetPassword(userCreate);
+    return this.loginService.resetPassword(userPasswordUpdate);
   }
 
   @Patch(':id')

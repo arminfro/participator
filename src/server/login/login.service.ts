@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { urlWithProtocol } from '../../constants';
-import { UserCreate } from '../../types/user';
+import { UserCreate, UserPasswordUpdate } from '../../types/user';
 import { AuthService } from '../auth/auth.service';
 import PasswordRecover from '../login/password-recover.entity';
 import { MailerService } from '../mailer/mailer.service';
@@ -43,14 +43,14 @@ export class LoginService {
   }
 
   async resetPassword(
-    userCreate: UserCreate & { passwordResetId: string },
+    userPasswordUpdate: UserPasswordUpdate,
   ): Promise<User | void> {
     const user = await this.findByPasswordRecoverId(
-      userCreate.passwordResetId,
+      userPasswordUpdate.passwordResetId,
       true,
     );
-    if (user && user.email === userCreate.email) {
-      user.password = AuthService.hashPassword(userCreate.pw1);
+    if (user) {
+      user.password = AuthService.hashPassword(userPasswordUpdate.pw1);
       await user.save();
       return user;
     }

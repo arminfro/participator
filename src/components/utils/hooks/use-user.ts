@@ -6,12 +6,14 @@ import {
   UserCreate,
   UserLogin,
   UserPasswordRecover,
+  UserPasswordUpdate,
   UserUpdate,
 } from '../../../types/user';
 import {
   validateUserCreate,
   validateUserLogin,
   validateUserPasswordRecover,
+  validateUserPasswordUpdate,
   validateUserUpdate,
 } from '../../../types/user.validation';
 import { useCurrentUser } from '../context/current-user';
@@ -88,6 +90,28 @@ export function useUserPasswordRecover(): UseStruct<UserPasswordRecover> {
   return useStruct<UserPasswordRecover, User>({
     states,
     validator: validateUserPasswordRecover,
+    initialValues,
+    remoteUpdate: async (user) => api('post', 'login/password/recover', user),
+  });
+}
+
+export function useUserPasswordUpdate(
+  passwordResetId: string,
+): UseStruct<UserPasswordUpdate> {
+  const initialValues: UserPasswordUpdate = {
+    pw1: '',
+    pw2: '',
+    passwordResetId,
+  };
+  const states = {
+    pw1: useState(initialValues.pw1),
+    pw2: useState(initialValues.pw2),
+    passwordResetId: useState(initialValues.passwordResetId),
+  };
+
+  return useStruct<UserPasswordUpdate, User>({
+    states,
+    validator: validateUserPasswordUpdate,
     initialValues,
     remoteUpdate: async (user) => api('post', 'login/password/recover', user),
   });

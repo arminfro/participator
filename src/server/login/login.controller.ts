@@ -42,7 +42,10 @@ export class LoginController {
         HttpStatus.NOT_FOUND,
       );
     }
-    res.render('users/password-reset', { id: id, user: JSON.stringify(user) });
+    res.render('users/password-reset', {
+      passwordResetId: id,
+      user: JSON.stringify(user),
+    });
   }
 
   @Post('password/recover')

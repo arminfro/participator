@@ -20,6 +20,8 @@ export default function Form<T>({ struct, children, onSubmit }: FormProps<T>) {
       : console.debug('Form reset called without initialValues');
   };
 
+  console.log('validationErrors', struct.validationErrors);
+
   return (
     <StructProvider struct={struct}>
       <AntdForm

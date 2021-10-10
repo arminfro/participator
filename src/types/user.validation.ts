@@ -3,6 +3,7 @@ import {
   UserCreate,
   UserLogin,
   UserPasswordRecover,
+  UserPasswordUpdate,
   UserUpdate,
   UserUpdateToggle,
 } from './user';
@@ -38,6 +39,15 @@ export function validateUserPasswordRecover(
   return validateUser<UserPasswordRecover>(
     userPasswordRecover,
     UserPasswordRecover,
+  );
+}
+
+export function validateUserPasswordUpdate(
+  userPasswordUpdate: UserPasswordUpdate,
+): ValidationResult<UserPasswordUpdate> {
+  return validateUser<UserPasswordUpdate>(
+    userPasswordUpdate,
+    UserPasswordUpdate,
   );
 }
 

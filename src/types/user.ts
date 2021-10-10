@@ -33,7 +33,6 @@ export const UserCreate = refine(
     email: isEmail('email'),
     pw1: stringMinLength(1, 'pw1'),
     pw2: stringMinLength(1, 'pw2'),
-    passwordResetId: optional(string()),
     avatarUrl: optional(string()),
   }),
   'equalPws',
@@ -67,6 +66,17 @@ export type UserPasswordRecover = Infer<typeof UserPasswordRecover>;
 export const UserPasswordRecover = object({
   email: isEmail('email'),
 });
+
+export type UserPasswordUpdate = Infer<typeof UserPasswordUpdate>;
+export const UserPasswordUpdate = refine(
+  object({
+    pw1: stringMinLength(1, 'pw1'),
+    pw2: stringMinLength(1, 'pw2'),
+    passwordResetId: string(),
+  }),
+  'equalPws',
+  (userPasswordRecover) => userPasswordRecover.pw1 === userPasswordRecover.pw2,
+);
 
 export type User = {
   readonly id: number;

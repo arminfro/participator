@@ -13,15 +13,11 @@ interface Props {
   name?: string;
   email?: string;
   edit?: boolean;
-  userId?: number;
-  passwordResetId?: string;
 }
 
 export default function UserCreateForm({
   name = '',
   email = '',
-  userId = null,
-  passwordResetId = null,
 }: Props): ReactElement {
   const user = useUserCreate({ name, email, pw1: '', pw2: '' });
 
@@ -34,11 +30,7 @@ export default function UserCreateForm({
       password,
     };
 
-    const createdUser = await api<User>(
-      passwordResetId ? 'PATCH' : 'POST',
-      passwordResetId ? `api/users/${userId}/password-reset` : 'api/users',
-      passwordResetId ? { ...user.get, passwordResetId } : user.get,
-    );
+    const createdUser = await api<User>('POST', 'api/users', user.get);
 
     const login = await apiLogin(loginProps);
     dispatch({ type: 'LOGIN', user: login.user });
@@ -54,20 +46,16 @@ export default function UserCreateForm({
   return (
     <Form onSubmit={onSubmit} struct={user}>
       <>
-        {!passwordResetId && (
-          <>
-            <FormInputItem
-              label="Username"
-              name="name"
-              inputProps={{ autoComplete: 'username' }}
-            />
-            <FormInputItem
-              label="E-Mail"
-              name="email"
-              inputProps={{ type: 'email' }}
-            />
-          </>
-        )}
+        <FormInputItem
+          label="Username"
+          name="name"
+          inputProps={{ autoComplete: 'username' }}
+        />
+        <FormInputItem
+          label="E-Mail"
+          name="email"
+          inputProps={{ type: 'email' }}
+        />
         <FormInputItem
           label="Password"
           name="pw1"
