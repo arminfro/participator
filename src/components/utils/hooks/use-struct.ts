@@ -63,10 +63,17 @@ export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
   autoSync = false,
   isEdit = false,
 }: StructOptions<T, P>): UseStruct<T> {
-  const [validationErrors, setValidationErrors] = useState<Failure[]>([]);
+  const struct = useMemo(() => ({ get: {}, set: {} }), []) as UseStruct<T>;
   const config = useStructConfigContext<T, P>();
 
-  const struct = useMemo(() => ({ get: {}, set: {} }), []) as UseStruct<T>;
+  const [validationErrors, setValidationErrors] = useState<Failure[]>(
+    validator(
+      Object.keys(states).reduce(
+        (acc, key) => ({ ...acc, [key]: states[key][0] }),
+        {} as T,
+      ),
+    )[0] || [],
+  );
 
   const mutate = useCallback(
     (data: T | P) =>
@@ -87,8 +94,25 @@ export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
     [config, remoteUpdate, mutate],
   );
 
-  const buildSetter = useCallback(
-    (setter: Dispatch<SetStateAction<Value<T>>>, key: string) => {
+  const onValidate = useMemo(() => {
+    // console.log('building onValidate');
+    return (newStruct: Partial<T>): T | void => {
+      const validationResult = validator({ ...struct.get, ...newStruct });
+      config.onValidate && config.onValidate(validationResult);
+      const errors: Failure[] = validationResult[0] || [];
+      const validatedModel: T = validationResult[1];
+      if (errors.length) {
+        setValidationErrors(errors);
+      } else {
+        setValidationErrors([]);
+        return validatedModel;
+      }
+    };
+  }, [config, validator, struct.get]);
+
+  const buildSetter = useMemo(() => {
+    // console.log('build Setter');
+    return (setter: Dispatch<SetStateAction<Value<T>>>, key: string) => {
       const onUpdate = (newValue: Value<T>, sync: boolean): Value<T> => {
         const newStruct = { ...struct.get, [key]: newValue };
 
@@ -96,26 +120,13 @@ export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
           remoteUpdateWrapper(newStruct);
         };
 
-        const onValidate = (): T | void => {
-          const validationResult = validator(newStruct);
-          config.onValidate && config.onValidate(validationResult);
-          const errors: Failure[] = validationResult[0] || [];
-          const validatedModel: T = validationResult[1];
-          if (errors.length) {
-            setValidationErrors(errors);
-          } else {
-            setValidationErrors([]);
-            return validatedModel;
-          }
-        };
-
-        onValidate() && (sync || autoSync) && remoteUpdate();
+        onValidate(newStruct) && (sync || autoSync) && remoteUpdate();
         return newValue;
       };
 
       return (
         setStateAction: SetStateAction<Value<T>>,
-        doRemoteUpdate: boolean = !!remoteUpdate && autoSync,
+        doRemoteUpdate = !!remoteUpdate && autoSync,
       ) => {
         if (setStateAction instanceof Function) {
           setter((currentValue) => {
@@ -129,16 +140,8 @@ export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
           setter(newStruct);
         }
       };
-    },
-    [
-      autoSync,
-      validator,
-      remoteUpdateWrapper,
-      remoteUpdate,
-      struct.get,
-      config,
-    ],
-  );
+    };
+  }, [autoSync, onValidate, remoteUpdateWrapper, remoteUpdate, struct.get]);
 
   const structBuilt = useMemo(() => {
     const reducedKeys = Object.keys(states).reduce(
@@ -149,35 +152,26 @@ export function useStruct<T extends Partial<Record<Key<T>, Value<T>>>, P = T>({
         acc.set[key] = buildSetter(setter, key);
         return acc;
       },
-      {
-        ...struct,
-        sync: async () => {
-          if (validator(reducedKeys.get)) {
-            return remoteUpdateWrapper(reducedKeys.get);
-          }
-        },
-        isEdit,
-        initialValues,
-        setToInitialState: () => {
-          forEach<T>(initialValues, (value, key) => {
-            struct.set[key](value);
-          });
-        },
-        validationErrors,
-      },
+      { ...struct },
     );
 
     return reducedKeys;
-  }, [
-    struct,
-    buildSetter,
+  }, [states, struct, buildSetter]);
+
+  return {
+    ...structBuilt,
+    validationErrors,
     isEdit,
     initialValues,
-    validator,
-    states,
-    validationErrors,
-    remoteUpdateWrapper,
-  ]);
-
-  return structBuilt;
+    setToInitialState: () => {
+      forEach<T>(initialValues, (value, key) => {
+        struct.set[key](value);
+      });
+    },
+    sync: async () => {
+      if (validator(struct.get)) {
+        return remoteUpdateWrapper(struct.get);
+      }
+    },
+  };
 }

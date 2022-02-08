@@ -1,3 +1,4 @@
+// import '../../scripts/wdyr';
 import React, { ReactElement, useRef } from 'react';
 import { SWRConfig } from 'swr';
 import { AbilityContextProvider } from '../components/utils/context/casl-context';

@@ -1,5 +1,5 @@
 import { pick } from 'lodash';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Room, RoomCreate, RoomUpdate } from '../../../types/room';
 import {
   validateRoomCreate,
@@ -37,20 +37,21 @@ export function useRoomCreate(autoSync = false): UseStruct<RoomCreate> {
     openToJoin: true,
   };
 
-  const states = {
-    name: useState(initialValues.name),
-    description: useState(initialValues.description),
-    openToJoin: useState(initialValues.openToJoin),
-  };
-
   return useStruct<RoomCreate>({
-    states,
+    states: {
+      name: useState(initialValues.name),
+      description: useState(initialValues.description),
+      openToJoin: useState(initialValues.openToJoin),
+    },
     initialValues,
-    validator: (room) => validateRoomCreate(room),
+    validator: useCallback((room) => validateRoomCreate(room), []),
     autoSync,
-    remoteUpdate: (newRoom: Room) =>
-      api<RoomCreate>('post', `api/rooms`, newRoom).then((data) => {
-        if (data) return data;
-      }),
+    remoteUpdate: useCallback(
+      (newRoom: Room) =>
+        api<RoomCreate>('post', `api/rooms`, newRoom).then((data) => {
+          if (data) return data;
+        }),
+      [],
+    ),
   });
 }
