@@ -1,8 +1,8 @@
-import * as Faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { define } from 'typeorm-factories';
 import { Link } from './link.entity';
 
-define(Link, (faker: typeof Faker) => {
+define(Link, (faker: any) => {
   const link = new Link();
 
   link.id = Number(faker.random.uuid());

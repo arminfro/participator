@@ -8,7 +8,7 @@ import { Room } from '../rooms/room.entity';
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { Chat } from './chat.entity';
-import TreeModel = require('tree-model');
+import TreeModel from 'tree-model';
 
 const urlRegex =
   /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/gi;

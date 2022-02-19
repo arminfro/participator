@@ -33,7 +33,7 @@ function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
     },
   };
   if (localStorage) {
-    swrConfig.initialData = localStorage;
+    swrConfig.fallback = localStorage;
   }
   const { data, error, mutate } = useSWR<T>(keys, swrConfig);
   if (error) console.error('error in Fetcher', error);
@@ -51,7 +51,11 @@ export default function Fetch<T>(props: FetchProps<T>): ReactElement {
     <ErrorBoundary
       fallback={(e) =>
         'status' in e && 'message' in e && 'path' in e ? (
-          <Exception status={e.status} message={e.message} path={e.path} />
+          <Exception
+            status={String(e.status)}
+            message={e.message}
+            path={e.path}
+          />
         ) : (
           <p>{JSON.stringify(e)}</p>
         )

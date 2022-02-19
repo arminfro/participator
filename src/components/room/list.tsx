@@ -1,5 +1,4 @@
-import { Button, Divider } from 'antd';
-import Link from 'next/link';
+import { Divider } from 'antd';
 import React, { ReactElement } from 'react';
 import { Room } from '../../types/room';
 import RoomTable from './table';

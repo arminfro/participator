@@ -7,6 +7,7 @@ import Welcome from './mails/welcome';
 @Injectable()
 export class MailerService {
   private mailer;
+
   constructor(@Inject(Logger) private readonly logger: LoggerService) {
     this.mailer = Mailer(this.config, this.templates);
   }
@@ -42,11 +43,9 @@ export class MailerService {
   }
 
   private send(template: string, to: string, props: any) {
-    const smtpSupport = [
-      'EMAIL_HOST',
-      'EMAIL_PASS',
-      'EMAIL_SENDER',
-    ].every((value) => isNotEmpty(value));
+    const smtpSupport = ['EMAIL_HOST', 'EMAIL_PASS', 'EMAIL_SENDER'].every(
+      (value) => isNotEmpty(process.env[value]),
+    );
     if (smtpSupport) {
       this.mailer.send(template, props, { to });
     } else {

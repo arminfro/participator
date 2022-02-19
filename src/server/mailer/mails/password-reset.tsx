@@ -7,9 +7,10 @@ interface Props {
   url: string;
 }
 
-export default function PasswordReset(
-  props: Props,
-): { subject: string; body: ReactElement } {
+export default function PasswordReset(props: Props): {
+  subject: string;
+  body: ReactElement;
+} {
   const subject = `Password recovery for Participator`;
   return {
     subject,

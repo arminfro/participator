@@ -1,5 +1,5 @@
 import { Room, RoomCreate } from '../../src/types/room';
-import * as Faker from 'faker';
+import { faker } from '@faker-js/faker';
 import GenericSeeder from './generic-seeder';
 import ChatSeeder from './chat';
 import QuestionSeeder from './question';
@@ -21,9 +21,9 @@ export default class RoomSeeder extends GenericSeeder<Room> {
       'api/rooms',
       this.token,
       {
-        name: Faker.lorem.slug(),
-        description: Faker.lorem.words(Faker.datatype.number(64)),
-        openToJoin: Faker.datatype.boolean(),
+        name: faker.lorem.slug(),
+        description: faker.lorem.words(faker.datatype.number(64)),
+        openToJoin: faker.datatype.boolean(),
       } as RoomCreate,
     );
     this.chatSeeders = [new ChatSeeder(this.token, this.userId, this.room)];

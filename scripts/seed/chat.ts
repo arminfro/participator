@@ -6,7 +6,7 @@ import GenericSeeder from './generic-seeder';
 
 export default class ChatSeeder extends GenericSeeder<Chat> {
   token: string;
-  socket: SocketIOClient.Socket;
+  // socket: SocketIOClient.Socket;
 
   constructor(userToken: string, public userId: number, public room: Room) {
     super();
@@ -34,10 +34,10 @@ export default class ChatSeeder extends GenericSeeder<Chat> {
   }
 
   async create() {
-    this.socket.emit(Events.create, {
-      msg: 'Hello Chat, pls parse my [link](https://en.wikipedia.org/wiki/Web_Application_Description_Language)',
-      userId: this.userId,
-      parentId: this.room.chat.id,
-    } as ChatCreate);
+    // this.socket.emit(Events.create, {
+    //   msg: 'Hello Chat, pls parse my [link](https://en.wikipedia.org/wiki/Web_Application_Description_Language)',
+    //   userId: this.userId,
+    //   parentId: this.room.chat.id,
+    // } as ChatCreate);
   }
 }

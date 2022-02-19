@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { urlWithProtocol } from '../../constants';
-import { UserCreate, UserPasswordUpdate } from '../../types/user';
+import { UserPasswordUpdate } from '../../types/user';
 import { AuthService } from '../auth/auth.service';
 import PasswordRecover from '../login/password-recover.entity';
 import { MailerService } from '../mailer/mailer.service';

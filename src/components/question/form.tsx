@@ -10,7 +10,7 @@ import { UseStruct } from '../utils/hooks/use-struct';
 
 interface Props {
   question: UseStruct<QuestionCreate | QuestionUpdate>;
-  onCloseDrawer: () => void;
+  onCloseDrawer?: () => void;
 }
 
 const presets = [
@@ -59,8 +59,9 @@ export default function QuestionForm<T = QuestionCreate | QuestionUpdate>({
   };
 
   const onSubmit = (promise: Promise<T>) =>
-    promise.then(() => {
-      onCloseDrawer();
+    promise.then((data) => {
+      onCloseDrawer && onCloseDrawer();
+      return data;
     });
 
   return (

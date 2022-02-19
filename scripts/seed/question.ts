@@ -1,4 +1,4 @@
-import * as Faker from 'faker';
+import { faker } from '@faker-js/faker';
 import GenericSeeder from './generic-seeder';
 import { Question, QuestionCreate } from '../../src/types/question';
 import AnswerSeeder from './answer';
@@ -21,7 +21,7 @@ export default class QuestionSeeder extends GenericSeeder<Question> {
       `api/rooms/${this.roomId}/questions`,
       this.token,
       {
-        text: Faker.lorem.sentence(),
+        text: faker.lorem.sentence(),
         answersFormat: 'free',
       } as QuestionCreate,
     );

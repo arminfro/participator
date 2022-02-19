@@ -15,8 +15,10 @@ import { User } from './user';
 import { stringMinLength } from './utils';
 
 export type AnswersFormat = 'free' | 'fix';
-export const AnswersFormat = define<AnswersFormat>('AnswersFormat', (value) =>
-  value === 'free' || value === 'fix');
+export const AnswersFormat = define<AnswersFormat>(
+  'AnswersFormat',
+  (value) => value === 'free' || value === 'fix',
+);
 
 export interface FixAnswer {
   id?: number;
@@ -63,15 +65,13 @@ const questionCreateProps = {
     array(object({ id: optional(number()), text: string() })),
   ),
 };
-export const QuestionCreate: Describe<QuestionCreate> = object(
-  questionCreateProps,
-);
+export const QuestionCreate: Describe<QuestionCreate> =
+  object(questionCreateProps);
 
 export type QuestionUpdate = {
   text?: string;
   answersFormat?: AnswersFormat;
   fixAnswers?: FixAnswer[];
 };
-export const QuestionUpdate: Describe<QuestionUpdate> = object(
-  questionCreateProps,
-);
+export const QuestionUpdate: Describe<QuestionUpdate> =
+  object(questionCreateProps);

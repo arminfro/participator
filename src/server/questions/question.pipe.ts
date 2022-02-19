@@ -12,7 +12,8 @@ import {
 
 @Injectable()
 export class QuestionUpdatePipe
-  implements PipeTransform<QuestionUpdate, QuestionUpdate> {
+  implements PipeTransform<QuestionUpdate, QuestionUpdate>
+{
   transform(question: QuestionUpdate): QuestionUpdate | never {
     const [errors] = validateQuestionUpdate(question);
     if (errors) {
@@ -27,7 +28,8 @@ export class QuestionUpdatePipe
 
 @Injectable()
 export class QuestionCreatePipe
-  implements PipeTransform<QuestionCreate, QuestionCreate> {
+  implements PipeTransform<QuestionCreate, QuestionCreate>
+{
   transform(question: QuestionCreate): QuestionCreate | never {
     const [errors] = validateQuestionCreate(question);
     if (errors) {

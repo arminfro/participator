@@ -5,9 +5,10 @@ interface Props {
   name: string;
 }
 
-export default function Welcome(
-  props: Props,
-): { subject: string; body: ReactElement } {
+export default function Welcome(props: Props): {
+  subject: string;
+  body: ReactElement;
+} {
   const subject = `Welcome ${props.name} to Participator`;
   return {
     subject,

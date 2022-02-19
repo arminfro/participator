@@ -4,7 +4,7 @@ import QuestionForm from './form';
 
 interface Props {
   roomId: number;
-  onCloseDrawer: () => void;
+  onCloseDrawer?: () => void;
 }
 
 export default function QuestionCreate({

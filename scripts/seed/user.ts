@@ -1,4 +1,4 @@
-import * as Faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { times } from 'lodash';
 import { User, UserCreate } from '../../src/types/user';
 import GenericSeeder from './generic-seeder';
@@ -25,11 +25,12 @@ export default class UserSeeder extends GenericSeeder<User> {
       'api/users',
       '',
       {
-        name: Faker.name.firstName(),
+        name: faker.name.firstName(),
         pw1: UserSeeder.password,
         pw2: UserSeeder.password,
-        email: email || Faker.internet.email().replace(/@.*$/, '@localhost.me'),
-        avatarUrl: Faker.internet.avatar(),
+        email: email || faker.internet.email().replace(/@.*$/, '@localhost.me'),
+        // results in net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep
+        // avatarUrl: faker.internet.avatar(),
       } as UserCreate,
     );
     await this.login();
@@ -40,7 +41,7 @@ export default class UserSeeder extends GenericSeeder<User> {
 
   // todo, not working, file gets received by server, but somehow content is not right, maybe encoding issue
   // async uploadAvatar() {
-  //   const avatarUrl = Faker.internet.avatar();
+  //   const avatarUrl = faker.internet.avatar();
   //   axios
   //     .get(avatarUrl, {
   //       headers: { responseType: 'arraybuffer' },
