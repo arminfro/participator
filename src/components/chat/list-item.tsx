@@ -6,7 +6,7 @@ import {
 import { subject } from '@casl/ability';
 import { Comment, Popconfirm, Tooltip } from 'antd';
 import { formatDistance } from 'date-fns';
-import marked from 'marked';
+import { marked } from 'marked';
 import emoji from 'node-emoji';
 import Prism from 'prismjs';
 import React, { Dispatch, SetStateAction, useState } from 'react';
