@@ -23,9 +23,9 @@ export default function Logout() {
   return (
     <>
       <Link href="/users/[id]" as={`/users/${id}`}>
-        <>Hi {name}</>
+        {`Hi ${name}`}
       </Link>
-      <Button danger onClick={onLogout}>
+      <Button style={{ marginLeft: 12 }} danger onClick={onLogout}>
         Logout
       </Button>
     </>
