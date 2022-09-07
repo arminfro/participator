@@ -25,7 +25,7 @@ export class ChatUpdatePipe implements PipeTransform<ChatUpdate, ChatUpdate> {
 export class ChatCreatePipe implements PipeTransform<ChatCreate, ChatCreate> {
   transform(chat: ChatCreate): ChatCreate | never {
     const [failures, validatedChatCreate] = validateChatCreate(chat);
-    if (!validatedChatCreate) {
+    if (failures) {
       throw new WsException(
         `Validation ChatCreate payload failed\n${failures
           .map((failure) => failure.message)
