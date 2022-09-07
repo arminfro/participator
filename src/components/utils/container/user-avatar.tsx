@@ -15,8 +15,7 @@ export default function UserAvatar({
   const [error, setError] = useState(false);
 
   // todo, get a better default
-  const defaultUrl =
-    'https://cdn0.iconfinder.com/data/icons/account-avatar/128/user_-512.png';
+  const defaultUrl = 'static/avatar/default.webp';
 
   return (
     <>
