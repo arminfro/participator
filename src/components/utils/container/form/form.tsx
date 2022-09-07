@@ -5,7 +5,7 @@ import { UseStruct } from '../../hooks/use-struct';
 
 interface FormProps<T> {
   struct: UseStruct<T>;
-  onSubmit: (data: Promise<T>) => Promise<T>;
+  onSubmit: (data: Promise<T>) => Promise<T | void>;
   children: ReactElement | ReactElement[];
 }
 
