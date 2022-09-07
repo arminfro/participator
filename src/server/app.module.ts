@@ -16,6 +16,8 @@ import { RoomsModule } from './rooms/rooms.module';
 import { UsersModule } from './users/users.module';
 import { WsExceptionsFilter } from './ws-exceptions-filter';
 
+import ormconfig from '../../ormconfig.json';
+
 @Module({
   imports: [
     AuthModule,
@@ -25,7 +27,7 @@ import { WsExceptionsFilter } from './ws-exceptions-filter';
     ChatsModule,
     RoomsModule,
     LinksModule,
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRoot(ormconfig),
     StorageModule.forRoot({
       default: 'local',
       disks: {
@@ -55,4 +57,4 @@ import { WsExceptionsFilter } from './ws-exceptions-filter';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
