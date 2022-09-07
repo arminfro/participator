@@ -57,4 +57,4 @@ import ormconfig from '../../ormconfig.json';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

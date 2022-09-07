@@ -24,7 +24,8 @@ import { validateAnswerCreate } from '../../types/answer.validation';
 
 @Injectable()
 export class AnswerCreatePipe
-  implements PipeTransform<AnswerCreate, AnswerCreate> {
+  implements PipeTransform<AnswerCreate, AnswerCreate>
+{
   transform(answer: AnswerCreate): AnswerCreate | never {
     const [errors] = validateAnswerCreate(answer);
     if (errors) {
