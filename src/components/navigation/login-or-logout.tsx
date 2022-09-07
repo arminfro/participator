@@ -12,7 +12,7 @@ export default function LoginOrLogout({ isLoading }: Props) {
   const { user } = useCurrentUser();
 
   return (
-    <Menu.Item style={{ float: 'right' }}>
+    <Menu.Item>
       {isLoading ? <Spin /> : user ? <Logout /> : <Login />}
     </Menu.Item>
   );

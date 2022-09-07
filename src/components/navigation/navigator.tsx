@@ -45,10 +45,16 @@ export default function Navigator() {
     return pathNameMatch ? pathNameMatch[0] : '/';
   };
 
+  const menuItemStyle = { marginRight: 'auto' };
+
   return (
     <>
-      <Menu mode="horizontal" selectedKeys={[selectedKey()]}>
-        <Menu.Item key="/">
+      <Menu
+        style={{ justifyContent: 'space-between' }}
+        mode="horizontal"
+        selectedKeys={[selectedKey()]}
+      >
+        <Menu.Item style={!userFetched && menuItemStyle} key="/">
           <Link href="/">Home</Link>
         </Menu.Item>
         {userFetched && (
@@ -56,7 +62,7 @@ export default function Navigator() {
             <Menu.Item key="/users">
               <Link href="/users">Users</Link>
             </Menu.Item>
-            <Menu.Item key="/rooms">
+            <Menu.Item style={menuItemStyle} key="/rooms">
               <Link href="/rooms">Rooms</Link>
             </Menu.Item>
           </>
