@@ -27,7 +27,7 @@ import ormconfig from '../../ormconfig.json';
     ChatsModule,
     RoomsModule,
     LinksModule,
-    TypeOrmModule.forRoot(ormconfig),
+    TypeOrmModule.forRoot({ ...ormconfig, type: 'sqlite' }),
     StorageModule.forRoot({
       default: 'local',
       disks: {
