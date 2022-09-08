@@ -56,7 +56,7 @@ async function bootstrap() {
     }),
   );
 
-  app.listen(port, domain, () => {
+  app.listen(port, '0.0.0.0', () => {
     console.log(`> Ready on http://${url} with Next.js!`);
   });
 }
