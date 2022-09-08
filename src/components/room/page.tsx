@@ -32,7 +32,7 @@ export default function RoomPage({
         <Layout.Sider>
           <Menu
             mode="inline"
-            defaultSelectedKeys={[paths[paths.length - 1].name]}
+            selectedKeys={[paths[paths.length - 1].name]}
             style={{ height: '100%', borderRight: 0 }}
           >
             <Menu.Item key={room.name}>
