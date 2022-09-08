@@ -25,6 +25,7 @@ export default function UserList({ users }: Props): ReactElement {
         <Card.Grid
           key={user.id}
           style={{
+            display: 'inline-block',
             maxWidth: '15em',
             minWidth: '9em',
             padding: 3,
