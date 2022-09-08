@@ -43,3 +43,5 @@ documentation
 static/avatar
 
 src/server/db/test.db.sqlite3
+
+tsconfig.build.tsbuildinfo
