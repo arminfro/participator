@@ -13,7 +13,7 @@ export default function LandingPage(): ReactElement {
     h1: { textAlign: 'center', fontSize: 24 },
     icon: { padding: 8, fontSize: 50, display: 'block' },
     col: { padding: 12, textAlign: 'center', margin: 'auto' },
-    alert: { textAlign: 'center', maxWidth: 600, margin: 'auto' },
+    alert: { textAlign: 'center', maxWidth: 600, margin: '8px auto' },
   };
 
   return (
@@ -21,8 +21,13 @@ export default function LandingPage(): ReactElement {
       <h1 style={styles.h1}>Welcome to Next.js on Nest.js</h1>
       <Alert
         style={styles.alert}
-        message="This is just a demo instance, any data you input will be deleted soon"
+        message="Disclaimer: This is just a demo instance, any data you input will be deleted soon."
         type="warning"
+      />
+      <Alert
+        style={styles.alert}
+        message="Status: Alpha, watch out there're bugs. Reload if something looks broken."
+        type="error"
       />
       <Row style={{ maxWidth: 400, margin: '50px auto' }}>
         <Col style={styles.col} span={12}>
