@@ -11,23 +11,24 @@
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
   "exclude": [
     "node_modules",
-    "bin"
+    "./src/server",
+    "./scripts"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "./static/avatar/default.webp",
+    "**/*.ts",
+    "**/*.tsx"
   ]
 }

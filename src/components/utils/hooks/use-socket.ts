@@ -8,6 +8,9 @@ import { noop } from '../../../constants';
 import { isDev } from '../../../utils/environment';
 import { message } from 'antd';
 
+// todo
+type Socket = any; //SocketIOClient.Socket;
+
 interface WithId {
   id: number;
 }
@@ -16,7 +19,7 @@ type EffectFuncs<T extends WithId> = {
   [P in Events]?: (
     payload: T | { id: number },
     setData: Dispatch<SetStateAction<T>>,
-    socket: SocketIOClient.Socket,
+    socket: Socket,
   ) => void;
 };
 
@@ -30,9 +33,9 @@ export function useSocket<T extends WithId>(
   effectFuncs: EffectFuncs<T> = {},
   dataProp: T = undefined,
   errorFunc: (error: string, failures: string[]) => void = noop,
-): [T, SocketIOClient.Socket] {
+): [T, Socket] {
   const [socket] = useState(
-    io.connect(namespace, {
+    (io as any).connect(namespace, {
       transportOptions: {
         polling: {
           extraHeaders: {

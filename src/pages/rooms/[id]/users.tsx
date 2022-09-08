@@ -6,14 +6,14 @@ import RoomPage from '../../../components/room/page';
 import UserList from '../../../components/user/list';
 import { Can } from '../../../components/utils/context/casl-context';
 import Drawer from '../../../components/utils/container/drawer';
-import Fetch from '../../../components/utils/container/fetch';
 import { Room } from '../../../types/room';
 import { User } from '../../../types/user';
+import FetchDynamicImport from '../../../components/utils/container/fetch-dynamic-import';
 
 export default function RoomUsers() {
   const router = useRouter();
   return (
-    <Fetch<Room> url={`api/rooms/${router.query.id}`}>
+    <FetchDynamicImport<Room> url={`api/rooms/${router.query.id}`}>
       {(room) => (
         <RoomPage
           room={room}
@@ -26,7 +26,7 @@ export default function RoomUsers() {
                 contentWrapperStyle={{ width: 512 }}
               >
                 {(onClose: () => void) => (
-                  <Fetch<User[]> url={`api/users`}>
+                  <FetchDynamicImport<User[]> url={`api/users`}>
                     {(allUsers) => (
                       <RoomMemberManage
                         allUsers={allUsers.filter(
@@ -40,7 +40,7 @@ export default function RoomUsers() {
                         onCloseDrawer={onClose}
                       />
                     )}
-                  </Fetch>
+                  </FetchDynamicImport>
                 )}
               </Drawer>
             </Can>,
@@ -49,6 +49,6 @@ export default function RoomUsers() {
           <UserList users={[room.admin, ...room.members]} />
         </RoomPage>
       )}
-    </Fetch>
+    </FetchDynamicImport>
   );
 }

@@ -2,17 +2,19 @@ import React, { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import { Answer } from '../../../../../../types/answer';
 import QuestionDetails from '../../../../../../components/question/details';
-import Fetch from '../../../../../../components/utils/container/fetch';
 import RoomPage from '../../../../../../components/room/page';
 import { Question } from '../../../../../../types/question';
+import FetchDynamicImport from '../../../../../../components/utils/container/fetch-dynamic-import';
 
 export default function AnswerIndex(): ReactElement {
   const { id, questionId } = useRouter().query;
 
   return (
-    <Fetch<Question> url={`api/rooms/${id}/questions/${questionId}`}>
+    <FetchDynamicImport<Question>
+      url={`api/rooms/${id}/questions/${questionId}`}
+    >
       {(question) => (
-        <Fetch<Answer[]>
+        <FetchDynamicImport<Answer[]>
           url={`api/rooms/${id}/questions/${questionId}/answers`}
         >
           {(answers) => (
@@ -34,15 +36,11 @@ export default function AnswerIndex(): ReactElement {
               ]}
             >
               {/* todo1 */}
-              <QuestionDetails
-                question={question}
-                answers={answers}
-                roomId={Number(id)}
-              />
+              <QuestionDetails question={question} roomId={Number(id)} />
             </RoomPage>
           )}
-        </Fetch>
+        </FetchDynamicImport>
       )}
-    </Fetch>
+    </FetchDynamicImport>
   );
 }

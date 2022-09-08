@@ -1,5 +1,6 @@
 import { Avatar, AvatarProps } from 'antd';
 import React, { ReactElement, useState } from 'react';
+import { avatarUrl } from '../../../constants';
 import { User } from '../../../types/user';
 
 interface Props extends AvatarProps {
@@ -14,8 +15,7 @@ export default function UserAvatar({
 }: Props) {
   const [error, setError] = useState(false);
 
-  // todo, get a better default
-  const defaultUrl = 'static/avatar/default.webp';
+  const defaultUrl = `${avatarUrl}/default.webp`;
 
   return (
     <>

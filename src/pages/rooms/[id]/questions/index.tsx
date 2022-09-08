@@ -4,7 +4,7 @@ import QuestionCreate from '../../../../components/question/create';
 import QuestionList from '../../../../components/question/list';
 import RoomPage from '../../../../components/room/page';
 import Drawer from '../../../../components/utils/container/drawer';
-import Fetch from '../../../../components/utils/container/fetch';
+import FetchDynamicImport from '../../../../components/utils/container/fetch-dynamic-import';
 import { Question } from '../../../../types/question';
 import { Room } from '../../../../types/room';
 
@@ -12,9 +12,9 @@ export default function QuestionIndex(): ReactElement {
   const roomId = useRouter().query.id;
 
   return (
-    <Fetch<Room> url={`api/rooms/${roomId}`}>
+    <FetchDynamicImport<Room> url={`api/rooms/${roomId}`}>
       {(room) => (
-        <Fetch<Question[]> url={`api/rooms/${roomId}/questions`}>
+        <FetchDynamicImport<Question[]> url={`api/rooms/${roomId}/questions`}>
           {(questions) => (
             <RoomPage
               room={room}
@@ -36,8 +36,8 @@ export default function QuestionIndex(): ReactElement {
               <QuestionList questions={questions} />
             </RoomPage>
           )}
-        </Fetch>
+        </FetchDynamicImport>
       )}
-    </Fetch>
+    </FetchDynamicImport>
   );
 }

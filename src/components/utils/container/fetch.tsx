@@ -14,7 +14,7 @@ import { getToken } from '../funcs/token';
 import useLocalStorage from '../hooks/use-local-storage';
 import ErrorBoundary from './error-boundary';
 
-interface FetchProps<T> {
+export interface FetchProps<T> {
   children: (data: T) => ReactElement;
   url: string;
 }

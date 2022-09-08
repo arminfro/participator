@@ -10,7 +10,7 @@ export interface ApiError {
   status: number;
 }
 
-function axiosCatch(error: AxiosError) {
+function axiosCatch(error: AxiosError<{ path?: string }>) {
   if (error.response?.data?.path === '/api/users/token-to-user') {
     console.debug('Invalid token, may due to server side rendering');
     return;

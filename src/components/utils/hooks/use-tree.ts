@@ -12,7 +12,7 @@ export default function useTree(): UseTree {
 
   const scrollToKey = useCallback(
     (key: number) => {
-      if (tree) {
+      if (tree && tree.scrollTo) {
         tree.scrollTo({
           key,
           align: 'bottom',

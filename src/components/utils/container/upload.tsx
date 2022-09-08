@@ -36,7 +36,8 @@ export default function Upload({
   };
 
   const beforeUpload = (file: RcFile) => {
-    const errors = verifyAvatar(file);
+    // todo: Type error: Argument of type 'RcFile' is not assignable to parameter of type 'File'
+    const errors = verifyAvatar(file as any);
     if (errors.length === 0) {
       return true;
     } else {

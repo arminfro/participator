@@ -2,14 +2,14 @@ import React, { ReactElement } from 'react';
 
 import { Room } from '../../types/room';
 import RoomList from '../../components/room/list';
-import Fetch from '../../components/utils/container/fetch';
 import Page from '../../components/utils/container/page';
 import Drawer from '../../components/utils/container/drawer';
 import RoomCreate from '../../components/room/create';
+import FetchDynamicImport from '../../components/utils/container/fetch-dynamic-import';
 
 export default function RoomsIndex(): ReactElement {
   return (
-    <Fetch<Room[]> url={'api/rooms'}>
+    <FetchDynamicImport<Room[]> url={'api/rooms'}>
       {(rooms) => (
         <>
           <Page
@@ -32,6 +32,6 @@ export default function RoomsIndex(): ReactElement {
           </Page>
         </>
       )}
-    </Fetch>
+    </FetchDynamicImport>
   );
 }

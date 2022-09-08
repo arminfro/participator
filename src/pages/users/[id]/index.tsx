@@ -4,7 +4,7 @@ import React, { ReactElement } from 'react';
 import UserDetails from '../../../components/user/details';
 import UserEditForm from '../../../components/user/update';
 import Drawer from '../../../components/utils/container/drawer';
-import Fetch from '../../../components/utils/container/fetch';
+import FetchDynamicImport from '../../../components/utils/container/fetch-dynamic-import';
 import Page from '../../../components/utils/container/page';
 import { useCurrentUser } from '../../../components/utils/context/current-user';
 import api from '../../../components/utils/funcs/api';
@@ -24,7 +24,7 @@ export default function UserIndex(): ReactElement {
   };
 
   return (
-    <Fetch<User> url={`api/users/${router.query.id}`}>
+    <FetchDynamicImport<User> url={`api/users/${router.query.id}`}>
       {(user) => (
         <Page
           title={user.name}
@@ -51,6 +51,6 @@ export default function UserIndex(): ReactElement {
           <UserDetails user={user} />
         </Page>
       )}
-    </Fetch>
+    </FetchDynamicImport>
   );
 }

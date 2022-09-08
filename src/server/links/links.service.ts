@@ -14,7 +14,7 @@ import { ChatsGateway } from '../chats/chats.gateway';
 import { ChatsService } from '../chats/chats.service';
 import { Link } from './link.entity';
 import LinkPreviewGenerator from 'link-preview-generator';
-import request = require('request');
+import request from 'request';
 
 interface PreviewData {
   title: string;
@@ -31,7 +31,7 @@ export class LinksService {
     @Inject(ChatsGateway) private readonly chatsGateway: ChatsGateway,
     @Inject(forwardRef(() => ChatsService))
     private readonly chatsService: ChatsService,
-  ) {}
+  ) { }
 
   async create(linkCreate: LinkCreate): Promise<Link | undefined> {
     const link = await this.build(linkCreate);

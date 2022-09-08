@@ -3,7 +3,6 @@ import { Logger, Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RenderModule } from 'nest-next';
-// import { NextModule } from './nextjs/next.module';
 import Next from 'next';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
@@ -17,6 +16,7 @@ import { UsersModule } from './users/users.module';
 import { WsExceptionsFilter } from './ws-exceptions-filter';
 
 import ormconfig from '../../ormconfig.json';
+import { domain, port } from '../constants';
 
 @Module({
   imports: [
@@ -40,9 +40,17 @@ import ormconfig from '../../ormconfig.json';
       },
     }),
     RenderModule.forRootAsync(
-      Next({ dev: process.env.NODE_ENV !== 'production' }),
-      { viewsDir: null, dev: process.env.NODE_ENV !== 'production' },
+      Next({
+        dev: process.env.NODE_ENV !== 'production',
+        // dir: resolve(__dirname, '../../..'),
+        hostname: domain,
+        port: Number(port),
+      }),
+      { passthrough404: false, viewsDir: null },
     ),
+    //   Next({ dev: process.env.NODE_ENV !== 'production' }),
+    //   { viewsDir: null, dev: process.env.NODE_ENV !== 'production' },
+    // ),
   ],
   controllers: [AppController],
   providers: [

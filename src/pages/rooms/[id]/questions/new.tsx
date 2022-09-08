@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 import QuestionCreate from '../../../../components/question/create';
 import RoomPage from '../../../../components/room/page';
-import Fetch from '../../../../components/utils/container/fetch';
+import FetchDynamicImport from '../../../../components/utils/container/fetch-dynamic-import';
 import { Room } from '../../../../types/room';
 
 export default function QuestionNew(): ReactElement {
@@ -10,7 +10,7 @@ export default function QuestionNew(): ReactElement {
   const { id } = router.query;
 
   return (
-    <Fetch<Room> url={`api/rooms/${router.query.id}`}>
+    <FetchDynamicImport<Room> url={`api/rooms/${router.query.id}`}>
       {(room) => (
         <RoomPage
           room={room}
@@ -23,6 +23,6 @@ export default function QuestionNew(): ReactElement {
           <QuestionCreate roomId={Number(id)} />
         </RoomPage>
       )}
-    </Fetch>
+    </FetchDynamicImport>
   );
 }

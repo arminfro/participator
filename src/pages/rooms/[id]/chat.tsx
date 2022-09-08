@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import Chats from '../../../components/chat/chats';
 import RoomPage from '../../../components/room/page';
-import Fetch from '../../../components/utils/container/fetch';
+import FetchDynamicImport from '../../../components/utils/container/fetch-dynamic-import';
 import { Chat } from '../../../types/chat';
 import { Room } from '../../../types/room';
 import { getAllIds } from '../../../utils/transform-tree';
@@ -20,9 +20,9 @@ export default function RoomChat() {
 
   return (
     // todo, make Fetch using Promise.all and pass url's by keys
-    <Fetch<Room> url={`api/rooms/${router.query.id}`}>
+    <FetchDynamicImport<Room> url={`api/rooms/${router.query.id}`}>
       {(room) => (
-        <Fetch<Chat> url={`api/rooms/${router.query.id}/chat`}>
+        <FetchDynamicImport<Chat> url={`api/rooms/${router.query.id}/chat`}>
           {(chat) => (
             <RoomPage
               room={room}
@@ -47,8 +47,8 @@ export default function RoomChat() {
               />
             </RoomPage>
           )}
-        </Fetch>
+        </FetchDynamicImport>
       )}
-    </Fetch>
+    </FetchDynamicImport>
   );
 }

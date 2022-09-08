@@ -5,7 +5,7 @@ import { AbilityContextProvider } from '../components/utils/context/casl-context
 import CurrentUserProvider from '../components/utils/context/current-user';
 import { SiderRefProvider } from '../components/utils/context/sider-ref-context';
 import { swrApi } from '../components/utils/funcs/api';
-import Layout from './layout';
+import Layout from '../components/layout';
 import './styles.css';
 
 interface Props {
