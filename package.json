@@ -46,7 +46,7 @@
     "date-fns": "^2.28.0",
     "dotenv": "^16.0.0",
     "helmet": "^6.0.0",
-    "link-preview-generator": "AndrejGajdos/link-preview-generator",
+    "link-preview-generator": "^1.1.0",
     "lodash": "^4.17.21",
     "marked": "^4.1.0",
     "nest-next": "^10.0.0",
