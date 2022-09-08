@@ -1,16 +1,6 @@
 # Participator
 
-in early stage development companion app for video/audio chats. \
-Specifically for teaching environments.
-
-## Installation
-
-You'll need sqlite (for dev db), python and gcc (for [`node-gyp`](https://github.com/nodejs/node-gyp)).
-
-Example [Choco](https://chocolatey.org/) Windows: `choco install sqlite python mingw` \
-Example Ubuntu: `sudo apt-get install sqlite python build-essential`
-
-Then simply do `yarn install`
+Demo application for testing, prototyping and learning purposes.
 
 ## Configuration
 
@@ -19,7 +9,7 @@ E-Mail configuration for `smtp` support by setting env variables, e.g. in `.env`
 ```bash
 EMAIL_HOST=smtp.example.com
 EMAIL_SENDER=myEmail@example.com
-EMAIL_PASS=mypassword 
+EMAIL_PASS=mypassword
 ```
 
 For `jwt` security secret key set `JWT_SECRET` to a random string.
