@@ -22,7 +22,6 @@ export default function QuestionIndex(): ReactElement {
               extra={[
                 <Drawer
                   key="new-room"
-                  contentWrapperStyle={{ width: 512 }}
                   primaryButton
                   action="Create"
                   subject="Question"

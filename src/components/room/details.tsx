@@ -16,11 +16,7 @@ export default function RoomDetails({ room }: Props): ReactElement {
     <RoomPage
       extra={[
         <Can I="update" this={subject('Room', room)} key="can-i-update">
-          <Drawer
-            contentWrapperStyle={{ width: 512 }}
-            action="Edit"
-            subject="Room"
-          >
+          <Drawer action="Edit" subject="Room">
             {(onClose: () => void) => (
               <RoomUpdate onCloseDrawer={onClose} room={room} />
             )}

@@ -1,9 +1,9 @@
-import { message } from 'antd';
+// import { message } from 'antd';
 import React, { ReactElement, Suspense } from 'react';
 import useSWR from 'swr';
 import { MutatorCallback, SWRConfiguration } from 'swr/dist/types';
 import Exception from '../../../pages/exception';
-import { isDev } from '../../../utils/environment';
+// import { isDev } from '../../../utils/environment';
 import LoadingSpinner from '../../shared/loading-spinner';
 import {
   SwrMutateProvider,
@@ -29,7 +29,7 @@ function Fetcher<T>({ children, url }: FetchProps<T>): ReactElement {
   const [localStorage] = useLocalStorage<T>(keys.join());
   const swrConfig: SWRConfiguration = {
     onError: (err: Error) => {
-      if (isDev()) message.error(err);
+      // if (isDev()) message.error(err);
     },
   };
   if (localStorage) {

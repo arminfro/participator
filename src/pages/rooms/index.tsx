@@ -17,7 +17,6 @@ export default function RoomsIndex(): ReactElement {
             extra={[
               <Drawer
                 key="new-room"
-                contentWrapperStyle={{ width: 512 }}
                 primaryButton
                 action="Create"
                 subject="Room"

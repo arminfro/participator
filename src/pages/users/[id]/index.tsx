@@ -29,12 +29,7 @@ export default function UserIndex(): ReactElement {
         <Page
           title={user.name}
           extra={[
-            <Drawer
-              key="edit"
-              action="Edit"
-              subject={`user ${user.name}`}
-              contentWrapperStyle={{ width: 512 }}
-            >
+            <Drawer key="edit" action="Edit" subject={`user ${user.name}`}>
               {(onClose: () => void) => (
                 <UserEditForm onCloseDrawer={onClose} user={user} />
               )}

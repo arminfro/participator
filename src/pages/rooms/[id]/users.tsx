@@ -20,11 +20,7 @@ export default function RoomUsers() {
           path={[{ name: 'Users', url: `/rooms/${room.id}/users` }]}
           extra={[
             <Can I="update" this={subject('Room', room)} key="can-i-update">
-              <Drawer
-                action="Manage"
-                subject="rooms users"
-                contentWrapperStyle={{ width: 512 }}
-              >
+              <Drawer action="Manage" subject="rooms users">
                 {(onClose: () => void) => (
                   <FetchDynamicImport<User[]> url={`api/users`}>
                     {(allUsers) => (

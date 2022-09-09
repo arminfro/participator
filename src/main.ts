@@ -15,7 +15,7 @@ import { join } from 'path';
 require('events').EventEmitter.prototype._maxListeners = 128;
 require('events').defaultMaxListeners = 128;
 
-import { domain, port, url } from './constants';
+import { port, url } from './constants';
 import { AppModule } from './server/app.module';
 
 async function bootstrap() {

@@ -27,12 +27,7 @@ export default function QuestionIndex(): ReactElement {
             },
           ]}
           extra={[
-            <Drawer
-              key={'question-update'}
-              contentWrapperStyle={{ width: 512 }}
-              action="Edit"
-              subject="Question"
-            >
+            <Drawer key={'question-update'} action="Edit" subject="Question">
               {(onClose: () => void) => (
                 <QuestionUpdate
                   onCloseDrawer={onClose}

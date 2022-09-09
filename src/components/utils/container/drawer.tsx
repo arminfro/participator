@@ -4,15 +4,15 @@ import { useQueryParamsBoolean } from '../hooks/use-query-params';
 
 interface Props extends Omit<DrawerProps, 'children'> {
   children:
-    | ReactElement
-    | ReactElement[]
-    | ((onClose: () => void) => ReactElement);
+  | ReactElement
+  | ReactElement[]
+  | ((onClose: () => void) => ReactElement);
   subject: string;
   primaryButton?: boolean;
   action: string;
 }
 
-export default function MyDrawer({
+export default function Drawer({
   children,
   subject,
   action,
