@@ -50,11 +50,11 @@ export default function Navigator() {
   return (
     <>
       <Menu
-        style={{ justifyContent: 'space-between' }}
+        style={!userFetched ? { justifyContent: 'space-between' } : {}}
         mode="horizontal"
         selectedKeys={[selectedKey()]}
       >
-        <Menu.Item style={!userFetched && menuItemStyle} key="/">
+        <Menu.Item style={!userFetched ? menuItemStyle : {}} key="/">
           <Link href="/">Home</Link>
         </Menu.Item>
         {userFetched && (
