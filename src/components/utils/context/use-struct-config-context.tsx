@@ -36,12 +36,7 @@ export function UseStructConfigProvider<T>({
         const newData = transformDateString(newStruct);
         mutate[`api${router.asPath}`]((currentData: T) => {
           if (is(currentData, array(object()))) {
-            const index = currentData.findIndex((d) => d.id === newData.id);
-            if (index) {
-              return currentData.map((d, i) => (i === index ? newData : d));
-            } else {
-              return [newData, ...currentData];
-            }
+            return [newData, ...currentData];
           }
           return { ...currentData, ...newData };
         }, false);
