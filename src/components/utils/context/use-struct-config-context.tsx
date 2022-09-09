@@ -32,7 +32,9 @@ export function UseStructConfigProvider<T>({
 
   const afterRemoteUpdate = useCallback(
     (newStruct) => {
-      if (mutate[`api${router.asPath}`]) {
+      console.log(router.asPath);
+      //quickfix, UserList does not support this mutations
+      if (mutate[`api${router.asPath}`] && router.asPath !== '/users') {
         const newData = transformDateString(newStruct);
         mutate[`api${router.asPath}`]((currentData: T) => {
           if (is(currentData, array(object()))) {
