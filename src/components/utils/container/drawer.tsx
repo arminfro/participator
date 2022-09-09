@@ -1,7 +1,8 @@
 import { Button, Drawer as AntdDrawer, DrawerProps } from 'antd';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement } from 'react';
+import { useQueryParamsBoolean } from '../hooks/use-query-params';
 
-interface Props extends DrawerProps {
+interface Props extends Omit<DrawerProps, 'children'> {
   children:
     | ReactElement
     | ReactElement[]
@@ -11,34 +12,29 @@ interface Props extends DrawerProps {
   action: string;
 }
 
-export default function Drawer({
+export default function MyDrawer({
   children,
   subject,
   action,
   primaryButton = false,
   ...drawerProps
 }: Props) {
-  const [visible, setVisibility] = useState(false);
-  useEffect(() => {
-    setVisibility(visible);
-  }, [visible, setVisibility]);
+  const [open, setOpen] = useQueryParamsBoolean(action, false);
 
-  const onClose = () => {
-    setVisibility(false);
-  };
+  const onClose = () => setOpen(false);
 
   return (
     <>
       <Button
         type={primaryButton ? 'primary' : 'default'}
-        onClick={() => setVisibility(true)}
+        onClick={() => setOpen(true)}
       >
         {action}
       </Button>
       <AntdDrawer
         title={`${action} ${subject}`}
         onClose={onClose}
-        visible={visible}
+        open={open}
         {...drawerProps}
       >
         {typeof children === 'function' ? children(onClose) : children}
