@@ -9,8 +9,8 @@ interface Props {
 
 export default function UserDetails({ user }: Props): ReactElement {
   return (
-    <Card.Grid key={user.id} style={{ maxWidth: '30em', minWidth: '15' }}>
-      <UserCard user={user} />
+    <Card.Grid key={user.id}>
+      <UserCard user={user} isDetailPage />
     </Card.Grid>
   );
 }

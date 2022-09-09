@@ -20,9 +20,10 @@ const offlineStyle = {
 
 export interface Props {
   user: User;
+  isDetailPage?: boolean;
 }
 
-export default function UserCard({ user }: Props): ReactElement {
+export default function UserCard({ user, isDetailPage }: Props): ReactElement {
   const userUpdate = useUserUpdate(user.id, user, true);
   const ability = useAbility();
   const canReadUser = () => ability.can(Action.Read, subject('User', user));
@@ -43,7 +44,7 @@ export default function UserCard({ user }: Props): ReactElement {
         <Card
           cover={
             <UserAvatar
-              style={{ height: 180 }}
+              style={{ height: isDetailPage ? 320 : 180 }}
               shape="square"
               size="large"
               user={user}
