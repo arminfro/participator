@@ -21,8 +21,14 @@ export default function Exception({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (+status === 401 && getToken() && !path.match(/^\/api*/)) {
-      router.push(path);
+    if (+status === 401 && !path.match(/^\/api*/)) {
+      if (getToken()) {
+        router.push(path);
+      } else {
+        const params = new URLSearchParams();
+        params.set('redirectUrl', path);
+        router.push(`/login?${params.toString()}`);
+      }
     } else {
       setLoading(false);
     }

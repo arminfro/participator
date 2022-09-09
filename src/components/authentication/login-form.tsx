@@ -16,7 +16,9 @@ export default function LoginForm({ redirectUrl }: Props): ReactElement {
 
   const onLogin = (promise: Promise<UserLogin>) =>
     promise.then(() => {
-      router.push(redirectUrl || '/users');
+      router.push(
+        redirectUrl ?? (router.query.redirectUrl as string) ?? '/users',
+      );
     });
 
   return (
