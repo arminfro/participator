@@ -26,7 +26,7 @@ export class ChatsService {
     await this.chatsRepository.save(chat);
     const urls = chat.msg.match(urlRegex);
     if (urls) {
-      this.linksService.buildLinksForChat(chat.id, urls);
+      // this.linksService.buildLinksForChat(chat.id, urls);
     }
     chat.save();
     return chat;
