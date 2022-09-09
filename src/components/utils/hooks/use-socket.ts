@@ -90,11 +90,12 @@ export function useSocket<T extends WithId>(
       });
     });
     return () => {
+      socket.off('connect');
       socket.off(Events.create);
       socket.off(Events.update);
       socket.off(Events.remove);
       socket.off(Events.exception);
     };
-  }, [namespace, socket, effectFuncs, errorFunc]);
+  }, []);
   return [data, socket];
 }
