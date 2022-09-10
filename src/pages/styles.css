@@ -8,7 +8,7 @@
   padding: 0 50px 30px;
 }
 .layout-content-padding {
-  padding: 24;
+  padding: 24px;
 }
 
 @media screen and (max-width: 639px) {
@@ -16,6 +16,6 @@
     padding: 0 20px 10px;
   }
   .layout-content-padding {
-    padding: 24;
+    padding: 8px;
   }
 }

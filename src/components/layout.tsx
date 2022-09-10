@@ -12,7 +12,7 @@ interface Props {
 
 export default function AppLayout({ Component, pageProps, siderRef }: Props) {
   const { height } = useWindowSize();
-  const { isMobile, layoutPadding } = useMobile();
+  const { layoutPadding } = useMobile();
 
   return (
     <Layout>
@@ -22,9 +22,9 @@ export default function AppLayout({ Component, pageProps, siderRef }: Props) {
       <Layout className="layout-padding">
         <div style={{ display: 'inherit' }} ref={siderRef} />
         <Layout.Content
+          className="layout-content-padding"
           style={{
             background: '#fff',
-            padding: `0 0 ${isMobile ? 8 : 24}px ${isMobile ? 8 : 24}px`,
             margin: 0,
             minHeight: height - (65 + layoutPadding.y) || undefined,
           }}
