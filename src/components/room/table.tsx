@@ -9,6 +9,8 @@ import { Room, RoomUpdate } from '../../types/room';
 import api from '../utils/funcs/api';
 import { useAbility } from '../utils/context/casl-context';
 import { useCurrentUser } from '../utils/context/current-user';
+import useMobile from '../utils/hooks/use-mobile';
+import { truncate } from 'lodash';
 
 interface Props {
   rooms: Room[];
@@ -18,14 +20,14 @@ export default function RoomTable({ rooms }: Props) {
   const { user } = useCurrentUser();
   const ability = useAbility();
   const router = useRouter();
+  const { isMobile } = useMobile();
 
   const canReadRoom = (room: Room): boolean => {
     return ability.can(Action.Read, subject('Room', room));
   };
 
-  const onGoToRoom = (room: Room, justJoined = false) => {
+  const onGoToRoom = (room: Room, justJoined = false) =>
     (canReadRoom(room) || justJoined) && router.push(`/rooms/${room.id}`);
-  };
 
   const onJoin = (event: SyntheticEvent, roomId: number) => {
     event.preventDefault();
@@ -77,7 +79,16 @@ export default function RoomTable({ rooms }: Props) {
   return (
     <Table
       columns={columns}
-      dataSource={rooms}
+      dataSource={
+        isMobile
+          ? rooms.map((room) => ({
+            ...room,
+            description: truncate(room.description, {
+              length: 30,
+            }),
+          }))
+          : rooms
+      }
       rowKey="id"
       pagination={false}
       bordered={true}

@@ -14,23 +14,19 @@ export default function AppLayout({ Component, pageProps, siderRef }: Props) {
   const { height } = useWindowSize();
   const { isMobile, layoutPadding } = useMobile();
 
-  const layoutPaddingStyle = {
-    padding: `0 ${layoutPadding.x}px ${layoutPadding.y}px`,
-  };
-
   return (
     <Layout>
-      <Layout.Header style={{ zIndex: 1, ...layoutPaddingStyle }}>
+      <Layout.Header className="layout-padding" style={{ zIndex: 1 }}>
         <Navigator />
       </Layout.Header>
-      <Layout style={layoutPaddingStyle}>
+      <Layout className="layout-padding">
         <div style={{ display: 'inherit' }} ref={siderRef} />
         <Layout.Content
           style={{
             background: '#fff',
-            padding: isMobile ? 8 : 24,
+            padding: `0 0 ${isMobile ? 8 : 24}px ${isMobile ? 8 : 24}px`,
             margin: 0,
-            minHeight: height - (65 + 30) || undefined,
+            minHeight: height - (65 + layoutPadding.y) || undefined,
           }}
         >
           <Component {...pageProps} />
